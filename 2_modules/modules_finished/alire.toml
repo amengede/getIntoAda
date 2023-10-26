@@ -1,0 +1,9 @@
+name = "modules_finished"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Andrew Mengede"]
+maintainers = ["Andrew Mengede <amengede27@outlook.com>"]
+maintainers-logins = ["amengede"]
+
+executables = ["modules_finished"]

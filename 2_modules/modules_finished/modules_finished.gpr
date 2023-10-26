@@ -1,0 +1,22 @@
+with "config/modules_finished_config.gpr";
+project Modules_Finished is
+
+   for Source_Dirs use ("src/", "config/");
+   for Object_Dir use "obj/" & Modules_Finished_Config.Build_Profile;
+   for Create_Missing_Dirs use "True";
+   for Exec_Dir use "bin";
+   for Main use ("modules_finished.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use Modules_Finished_Config.Ada_Compiler_Switches;
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es"); --  Symbolic traceback
+   end Binder;
+
+   package Install is
+      for Artifacts (".") use ("share");
+   end Install;
+
+end Modules_Finished;
