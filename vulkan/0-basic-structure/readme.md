@@ -1,0 +1,6 @@
+- alr with sdlada --use=https://github.com/ada-game-framework/sdla
+- backend
+- logger
+- renderer
+- controller
+- main
