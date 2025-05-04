@@ -14,7 +14,7 @@ package body App is
         Logger.Print ("Making App");
         SDL_Backend.Build_Window (Window, Width, Height, "Test");
         Logger.Print ("Made Window");
-        Renderer.Initialize;
+        Renderer.Initialize (Window);
     end Initialize;
 
     procedure Run is

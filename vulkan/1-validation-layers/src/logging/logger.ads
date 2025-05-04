@@ -36,12 +36,6 @@ package Logger is
     ---------------------------------------------------------------------------
     procedure Print (Layers : Vulkan.Layer_Properties_Vectors.Vector);
 
-    function Debug_Callback (
-        Message_Severity : Vulkan.Debug_Utils_Message_Severity_Flags;
-        Message_Types : Vulkan.Debug_Utils_Message_Type_Flags;
-        Callback_Data : Vulkan.Debug_Utils_Messenger_Callback_Data;
-        User_Data : Interfaces.C.Extensions.void_ptr) 
-        return Boolean;
     ---------------------------------------------------------------------------
     --  Make a debug messenger
     ---------------------------------------------------------------------------

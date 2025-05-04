@@ -18,4 +18,10 @@ package body SDL_Backend is
             Flags => 0);
     end Build_Window;
 
+    function Get_SDL_Extensions (
+        Window : Windows.Window) return SDL_Vulkan.Extension_Name_Arrays is
+    begin
+        SDL_Vulkan.Load_Library;
+        return SDL_Vulkan.Get_Instance_Extensions (Window);
+    end Get_SDL_Extensions;
 end SDL_Backend;

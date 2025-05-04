@@ -87,6 +87,8 @@ package body Logger is
         
     begin
 
+        Vulkan.Debug_Utils.Load_Extension (Instance);
+
         Messenger_Info.Message_Severity :=
             Vulkan.Debug_Utils_Message_Severity_Error_Bit
             + Vulkan.Debug_Utils_Message_Severity_Warning_Bit;

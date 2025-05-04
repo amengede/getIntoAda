@@ -2,13 +2,16 @@
 --  Renderer: Draws stuff
 -------------------------------------------------------------------------------
 with Vulkan;
+with SDL.Video.Windows;
 
 package Renderer is
+
+    package Windows renames SDL.Video.Windows;
 
     ---------------------------------------------------------------------------
     --  Set up the renderer
     ---------------------------------------------------------------------------
-    procedure Initialize; 
+    procedure Initialize (Window : Windows.Window);
 
     ---------------------------------------------------------------------------
     --  Free up memory

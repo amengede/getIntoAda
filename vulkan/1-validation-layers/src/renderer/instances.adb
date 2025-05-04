@@ -12,11 +12,13 @@ package body Instances is
         Requested_Layers : Vulkan.String_Vectors.Vector)
         return Boolean is
 
-        Supported_Extensions : Vulkan.Extension_Properties_Vectors.Vector
-            := Vulkan.Core.Enumerate_Instance_Extension_Properties;
+        Supported_Extensions :
+            constant Vulkan.Extension_Properties_Vectors.Vector
+                := Vulkan.Core.Enumerate_Instance_Extension_Properties;
 
-        Supported_Layers : Vulkan.Layer_Properties_Vectors.Vector
-            := Vulkan.Core.Enumerate_Instance_Layer_Properties;
+        Supported_Layers :
+            constant Vulkan.Layer_Properties_Vectors.Vector
+                := Vulkan.Core.Enumerate_Instance_Layer_Properties;
 
         Found : Boolean;
     begin
@@ -63,7 +65,10 @@ package body Instances is
         return True;
     end Supported;
 
-    procedure Initialize (Instance : in out Vulkan.Instance) is
+    procedure Initialize (
+        Instance : in out Vulkan.Instance;
+        SDL_Extensions : SDL_Vulkan.Extension_Name_Arrays) is
+        
         App_Info : aliased Vulkan.Application_Info;
         Requested_Extensions, Requested_Layers : Vulkan.String_Vectors.Vector;
         Create_Info : Vulkan.Instance_Create_Info;
@@ -77,7 +82,12 @@ package body Instances is
         App_Info.Engine_Version   := Vulkan.Create_Version (1, 0);
         App_Info.API_Version      := Version;
 
+        for Name of SDL_Extensions loop
+            Requested_Extensions.Append (Name.To_String);
+        end loop;
+
         Create_Info.Application_Info := App_Info'Unchecked_Access;
+
         Requested_Layers.Append ("VK_LAYER_KHRONOS_validation");
 
         if not Supported (Requested_Extensions, Requested_Layers) then
