@@ -14,9 +14,13 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Various properties of object handles useful in generics
+
+with Vulkan.Extensions.KHR;
+with Vulkan.Extensions.EXT;
+with Vulkan.Extensions.NVX;
 
 package Vulkan.Object_Traits is
     generic
@@ -104,38 +108,34 @@ package Vulkan.Object_Traits is
                                             Private_Data_Slot_Object_Type,
                                             No_Private_Data_Slot);
     -- Extensions
-    package Surface is new Traits(Vulkan.Surface,
+    package Surface is new Traits(Extensions.KHR.Surface,
                                   Surface_Object_Type,
-                                  No_Surface);
-    package Swapchain is new Traits(Vulkan.Swapchain,
+                                  Extensions.KHR.No_Surface);
+    package Swapchain is new Traits(Extensions.KHR.Swapchain,
                                     Swapchain_Object_Type,
-                                    No_Swapchain);
-    package Display is new Traits(Vulkan.Display,
+                                    Extensions.KHR.No_Swapchain);
+    package Display is new Traits(Extensions.KHR.Display,
                                   Display_Object_Type,
-                                  No_Display);
-    package Display_Mode is new Traits(Vulkan.Display_Mode,
+                                  Extensions.KHR.No_Display);
+    package Display_Mode is new Traits(Extensions.KHR.Display_Mode,
                                        Display_Mode_Object_Type,
-                                       No_Display_Mode);
-    package Video_Session is new Traits(Vulkan.Video_Session,
+                                       Extensions.KHR.No_Display_Mode);
+    package Video_Session is new Traits(Extensions.KHR.Video_Session,
                                         Video_Session_Object_Type,
-                                        No_Video_Session);
+                                        Extensions.KHR.No_Video_Session);
     package Video_Session_Parameters is new Traits
-        (Vulkan.Video_Session_Parameters,
+        (Extensions.KHR.Video_Session_Parameters,
          Video_Session_Parameters_Object_Type,
-         No_Video_Session_Parameters);
-    package Debug_Report_Callback is new Traits
-        (Vulkan.Debug_Report_Callback,
-         Debug_Report_Callback_Object_Type,
-         No_Debug_Report_Callback);
-    package Cu_Module is new Traits(Vulkan.Cu_Module,
+         Extensions.KHR.No_Video_Session_Parameters);
+    package Cu_Module is new Traits(Extensions.NVX.Cu_Module,
                                     Cu_Module_Object_Type,
-                                    No_Cu_Module);
-    package Cu_Function is new Traits(Vulkan.Cu_Function,
+                                    Extensions.NVX.No_Cu_Module);
+    package Cu_Function is new Traits(Extensions.NVX.Cu_Function,
                                       Cu_Function_Object_Type,
-                                      No_Cu_Function);
+                                      Extensions.NVX.No_Cu_Function);
     package Debug_Utils_Messenger is new Traits
-        (Vulkan.Debug_Utils_Messenger,
+        (Extensions.EXT.Debug_Utils_Messenger,
          Debug_Utils_Messenger_Object_Type,
-         No_Debug_Utils_Messenger);
+         Extensions.EXT.No_Debug_Utils_Messenger);
 end Vulkan.Object_Traits;
 

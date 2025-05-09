@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Shader module related subprograms
 

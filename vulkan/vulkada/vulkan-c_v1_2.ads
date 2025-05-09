@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Subprogram access for Vulkan 1.2
 
@@ -22,7 +22,7 @@ with Vulkan.C_Arrays;
 with Vulkan.C;
 
 private package Vulkan.C_V1_2 is
-    -- Structure classifications.
+    -- Structure classification.
     subtype Structure is Structure_Type
         with Static_Predicate => Structure in 
             Physical_Device_Vulkan_1_1_Features_Type |
@@ -77,33 +77,7 @@ private package Vulkan.C_V1_2 is
             Device_Memory_Opaque_Capture_Address_Info_Type;
     
     subtype Out_Structure is Structure
-        with Static_Predicate => Out_Structure in
-            Physical_Device_Vulkan_1_1_Features_Type |
-            Physical_Device_Vulkan_1_1_Properties_Type |
-            Physical_Device_Vulkan_1_2_Features_Type |
-            Physical_Device_Vulkan_1_2_Properties_Type |
-            Physical_Device_8Bit_Storage_Features_Type |
-            Physical_Device_Driver_Properties_Type |
-            Physical_Device_Shader_Atomic_Int64_Features_Type |
-            Physical_Device_Shader_Float16_Int8_Features_Type |
-            Physical_Device_Float_Controls_Properties_Type |
-            Physical_Device_Descriptor_Indexing_Features_Type |
-            Physical_Device_Descriptor_Indexing_Properties_Type |
-            Descriptor_Set_Variable_Descriptor_Count_Layout_Support_Type |
-            Physical_Device_Depth_Stencil_Resolve_Properties_Type |
-            Physical_Device_Scalar_Block_Layout_Features_Type |
-            Physical_Device_Sampler_Filter_Minmax_Properties_Type |
-            Physical_Device_Vulkan_Memory_Model_Features_Type |
-            Physical_Device_Imageless_Framebuffer_Features_Type |
-            Physical_Device_Uniform_Buffer_Standard_Layout_Features_Type |
-            Physical_Device_Shader_Subgroup_Extended_Types_Features_Type |
-            Physical_Device_Separate_Depth_Stencil_Layouts_Features_Type |
-            Attachment_Reference_Stencil_Layout_Type |
-            Attachment_Description_Stencil_Layout_Type |
-            Physical_Device_Host_Query_Reset_Features_Type |
-            Physical_Device_Timeline_Semaphore_Features_Type |
-            Physical_Device_Timeline_Semaphore_Properties_Type |
-            Physical_Device_Buffer_Device_Address_Features_Type;
+        with Static_Predicate => Out_Structure in Out_Structure_Type;
 
     subtype In_Structure is Structure
         with Static_Predicate => In_Structure not in Out_Structure;

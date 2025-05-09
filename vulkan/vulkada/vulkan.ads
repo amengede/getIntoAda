@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Basic Vulkan types and constants
 
@@ -63,6 +63,7 @@ package Vulkan is
     Whole_Size: constant Device_Size := Device_Size'Last;
     Max_Memory_Types: constant := 32;
     Max_Physical_Device_Name_Size: constant := 256;
+    UUID_Size: constant := UUID'Length;
     Max_Extension_Name_Size: constant := 256;
     Max_Description_Size: constant := 256;
     Max_Memory_Heaps: constant := 16;
@@ -73,39 +74,7 @@ package Vulkan is
     -- Vulkan 1.2
     Max_Driver_Name_Size: constant := 256;
     Max_Driver_Info_Size: constant := 256;
-    -- Extensions.
-    Std_Video_H264_CPB_Cnt_List_Size: constant := 32;
-    Std_Video_H264_Scaling_List_4x4_Num_Lists: constant := 6;
-    Std_Video_H264_Scaling_List_4x4_Num_Elements: constant := 16;
-    Std_Video_H264_Scaling_List_8x8_Num_Lists: constant := 6;
-    Std_Video_H264_Scaling_List_8x8_Num_Elements: constant := 64;
-    Std_Video_H264_Max_Num_List_Ref: constant := 32;
-    Std_Video_H262_Max_Chroma_Planes: constant := 2;
-    Std_Video_Decode_H264_Field_Order_Count_List_Size: constant := 2;
-    Std_Video_H265_CPB_Cnt_List_Size: constant := 32;
-    Std_Video_H265_Sub_Layers_List_Size: constant := 7;
-    Std_Video_H265_Scaling_List_4x4_Num_Lists: constant := 6;
-    Std_Video_H265_Scaling_List_4x4_Num_Elements: constant := 16;
-    Std_Video_H265_Scaling_List_8x8_Num_Lists: constant := 6;
-    Std_Video_H265_Scaling_List_8x8_Num_Elements: constant := 64;
-    Std_Video_H265_Scaling_List_16x16_Num_Lists: constant := 6;
-    Std_Video_H265_Scaling_List_16x16_Num_Elements: constant := 64;
-    Std_Video_H265_Scaling_List_32x32_Num_Lists: constant := 2;
-    Std_Video_H265_Scaling_List_32x32_Num_Elements: constant := 64;
-    Std_Video_H265_Chroma_QP_Offset_List_Size: constant := 6;
-    Std_Video_H265_Chroma_QP_Offset_Tile_Cols_List_Size: constant := 19;
-    Std_Video_H265_Chroma_QP_Offset_Tile_Rows_List_Size: constant := 21;
-    Std_Video_H265_Predictor_Palette_Components_List_Size: constant := 3;
-    Std_Video_H265_Predictor_Palette_Comp_Entries_List_Size: constant := 128;
-    Std_Video_H265_Max_Num_List_Ref: constant := 15;
-    Std_Video_H265_Max_Chroma_Planes: constant := 2;
-    Std_Video_H265_Max_Short_Term_Ref_Pics_Sets: constant := 64;
-    Std_Video_H265_Max_DPB_Size: constant := 16;
-    Std_Video_H265_Max_Long_Term_Ref_Pics_SPS: constant := 32;
-    Std_Video_H265_Max_Long_Terms_Pics: constant := 16;
-    Std_Video_H265_Max_Delta_POC: constant := 48;
-    Std_Video_H265_No_Reference_Picture: constant := 16#ff#;
-    Std_Video_Decode_H265_Ref_Pic_Set_List_Size: constant := 8;
+    -- Vulkan 1.4
     Max_Global_Priority_Size: constant := 16;
 
     -- Handle types.
@@ -142,18 +111,6 @@ package Vulkan is
     type Descriptor_Update_Template is new Object_Handle;
     -- Vulkan 1.3
     type Private_Data_Slot is new Object_Handle;
-    -- Extensions
-    type Surface is new Object_Handle;
-    type Swapchain is new Object_Handle;
-    type Display is new Object_Handle;
-    type Display_Mode is new Object_Handle;
-    type Video_Session is new Object_Handle;
-    type Video_Session_Parameters is new Object_Handle;
-    type Deferred_Operation is new Object_Handle;
-    type Debug_Report_Callback is new Object_Handle;
-    type Cu_Module is new Object_Handle;
-    type Cu_Function is new Object_Handle;
-    type Debug_Utils_Messenger is new Object_Handle;
 
     No_Object_Handle: constant Object_Handle :=
         Object_Handle(System.Null_Address);
@@ -199,23 +156,6 @@ package Vulkan is
     -- Vulkan 1.3
     No_Private_Data_Slot: constant Private_Data_Slot :=
         Private_Data_Slot(System.Null_Address);
-    -- Extensions
-    No_Surface: constant Surface := Surface(System.Null_Address);
-    No_Swapchain: constant Swapchain := Swapchain(System.Null_Address);
-    No_Display: constant Display := Display(System.Null_Address);
-    No_Display_Mode: constant Display_Mode := Display_Mode(System.Null_Address);
-    No_Video_Session: constant Video_Session :=
-        Video_Session(System.Null_Address);
-    No_Video_Session_Parameters: constant Video_Session_Parameters :=
-        Video_Session_Parameters(System.Null_Address);
-    No_Deferred_Operation: constant Deferred_Operation :=
-        Deferred_Operation(System.Null_Address);
-    No_Debug_Report_Callback: constant Debug_Report_Callback :=
-        Debug_Report_Callback(System.Null_Address);
-    No_Cu_Module: constant Cu_Module := Cu_Module(System.Null_Address);
-    No_Cu_Function: constant Cu_Function := Cu_Function(System.Null_Address);
-    No_Debug_Utils_Messenger: constant Debug_Utils_Messenger :=
-        Debug_Utils_Messenger(System.Null_Address);
 
     -- Handle vector types.
     package Physical_Device_Vectors is
@@ -244,9 +184,6 @@ package Vulkan is
         new Ada.Containers.Vectors(Positive, Descriptor_Set);
     package Framebuffer_Vectors is
         new Ada.Containers.Vectors(Positive, Framebuffer);
-    package Swapchain_Vectors is
-        new Ada.Containers.Vectors(Positive, Swapchain);
-    package Display_Vectors is new Ada.Containers.Vectors(Positive, Display);
 
     -- Enumerations.
     type Result is (Incompatible_Shader_Binary,
@@ -407,6 +344,8 @@ package Vulkan is
          Physical_Device_Vulkan_1_2_Properties_Type,
          Physical_Device_Vulkan_1_3_Features_Type,
          Physical_Device_Vulkan_1_3_Properties_Type,
+         Physical_Device_Vulkan_1_4_Features_Type,
+         Physical_Device_Vulkan_1_4_Properties_Type,
          Swapchain_Create_Info_Type,
          Present_Info_Type,
          Display_Mode_Create_Info_Type,
@@ -416,11 +355,7 @@ package Vulkan is
          Xcb_Surface_Create_Info_Type,
          Wayland_Surface_Create_Info_Type,
          Win32_Surface_Create_Info_Type,
-         Debug_Report_Callback_Create_Info_Type,
          Pipeline_Rasterization_State_Rasterization_Order_Type,
-         Debug_Marker_Object_Name_Info_Type,
-         Debug_Marker_Object_Tag_Info_Type,
-         Debug_Marker_Marker_Info_Type,
          Video_Profile_Info_Type,
          Video_Capabilities_Type,
          Video_Picture_Resource_Info_Type,
@@ -452,6 +387,34 @@ package Vulkan is
          Cu_Launch_Info_Type,
          Image_View_Handle_Info_Type,
          Image_View_Address_Properties_Type,
+         Video_Encode_H264_Capabilities_Type,
+         Video_Encode_H264_Session_Parameters_Create_Info_Type,
+         Video_Encode_H264_Session_Parameters_Add_Info_Type,
+         Video_Encode_H264_Picture_Info_Type,
+         Video_Encode_H264_DPB_Slot_Info_Type,
+         Video_Encode_H264_Nalu_Slice_Info_Type,
+         Video_Encode_H264_GOP_Remaining_Frame_Info_Type,
+         Video_Encode_H264_Profile_Info_Type,
+         Video_Encode_H264_Rate_Control_Info_Type,
+         Video_Encode_H264_Rate_Control_Layer_Info_Type,
+         Video_Encode_H264_Session_Create_Info_Type,
+         Video_Encode_H264_Quality_Level_Properties_Type,
+         Video_Encode_H264_Session_Parameters_Get_Info_Type,
+         Video_Encode_H264_Session_Parameters_Feedback_Info_Type,
+         Video_Encode_H265_Capabilities_Type,
+         Video_Encode_H265_Session_Parameters_Create_Info_Type,
+         Video_Encode_H265_Session_Parameters_Add_Info_Type,
+         Video_Encode_H265_Picture_Info_Type,
+         Video_Encode_H265_DPB_Slot_Info_Type,
+         Video_Encode_H265_Nalu_Slice_Segment_Info_Type,
+         Video_Encode_H265_GOP_Remaining_Frame_Info_Type,
+         Video_Encode_H265_Profile_Info_Type,
+         Video_Encode_H265_Rate_Control_Info_Type,
+         Video_Encode_H265_Rate_Control_Layer_Info_Type,
+         Video_Encode_H265_Session_Create_Info_Type,
+         Video_Encode_H265_Quality_Level_Properties_Type,
+         Video_Encode_H265_Session_Parameters_Get_Info_Type,
+         Video_Encode_H265_Session_Parameters_Feedback_Info_Type,
          Video_Decode_H264_Capabilities_Type,
          Video_Decode_H264_Picture_Info_Type,
          Video_Decode_H264_Profile_Info_Type,
@@ -472,8 +435,6 @@ package Vulkan is
          Render_Pass_Multiview_Create_Info_Type,
          Physical_Device_Multiview_Features_Type,
          Physical_Device_Multiview_Properties_Type,
-         External_Memory_Image_Create_Info_NV_Type,
-         Export_Memory_Allocate_Info_NV_Type,
          Physical_Device_Features_2_Type,
          Physical_Device_Properties_2_Type,
          Format_Properties_2_Type,
@@ -496,7 +457,6 @@ package Vulkan is
          Device_Group_Swapchain_Create_Info_Type,
          Bind_Buffer_Memory_Device_Group_Info_Type,
          Bind_Image_Memory_Device_Group_Info_Type,
-         Validation_Flags_Type,
          Physical_Device_Shader_Draw_Parameter_Features_Type,
          Physical_Device_Texture_Compression_ASTC_HDR_Features_Type,
          Image_View_ASTC_Decode_Mode_Type,
@@ -530,78 +490,94 @@ package Vulkan is
          Physical_Device_16Bit_Storage_Features_Type,
          Present_Regions_Type,
          Descriptor_Update_Template_Create_Info_Type,
+         Pipeline_Viewport_W_Scaling_State_Create_Info_Type,
+         Surface_Capabilities_2_EXT_Type,
+         Display_Power_Info_Type,
+         Device_Event_Info_Type,
+         Display_Event_Info_Type,
+         Swapchain_Counter_Create_Info_Type,
+         Present_Times_Info_Type,
          Physical_Device_Subgroup_Properties_Type,
+         Physical_Device_Multiview_Per_View_Attributes_Properties_Type,
+         Pipeline_Viewport_Swizzle_State_Create_Info_Type,
+         Physical_Device_Discard_Rectangle_Properties_Type,
+         Pipeline_Discard_Rectangle_State_Create_Info_Type,
+         Physical_Device_Conservative_Rasterization_Properties_Type,
+         Pipeline_Rasterization_Conservative_State_Create_Info_Type,
+         Physical_Device_Depth_Clip_Enable_Features_Type,
+         Pipeline_Rasterization_Depth_Clip_State_Create_Info_Type,
+         HDR_Metadata_Type,
          Physical_Device_Imageless_Framebuffer_Features_Type,
-         Framebuffer_Attachments_Create_Info_Type,
-         Framebuffer_Attachment_Image_Info_Type,
-         Render_Pass_Attachment_Begin_Info_Type,
-         Attachment_Description_2_Type,
-         Attachment_Reference_2_Type,
-         Subpass_Description_2_Type,
-         Subpass_Dependency_2_Type,
-         Render_Pass_Create_Info_2_Type,
-         Subpass_Begin_Info_Type,
+         Framebuffer_Attachments_Create_Info_Type,                           
+         Framebuffer_Attachment_Image_Info_Type,                             
+         Render_Pass_Attachment_Begin_Info_Type,                             
+         Attachment_Description_2_Type,                                      
+         Attachment_Reference_2_Type,                                        
+         Subpass_Description_2_Type,                                         
+         Subpass_Dependency_2_Type,                                          
+         Render_Pass_Create_Info_2_Type,                                     
+         Subpass_Begin_Info_Type,                                            
          Subpass_End_Info_Type,
-         Shared_Present_Surface_Capabilities_Type,
-         Physical_Device_External_Fence_Info_Type,
-         External_Fence_Properties_Type,
-         Export_Fence_Create_Info_Type,
-         Import_Fence_FD_Info_Type,
-         Fence_Get_FD_Info_Type,
-         Physical_Device_Performance_Query_Features_Type,
-         Physical_Device_Performance_Query_Properties_Type,
-         Query_Pool_Performance_Create_Info_Type,
-         Performance_Query_Submit_Info_Type,
-         Acquire_Profiling_Lock_Info_Type,
-         Performance_Counter_Type,
-         Performance_Counter_Description_Type,
-         Physical_Device_Point_Clipping_Properties_Type,
+         Physical_Device_Relaxed_Line_Rasterization_Features_Type,
+         Shared_Present_Surface_Capabilities_Type,                           
+         Physical_Device_External_Fence_Info_Type,                           
+         External_Fence_Properties_Type,                                     
+         Export_Fence_Create_Info_Type,                                      
+         Import_Fence_FD_Info_Type,                                          
+         Fence_Get_FD_Info_Type,                                             
+         Physical_Device_Performance_Query_Features_Type,                    
+         Physical_Device_Performance_Query_Properties_Type,                  
+         Query_Pool_Performance_Create_Info_Type,                            
+         Performance_Query_Submit_Info_Type,                                 
+         Acquire_Profiling_Lock_Info_Type,                                   
+         Performance_Counter_Type,                                           
+         Performance_Counter_Description_Type,                               
+         Physical_Device_Point_Clipping_Properties_Type,                     
          Render_Pass_Input_Attachment_Aspect_Create_Info_Type,
-         Image_View_Usage_Create_Info_Type,
+         Image_View_Usage_Create_Info_Type,                                  
          Pipeline_Tessellation_Domain_Origin_State_Create_Info_Type,
-         Physical_Device_Surface_Info_2_Type,
-         Surface_Capabilities_2_Type,
-         Surface_Format_2_Type,
-         Physical_Device_Variable_Pointer_Features_Type,
-         Display_Properties_2_Type,
-         Display_Plane_Properties_2_Type,
-         Display_Mode_Properties_2_Type,
-         Display_Plane_Info_2_Type,
-         Display_Plane_Capabilities_2_Type,
-         MacOS_Surface_Create_Info_Type,
-         Memory_Dedicated_Requirements_Type,
-         Memory_Dedicated_Allocate_Info_Type,
-         Debug_Utils_Object_Name_Info_Type,
-         Debug_Utils_Object_Tag_Info_Type,
-         Debug_Utils_Label_Type,
-         Debug_Utils_Messenger_Callback_Data_Type,
-         Debug_Utils_Messenger_Create_Info_Type,
+         Physical_Device_Surface_Info_2_Type,                                
+         Surface_Capabilities_2_Type,                                        
+         Surface_Format_2_Type,                                              
+         Physical_Device_Variable_Pointer_Features_Type,                     
+         Display_Properties_2_Type,                                          
+         Display_Plane_Properties_2_Type,                                    
+         Display_Mode_Properties_2_Type,                                     
+         Display_Plane_Info_2_Type,                                          
+         Display_Plane_Capabilities_2_Type,                                  
+         Memory_Dedicated_Requirements_Type,                                 
+         Memory_Dedicated_Allocate_Info_Type,                                
+         Debug_Utils_Object_Name_Info_Type,                                  
+         Debug_Utils_Object_Tag_Info_Type,                                   
+         Debug_Utils_Label_Type,                                             
+         Debug_Utils_Messenger_Callback_Data_Type,                           
+         Debug_Utils_Messenger_Create_Info_Type,                             
          Physical_Device_Sampler_Filter_Minmax_Properties_Type,
-         Sampler_Reduction_Mode_Create_Info_Type,
+         Sampler_Reduction_Mode_Create_Info_Type,                            
          Physical_Device_Inline_Uniform_Block_Features_Type,
          Physical_Device_Inline_Uniform_Block_Properties_Type,
-         Write_Descriptor_Set_Inline_Uniform_Block_Type,
+         Write_Descriptor_Set_Inline_Uniform_Block_Type,                     
          Descriptor_Pool_Inline_Uniform_Block_Create_Info_Type,
-         Protected_Submit_Info_Type,
-         Physical_Device_Protected_Memory_Features_Type,
-         Physical_Device_Protected_Memory_Properties_Type,
-         Device_Queue_Info_2_Type,
-         Buffer_Memory_Requirements_Info_2_Type,
-         Image_Memory_Requirements_Info_2_Type,
-         Image_Sparse_Memory_Requirements_Info_2_Type,
-         Memory_Requirements_2_Type,
-         Sparse_Image_Memory_Requirements_2_Type,
-         Image_Format_List_Create_Info_Type,
-         Sampler_YCbCr_Conversion_Create_Info_Type,
-         Sampler_YCbCr_Conversion_Info_Type,
-         Bind_Image_Plane_Memory_Info_Type,
-         Image_Plane_Memory_Requirements_Info_Type,
+         Protected_Submit_Info_Type,                                         
+         Physical_Device_Protected_Memory_Features_Type,                     
+         Physical_Device_Protected_Memory_Properties_Type,                   
+         Device_Queue_Info_2_Type,                                           
+         Buffer_Memory_Requirements_Info_2_Type,                             
+         Image_Memory_Requirements_Info_2_Type,                              
+         Image_Sparse_Memory_Requirements_Info_2_Type,                       
+         Memory_Requirements_2_Type,                                         
+         Sparse_Image_Memory_Requirements_2_Type,                            
+         Image_Format_List_Create_Info_Type,                                 
+         Sampler_YCbCr_Conversion_Create_Info_Type,                          
+         Sampler_YCbCr_Conversion_Info_Type,                                 
+         Bind_Image_Plane_Memory_Info_Type,                                  
+         Image_Plane_Memory_Requirements_Info_Type,                          
          Physical_Device_Sampler_YCbCr_Conversion_Features_Type,
          Sampler_YCbCr_Conversion_Image_Format_Properties_Type,
-         Bind_Buffer_Memory_Info_Type,
-         Bind_Image_Memory_Info_Type,
+         Bind_Buffer_Memory_Info_Type,                                       
+         Bind_Image_Memory_Info_Type,                                        
          Descriptor_Set_Layout_Binding_Flags_Create_Info_Type,
-         Physical_Device_Descriptor_Indexing_Features_Type,
+         Physical_Device_Descriptor_Indexing_Features_Type,                  
          Physical_Device_Descriptor_Indexing_Properties_Type,
          Descriptor_Set_Variable_Descriptor_Count_Allocate_Info_Type,
          Descriptor_Set_Variable_Descriptor_Count_Layout_Support_Type,
@@ -645,6 +621,10 @@ package Vulkan is
          Physical_Device_Fragment_Shading_Rate_Properties_Type,
          Physical_Device_Fragment_Shading_Rate_Features_Type,
          Physical_Device_Fragment_Shading_Rate_Type,
+         Physical_Device_Dynamic_Rendering_Local_Read_Features_Type,
+         Rendering_Attachment_Location_Info_Type,
+         Rendering_Input_Attachment_Index_Info_Type,
+         Physical_Device_Shader_Quad_Control_Features_Type,
          Surface_Protected_Capabilities_Type,
          Physical_Device_Separate_Depth_Stencil_Layouts_Features_Type,
          Attachment_Reference_Stencil_Layout_Type,
@@ -658,13 +638,27 @@ package Vulkan is
          Buffer_Opaque_Capture_Address_Create_Info_Type,
          Memory_Opaque_Capture_Address_Allocate_Info_Type,
          Device_Memory_Opaque_Capture_Address_Info_Type,
+         Physical_Device_Line_Rasterization_Features_Type,
+         Pipeline_Rasterization_Line_State_Create_Info_Type,
+         Physical_Device_Line_Rasterization_Properties_Type,
          Physical_Device_Host_Query_Reset_Features_Type,
+         Physical_Device_Index_Type_Uint8_Features_Type,
          Physical_Device_Pipeline_Executable_Properties_Features_Type,
          Pipeline_Info_Type,
          Pipeline_Executable_Properties_Type,
          Pipeline_Executable_Info_Type,
          Pipeline_Executable_Statistic_Type,
          Pipeline_Executable_Internal_Representation_Type,
+         Physical_Device_Host_Image_Copy_Features_Type,
+         Physical_Device_Host_Image_Copy_Properties_Type,
+         Memory_To_Image_Copy_Type,
+         Image_To_Memory_Copy_Type,
+         Copy_Image_To_Memory_Info_Type,
+         Copy_Memory_To_Image_Info_Type,
+         Host_Image_Layout_Transition_Info_Type,
+         Copy_Image_To_Image_Info_Type,
+         Subresource_Host_Memcpy_Size_Type,
+         Host_Image_Copy_Device_Performance_Query_Type,
          Memory_Map_Info_Type,
          Memory_Unmap_Info_Type,
          Physical_Device_Shader_Demote_To_Helper_Invocation_Features_Type,
@@ -678,6 +672,17 @@ package Vulkan is
          Device_Private_Data_Create_Info_Type,
          Private_Data_Slot_Create_Info_Type,
          Physical_Device_Pipeline_Creation_Cache_Control_Features_Type,
+         Video_Encode_Info_Type,
+         Video_Encode_Rate_Control_Info_Type,
+         Video_Encode_Rate_Control_Layer_Info_Type,
+         Video_Encode_Capabilities_Type,
+         Video_Encode_Usage_Info_Type,
+         Query_Pool_Video_Encode_Feedback_Create_Info_Type,
+         Physical_Device_Video_Encode_Quality_Level_Info_Type,
+         Video_Encode_Quality_Level_Properties_Type,
+         Video_Encode_Quality_Level_Info_Type,
+         Video_Encode_Session_Parameters_Get_Info_Type,
+         Video_Encode_Session_Parameters_Feedback_Info_Type,
          Memory_Barrier_2_Type,
          Buffer_Memory_Barrier_2_Type,
          Image_Memory_Barrier_2_Type,
@@ -714,6 +719,9 @@ package Vulkan is
          Physical_Device_Maintenance_4_Properties_Type,
          Device_Buffer_Memory_Requirements_Type,
          Device_Image_Memory_Requirements_Type,
+         Physical_Device_Shader_Subgroup_Rotate_Features_Type,
+         Physical_Device_Shader_Maximal_Reconvergence_Features_Type,
+         Physical_Device_Pipeline_Protected_Access_Features_Type,
          Physical_Device_Maintenance_5_Features_Type,
          Physical_Device_Maintenance_5_Properties_Type,
          Rendering_Area_Info_Type,
@@ -724,9 +732,16 @@ package Vulkan is
          Physical_Device_Cooperative_Matrix_Features_Type,
          Cooperative_Matrix_Properties_Type,
          Physical_Device_Cooperative_Matrix_Properties_Type,
+         Video_Decode_AV1_Capabilities_Type,
+         Video_Decode_AV1_Picture_Info_Type,
+         Video_Decode_AV1_Profile_Info_Type,
+         Video_Decode_AV1_Session_Parameters_Create_Info_Type,
+         Video_Decode_AV1_DPB_Slot_Info_Type,
          Physical_Device_Video_Maintenance_1_Features_Type,
          Video_Inline_Query_Info_Type,
          Physical_Device_Vertex_Attribute_Divisor_Properties_Type,
+         Physical_Device_Shader_Float_Controls_2_Features_Type,
+         Physical_Device_Shader_Expect_Assume_Features_Type,
          Physical_Device_Maintenance_6_Features_Type,
          Physical_Device_Maintenance_6_Properties_Type,
          Bind_Memory_Status_Type,
@@ -794,6 +809,8 @@ package Vulkan is
          Physical_Device_Vulkan_1_2_Properties_Type => 52,
          Physical_Device_Vulkan_1_3_Features_Type => 53,
          Physical_Device_Vulkan_1_3_Properties_Type => 54,
+         Physical_Device_Vulkan_1_4_Features_Type => 55,
+         Physical_Device_Vulkan_1_4_Properties_Type => 56,
          Swapchain_Create_Info_Type => 1_000_001_000,
          Present_Info_Type => 1_000_001_001,
          Display_Mode_Create_Info_Type => 1_000_002_000,
@@ -803,11 +820,7 @@ package Vulkan is
          Xcb_Surface_Create_Info_Type => 1_000_005_000,
          Wayland_Surface_Create_Info_Type => 1_000_006_000,
          Win32_Surface_Create_Info_Type => 1_000_009_000,
-         Debug_Report_Callback_Create_Info_Type => 1_000_011_000,
          Pipeline_Rasterization_State_Rasterization_Order_Type => 1_000_018_000,
-         Debug_Marker_Object_Name_Info_Type => 1_000_022_000,
-         Debug_Marker_Object_Tag_Info_Type => 1_000_022_001,
-         Debug_Marker_Marker_Info_Type => 1_000_022_002,
          Video_Profile_Info_Type => 1_000_023_000,
          Video_Capabilities_Type => 1_000_023_001,
          Video_Picture_Resource_Info_Type => 1_000_023_002,
@@ -839,6 +852,36 @@ package Vulkan is
          Cu_Launch_Info_Type => 1_000_029_002,
          Image_View_Handle_Info_Type => 1_000_030_000,
          Image_View_Address_Properties_Type => 1_000_030_001,
+         Video_Encode_H264_Capabilities_Type => 1_000_038_000,
+         Video_Encode_H264_Session_Parameters_Create_Info_Type => 1_000_038_001,
+         Video_Encode_H264_Session_Parameters_Add_Info_Type => 1_000_038_002,
+         Video_Encode_H264_Picture_Info_Type => 1_000_038_003,
+         Video_Encode_H264_DPB_Slot_Info_Type => 1_000_038_004,
+         Video_Encode_H264_Nalu_Slice_Info_Type => 1_000_038_005,
+         Video_Encode_H264_GOP_Remaining_Frame_Info_Type => 1_000_038_006,
+         Video_Encode_H264_Profile_Info_Type => 1_000_038_007,
+         Video_Encode_H264_Rate_Control_Info_Type => 1_000_038_008,
+         Video_Encode_H264_Rate_Control_Layer_Info_Type => 1_000_038_009,
+         Video_Encode_H264_Session_Create_Info_Type => 1_000_038_010,
+         Video_Encode_H264_Quality_Level_Properties_Type => 1_000_038_011,
+         Video_Encode_H264_Session_Parameters_Get_Info_Type => 1_000_038_012,
+         Video_Encode_H264_Session_Parameters_Feedback_Info_Type
+            => 1_000_038_013,
+         Video_Encode_H265_Capabilities_Type => 1_000_039_000,
+         Video_Encode_H265_Session_Parameters_Create_Info_Type => 1_000_039_001,
+         Video_Encode_H265_Session_Parameters_Add_Info_Type => 1_000_039_002,
+         Video_Encode_H265_Picture_Info_Type => 1_000_039_003,
+         Video_Encode_H265_DPB_Slot_Info_Type => 1_000_039_004,
+         Video_Encode_H265_Nalu_Slice_Segment_Info_Type => 1_000_039_005,
+         Video_Encode_H265_GOP_Remaining_Frame_Info_Type => 1_000_039_006,
+         Video_Encode_H265_Profile_Info_Type => 1_000_039_007,
+         Video_Encode_H265_Rate_Control_Info_Type => 1_000_039_009,
+         Video_Encode_H265_Rate_Control_Layer_Info_Type => 1_000_039_010,
+         Video_Encode_H265_Session_Create_Info_Type => 1_000_039_011,
+         Video_Encode_H265_Quality_Level_Properties_Type => 1_000_039_012,
+         Video_Encode_H265_Session_Parameters_Get_Info_Type => 1_000_039_013,
+         Video_Encode_H265_Session_Parameters_Feedback_Info_Type
+            => 1_000_039_014,
          Video_Decode_H264_Capabilities_Type => 1_000_040_000,
          Video_Decode_H264_Picture_Info_Type => 1_000_040_001,
          Video_Decode_H264_Profile_Info_Type => 1_000_040_003,
@@ -859,8 +902,6 @@ package Vulkan is
          Render_Pass_Multiview_Create_Info_Type => 1_000_053_000,
          Physical_Device_Multiview_Features_Type => 1_000_053_001,
          Physical_Device_Multiview_Properties_Type => 1_000_053_002,
-         External_Memory_Image_Create_Info_NV_Type => 1_000_056_000,
-         Export_Memory_Allocate_Info_NV_Type => 1_000_056_001,
          Physical_Device_Features_2_Type => 1_000_059_000,
          Physical_Device_Properties_2_Type => 1_000_059_001,
          Format_Properties_2_Type => 1_000_059_002,
@@ -883,7 +924,6 @@ package Vulkan is
          Device_Group_Swapchain_Create_Info_Type => 1_000_060_012,
          Bind_Buffer_Memory_Device_Group_Info_Type => 1_000_060_013,
          Bind_Image_Memory_Device_Group_Info_Type => 1_000_060_014,
-         Validation_Flags_Type => 1_000_061_000,
          Physical_Device_Shader_Draw_Parameter_Features_Type => 1_000_063_000,
          Physical_Device_Texture_Compression_ASTC_HDR_Features_Type =>
             1_000_066_000,
@@ -919,7 +959,27 @@ package Vulkan is
          Physical_Device_16Bit_Storage_Features_Type => 1_000_083_000,
          Present_Regions_Type => 1_000_084_000,
          Descriptor_Update_Template_Create_Info_Type => 1_000_085_000,
+         Pipeline_Viewport_W_Scaling_State_Create_Info_Type => 1_000_087_000,
+         Surface_Capabilities_2_EXT_Type => 1_000_090_000,
+         Display_Power_Info_Type => 1_000_091_000,
+         Device_Event_Info_Type => 1_000_091_001,
+         Display_Event_Info_Type => 1_000_091_002,
+         Swapchain_Counter_Create_Info_Type => 1_000_091_003,
+         Present_Times_Info_Type => 1_000_092_000,
          Physical_Device_Subgroup_Properties_Type => 1_000_094_000,
+         Physical_Device_Multiview_Per_View_Attributes_Properties_Type
+            => 1_000_097_000,
+         Pipeline_Viewport_Swizzle_State_Create_Info_Type => 1_000_098_000,
+         Physical_Device_Discard_Rectangle_Properties_Type => 1_000_099_000,
+         Pipeline_Discard_Rectangle_State_Create_Info_Type => 1_000_099_001,
+         Physical_Device_Conservative_Rasterization_Properties_Type
+            => 1_000_101_000,
+         Pipeline_Rasterization_Conservative_State_Create_Info_Type
+            => 1_000_101_001,
+         Physical_Device_Depth_Clip_Enable_Features_Type => 1_000_102_000,
+         Pipeline_Rasterization_Depth_Clip_State_Create_Info_Type
+            => 1_000_102_001,
+         HDR_Metadata_Type => 1_000_105_000,
          Physical_Device_Imageless_Framebuffer_Features_Type => 1_000_108_000,
          Framebuffer_Attachments_Create_Info_Type => 1_000_108_001,
          Framebuffer_Attachment_Image_Info_Type => 1_000_108_002,
@@ -931,6 +991,8 @@ package Vulkan is
          Render_Pass_Create_Info_2_Type => 1_000_109_004,
          Subpass_Begin_Info_Type => 1_000_109_005,
          Subpass_End_Info_Type => 1_000_109_006,
+         Physical_Device_Relaxed_Line_Rasterization_Features_Type
+            => 1_000_110_000,
          Shared_Present_Surface_Capabilities_Type => 1_000_111_000,
          Physical_Device_External_Fence_Info_Type => 1_000_112_000,
          External_Fence_Properties_Type => 1_000_112_001,
@@ -958,7 +1020,6 @@ package Vulkan is
          Display_Mode_Properties_2_Type => 1_000_121_002,
          Display_Plane_Info_2_Type => 1_000_121_003,
          Display_Plane_Capabilities_2_Type => 1_000_121_004,
-         MacOS_Surface_Create_Info_Type => 1_000_123_000,
          Memory_Dedicated_Requirements_Type => 1_000_127_000,
          Memory_Dedicated_Allocate_Info_Type => 1_000_127_001,
          Debug_Utils_Object_Name_Info_Type => 1_000_128_000,
@@ -1044,6 +1105,11 @@ package Vulkan is
             1_000_226_002,
          Physical_Device_Fragment_Shading_Rate_Features_Type => 1_000_226_003,
          Physical_Device_Fragment_Shading_Rate_Type => 1_000_226_004,
+         Physical_Device_Dynamic_Rendering_Local_Read_Features_Type =>
+            1_000_232_000,
+         Rendering_Attachment_Location_Info_Type => 1_000_232_001,
+         Rendering_Input_Attachment_Index_Info_Type => 1_000_232_002,
+         Physical_Device_Shader_Quad_Control_Features_Type => 1_000_235_000,
          Surface_Protected_Capabilities_Type => 1_000_239_000,
          Physical_Device_Separate_Depth_Stencil_Layouts_Features_Type =>
             1_000_241_000,
@@ -1059,7 +1125,11 @@ package Vulkan is
          Buffer_Opaque_Capture_Address_Create_Info_Type => 1_000_257_002,
          Memory_Opaque_Capture_Address_Allocate_Info_Type => 1_000_257_003,
          Device_Memory_Opaque_Capture_Address_Info_Type => 1_000_257_004,
+         Physical_Device_Line_Rasterization_Features_Type => 1_000_259_000,
+         Pipeline_Rasterization_Line_State_Create_Info_Type => 1_000_259_001,
+         Physical_Device_Line_Rasterization_Properties_Type => 1_000_259_002,
          Physical_Device_Host_Query_Reset_Features_Type => 1_000_261_000,
+         Physical_Device_Index_Type_Uint8_Features_Type => 1_000_265_000,
          Physical_Device_Pipeline_Executable_Properties_Features_Type =>
             1_000_269_000,
          Pipeline_Info_Type => 1_000_269_001,
@@ -1067,6 +1137,16 @@ package Vulkan is
          Pipeline_Executable_Info_Type => 1_000_269_003,
          Pipeline_Executable_Statistic_Type => 1_000_269_004,
          Pipeline_Executable_Internal_Representation_Type => 1_000_269_005,
+         Physical_Device_Host_Image_Copy_Features_Type => 1_000_270_000,
+         Physical_Device_Host_Image_Copy_Properties_Type => 1_000_270_001,
+         Memory_To_Image_Copy_Type => 1_000_270_002,
+         Image_To_Memory_Copy_Type => 1_000_270_003,
+         Copy_Image_To_Memory_Info_Type => 1_000_270_004,
+         Copy_Memory_To_Image_Info_Type => 1_000_270_005,
+         Host_Image_Layout_Transition_Info_Type => 1_000_270_006,
+         Copy_Image_To_Image_Info_Type => 1_000_270_007,
+         Subresource_Host_Memcpy_Size_Type => 1_000_270_008,
+         Host_Image_Copy_Device_Performance_Query_Type => 1_000_270_009,
          Memory_Map_Info_Type => 1_000_271_000,
          Memory_Unmap_Info_Type => 1_000_271_001,
          Physical_Device_Shader_Demote_To_Helper_Invocation_Features_Type =>
@@ -1085,6 +1165,17 @@ package Vulkan is
          Private_Data_Slot_Create_Info_Type => 1_000_295_002,
          Physical_Device_Pipeline_Creation_Cache_Control_Features_Type =>
             1_000_297_000,
+         Video_Encode_Info_Type => 1_000_299_000,
+         Video_Encode_Rate_Control_Info_Type => 1_000_299_001,
+         Video_Encode_Rate_Control_Layer_Info_Type => 1_000_299_002,
+         Video_Encode_Capabilities_Type => 1_000_299_003,
+         Video_Encode_Usage_Info_Type => 1_000_299_004,
+         Query_Pool_Video_Encode_Feedback_Create_Info_Type => 1_000_299_005,
+         Physical_Device_Video_Encode_Quality_Level_Info_Type => 1_000_299_006,
+         Video_Encode_Quality_Level_Properties_Type => 1_000_299_007,
+         Video_Encode_Quality_Level_Info_Type => 1_000_299_008,
+         Video_Encode_Session_Parameters_Get_Info_Type => 1_000_299_009,
+         Video_Encode_Session_Parameters_Feedback_Info_Type => 1_000_299_010,
          Memory_Barrier_2_Type => 1_000_314_000,
          Buffer_Memory_Barrier_2_Type => 1_000_314_001,
          Image_Memory_Barrier_2_Type => 1_000_314_002,
@@ -1126,6 +1217,11 @@ package Vulkan is
          Physical_Device_Maintenance_4_Properties_Type => 1_000_413_001,
          Device_Buffer_Memory_Requirements_Type => 1_000_413_002,
          Device_Image_Memory_Requirements_Type => 1_000_413_003,
+         Physical_Device_Shader_Subgroup_Rotate_Features_Type => 1_000_416_000,
+         Physical_Device_Shader_Maximal_Reconvergence_Features_Type =>
+            1_000_434_000,
+         Physical_Device_Pipeline_Protected_Access_Features_Type =>
+            1_000_466_000,
          Physical_Device_Maintenance_5_Features_Type => 1_000_470_000,
          Physical_Device_Maintenance_5_Properties_Type => 1_000_470_001,
          Rendering_Area_Info_Type => 1_000_470_003,
@@ -1137,10 +1233,17 @@ package Vulkan is
          Physical_Device_Cooperative_Matrix_Features_Type => 1_000_506_000,
          Cooperative_Matrix_Properties_Type => 1_000_506_001,
          Physical_Device_Cooperative_Matrix_Properties_Type => 1_000_506_002,
+         Video_Decode_AV1_Capabilities_Type => 1_000_512_000,
+         Video_Decode_AV1_Picture_Info_Type => 1_000_512_001,
+         Video_Decode_AV1_Profile_Info_Type => 1_000_512_003,
+         Video_Decode_AV1_Session_Parameters_Create_Info_Type => 1_000_512_004,
+         Video_Decode_AV1_DPB_Slot_Info_Type => 1_000_512_005,
          Physical_Device_Video_Maintenance_1_Features_Type => 1_000_515_000,
          Video_Inline_Query_Info_Type => 1_000_515_001,
          Physical_Device_Vertex_Attribute_Divisor_Properties_Type =>
             1_000_525_000,
+         Physical_Device_Shader_Float_Controls_2_Features_Type => 1_000_528_000,
+         Physical_Device_Shader_Expect_Assume_Features_Type => 1_000_544_000,
          Physical_Device_Maintenance_6_Features_Type => 1_000_545_000,
          Physical_Device_Maintenance_6_Properties_Type => 1_000_545_001,
          Bind_Memory_Status_Type => 1_000_545_002,
@@ -1293,7 +1396,39 @@ package Vulkan is
             Physical_Device_ASTC_Decode_Features_Type |
             Physical_Device_Pipeline_Robustness_Features_Type |
             Physical_Device_Pipeline_Robustness_Properties_Type |
-            Physical_Device_Conditional_Rendering_Features_Type;
+            Physical_Device_Conditional_Rendering_Features_Type |
+            Surface_Capabilities_2_EXT_Type |
+            Physical_Device_Multiview_Per_View_Attributes_Properties_Type |
+            Physical_Device_Discard_Rectangle_Properties_Type |
+            Physical_Device_Conservative_Rasterization_Properties_Type |
+            Physical_Device_Depth_Clip_Enable_Features_Type |
+            Physical_Device_Relaxed_Line_Rasterization_Features_Type |
+            Video_Encode_H264_Capabilities_Type |
+            Video_Encode_H264_Quality_Level_Properties_Type |
+            Video_Encode_H264_Session_Parameters_Feedback_Info_Type |
+            Video_Encode_H265_Capabilities_Type |
+            Video_Encode_H265_Quality_Level_Properties_Type |
+            Video_Encode_H265_Session_Parameters_Feedback_Info_Type |
+            Physical_Device_Dynamic_Rendering_Local_Read_Features_Type |
+            Physical_Device_Shader_Quad_Control_Features_Type |
+            Video_Encode_Capabilities_Type |
+            Video_Encode_Quality_Level_Properties_Type |
+            Video_Encode_Session_Parameters_Feedback_Info_Type |
+            Physical_Device_Shader_Maximal_Reconvergence_Features_Type |
+            Video_Decode_AV1_Capabilities_Type |
+            Physical_Device_Vulkan_1_4_Features_Type |
+            Physical_Device_Vulkan_1_4_Properties_Type |
+            Physical_Device_Shader_Subgroup_Rotate_Features_Type |
+            Physical_Device_Shader_Float_Controls_2_Features_Type |
+            Physical_Device_Shader_Expect_Assume_Features_Type |
+            Physical_Device_Line_Rasterization_Features_Type |
+            Physical_Device_Line_Rasterization_Properties_Type |
+            Physical_Device_Index_Type_Uint8_Features_Type |
+            Physical_Device_Pipeline_Protected_Access_Features_Type |
+            Physical_Device_Host_Image_Copy_Features_Type |
+            Physical_Device_Host_Image_Copy_Properties_Type |
+            Subresource_Host_Memcpy_Size_Type |
+            Host_Image_Copy_Device_Performance_Query_Type;
 
     subtype In_Structure_Type is Structure_Type
         with Static_Predicate => In_Structure_Type not in Out_Structure_Type;
@@ -1391,7 +1526,6 @@ package Vulkan is
                          Swapchain_Object_Type,
                          Display_Object_Type,
                          Display_Mode_Object_Type,
-                         Debug_Report_Callback_Object_Type,
                          Video_Session_Object_Type,
                          Video_Session_Parameters_Object_Type,
                          Cu_Module_Object_Type,
@@ -1445,7 +1579,6 @@ package Vulkan is
          Swapchain_Object_Type => 1_000_001_000,
          Display_Object_Type => 1_000_002_000,
          Display_Mode_Object_Type => 1_000_002_001,
-         Debug_Report_Callback_Object_Type => 1_000_011_000,
          Video_Session_Object_Type => 1_000_023_000,
          Video_Session_Parameters_Object_Type => 1_000_023_001,
          Cu_Module_Object_Type => 1_000_029_000,
@@ -2311,10 +2444,10 @@ package Vulkan is
                            Stencil_Compare_Mask,
                            Stencil_Write_Mask,
                            Stencil_Reference,
-                           Viewport_W_Scaling,
+                           State_Viewport_W_Scaling,
                            Discard_Rectangle,
                            Discard_Rectangle_Enable,
-                           Discard_Rectangle_Mode,
+                           State_Discard_Rectangle_Mode,
                            Sample_Locations,
                            Viewport_Shading_Rate_Palette,
                            Viewport_Coarse_Sample_Order,
@@ -2354,17 +2487,17 @@ package Vulkan is
                            Color_Blend_Equation,
                            Color_Write_Mask,
                            Rasterization_Stream,
-                           Conservative_Rasterization_Mode,
+                           State_Conservative_Rasterization_Mode,
                            Extra_Primitive_Overestimation_Size,
                            Depth_Clip_Enable,
                            Sample_Locations_Enable,
                            Color_Blend_Advanced,
                            Provoking_Vertex_Mode,
-                           Line_Rasterization_Mode,
+                           State_Line_Rasterization_Mode,
                            Line_Stipple_Enable,
                            Depth_Clip_Negative_One_To_One,
                            Viewport_W_Scaling_Enable,
-                           Viewport_Swizzle,
+                           State_Viewport_Swizzle,
                            Coverage_To_Color_Enable,
                            Coverage_To_Color_Location,
                            Coverage_Modulation_Mode,
@@ -2378,78 +2511,79 @@ package Vulkan is
 
     for Dynamic_State'Size use 32;
 
-    for Dynamic_State use (State_Viewport => 0,
-                           Scissor => 1,
-                           Line_Width => 2,
-                           Depth_Bias => 3,
-                           Blend_Constants => 4,
-                           Depth_Bounds => 5,
-                           Stencil_Compare_Mask => 6,
-                           Stencil_Write_Mask => 7,
-                           Stencil_Reference => 8,
-                           Viewport_W_Scaling => 1_000_087_000,
-                           Discard_Rectangle => 1_000_099_000,
-                           Discard_Rectangle_Enable => 1_000_099_001,
-                           Discard_Rectangle_Mode => 1_000_099_002,
-                           Sample_Locations => 1_000_143_000,
-                           Viewport_Shading_Rate_Palette => 1_000_164_004,
-                           Viewport_Coarse_Sample_Order => 1_000_164_006,
-                           Exclusive_Scissor_Enable => 1_000_205_000,
-                           Exclusive_Scissor => 1_000_205_001,
-                           Fragment_Shading_Rate => 1_000_226_000,
-                           Line_Stipple => 1_000_259_000,
-                           Cull_Mode => 1_000_267_000,
-                           State_Front_Face => 1_000_267_001,
-                           State_Primitive_Topology => 1_000_267_002,
-                           Viewport_With_Count => 1_000_267_003,
-                           Scissor_With_Count => 1_000_267_004,
-                           Vertex_Input_Binding_Stride => 1_000_267_005,
-                           Depth_Test_Enable => 1_000_267_006,
-                           Depth_Write_Enable => 1_000_267_007,
-                           Depth_Compare_Op => 1_000_267_008,
-                           Depths_Bounds_Test_Enable => 1_000_267_009,
-                           Stencil_Test_Enable => 1_000_267_010,
-                           State_Stencil_Op => 1_000_267_011,
-                           Raytracing_Pipeline_Stack_Size => 1_000_347_000,
-                           Vertex_Input => 1_000_352_000,
-                           Patch_Control_Points => 1_000_377_000,
-                           Rasterizer_Discard_Enable => 1_000_377_001,
-                           Depth_Bias_Enable => 1_000_377_002,
-                           State_Logic_Op => 1_000_377_003,
-                           Primitive_Restart_Enable => 1_000_377_004,
-                           Color_Write_Enable => 1_000_381_000,
-                           State_Tessellation_Domain_Origin => 1_000_455_002,
-                           Depth_Clamp_Enable => 1_000_455_003,
-                           State_Polygon_Mode => 1_000_455_004,
-                           Rasterization_Samples => 1_000_455_005,
-                           State_Sample_Mask => 1_000_455_006,
-                           Alpha_To_Converage_Enable => 1_000_455_007,
-                           Alpha_To_One_Enable => 1_000_455_008,
-                           Logic_Op_Enable => 1_000_455_009,
-                           Color_Blend_Enable => 1_000_455_010,
-                           Color_Blend_Equation => 1_000_455_011,
-                           Color_Write_Mask => 1_000_455_012,
-                           Rasterization_Stream => 1_000_455_013,
-                           Conservative_Rasterization_Mode => 1_000_455_014,
-                           Extra_Primitive_Overestimation_Size => 1_000_455_015,
-                           Depth_Clip_Enable => 1_000_455_016,
-                           Sample_Locations_Enable => 1_000_455_017,
-                           Color_Blend_Advanced => 1_000_455_018,
-                           Provoking_Vertex_Mode => 1_000_455_019,
-                           Line_Rasterization_Mode => 1_000_455_020,
-                           Line_Stipple_Enable => 1_000_455_021,
-                           Depth_Clip_Negative_One_To_One => 1_000_455_022,
-                           Viewport_W_Scaling_Enable => 1_000_455_023,
-                           Viewport_Swizzle => 1_000_455_024,
-                           Coverage_To_Color_Enable => 1_000_455_025,
-                           Coverage_To_Color_Location => 1_000_455_026,
-                           Coverage_Modulation_Mode => 1_000_455_027,
-                           Coverage_Modulation_Table_Enable => 1_000_455_028,
-                           Coverage_Modulation_Table => 1_000_455_029,
-                           Shading_Rate_Image_Enable => 1_000_455_030,
-                           Representative_Fragment_Test_Enable => 1_000_455_031,
-                           Coverage_Reduction_Mode => 1_000_455_032,
-                           Attachment_Feedback_Loop_Enable => 1_000_524_000);
+    for Dynamic_State use 
+        (State_Viewport => 0,
+         Scissor => 1,
+         Line_Width => 2,
+         Depth_Bias => 3,
+         Blend_Constants => 4,
+         Depth_Bounds => 5,
+         Stencil_Compare_Mask => 6,
+         Stencil_Write_Mask => 7,
+         Stencil_Reference => 8,
+         State_Viewport_W_Scaling => 1_000_087_000,
+         Discard_Rectangle => 1_000_099_000,
+         Discard_Rectangle_Enable => 1_000_099_001,
+         State_Discard_Rectangle_Mode => 1_000_099_002,
+         Sample_Locations => 1_000_143_000,
+         Viewport_Shading_Rate_Palette => 1_000_164_004,
+         Viewport_Coarse_Sample_Order => 1_000_164_006,
+         Exclusive_Scissor_Enable => 1_000_205_000,
+         Exclusive_Scissor => 1_000_205_001,
+         Fragment_Shading_Rate => 1_000_226_000,
+         Line_Stipple => 1_000_259_000,
+         Cull_Mode => 1_000_267_000,
+         State_Front_Face => 1_000_267_001,
+         State_Primitive_Topology => 1_000_267_002,
+         Viewport_With_Count => 1_000_267_003,
+         Scissor_With_Count => 1_000_267_004,
+         Vertex_Input_Binding_Stride => 1_000_267_005,
+         Depth_Test_Enable => 1_000_267_006,
+         Depth_Write_Enable => 1_000_267_007,
+         Depth_Compare_Op => 1_000_267_008,
+         Depths_Bounds_Test_Enable => 1_000_267_009,
+         Stencil_Test_Enable => 1_000_267_010,
+         State_Stencil_Op => 1_000_267_011,
+         Raytracing_Pipeline_Stack_Size => 1_000_347_000,
+         Vertex_Input => 1_000_352_000,
+         Patch_Control_Points => 1_000_377_000,
+         Rasterizer_Discard_Enable => 1_000_377_001,
+         Depth_Bias_Enable => 1_000_377_002,
+         State_Logic_Op => 1_000_377_003,
+         Primitive_Restart_Enable => 1_000_377_004,
+         Color_Write_Enable => 1_000_381_000,
+         State_Tessellation_Domain_Origin => 1_000_455_002,
+         Depth_Clamp_Enable => 1_000_455_003,
+         State_Polygon_Mode => 1_000_455_004,
+         Rasterization_Samples => 1_000_455_005,
+         State_Sample_Mask => 1_000_455_006,
+         Alpha_To_Converage_Enable => 1_000_455_007,
+         Alpha_To_One_Enable => 1_000_455_008,
+         Logic_Op_Enable => 1_000_455_009,
+         Color_Blend_Enable => 1_000_455_010,
+         Color_Blend_Equation => 1_000_455_011,
+         Color_Write_Mask => 1_000_455_012,
+         Rasterization_Stream => 1_000_455_013,
+         State_Conservative_Rasterization_Mode => 1_000_455_014,
+         Extra_Primitive_Overestimation_Size => 1_000_455_015,
+         Depth_Clip_Enable => 1_000_455_016,
+         Sample_Locations_Enable => 1_000_455_017,
+         Color_Blend_Advanced => 1_000_455_018,
+         Provoking_Vertex_Mode => 1_000_455_019,
+         State_Line_Rasterization_Mode => 1_000_455_020,
+         Line_Stipple_Enable => 1_000_455_021,
+         Depth_Clip_Negative_One_To_One => 1_000_455_022,
+         Viewport_W_Scaling_Enable => 1_000_455_023,
+         State_Viewport_Swizzle => 1_000_455_024,
+         Coverage_To_Color_Enable => 1_000_455_025,
+         Coverage_To_Color_Location => 1_000_455_026,
+         Coverage_Modulation_Mode => 1_000_455_027,
+         Coverage_Modulation_Table_Enable => 1_000_455_028,
+         Coverage_Modulation_Table => 1_000_455_029,
+         Shading_Rate_Image_Enable => 1_000_455_030,
+         Representative_Fragment_Test_Enable => 1_000_455_031,
+         Coverage_Reduction_Mode => 1_000_455_032,
+         Attachment_Feedback_Loop_Enable => 1_000_524_000);
 
     type Front_Face is (Counter_Clockwise,
                         Clockwise)
@@ -2878,746 +3012,7 @@ package Vulkan is
     for Semaphore_Type use (Binary => 0,
                             Timeline => 1);
 
-    -- Extensions
-    type Present_Mode is (Immediate,
-                          Mailbox,
-                          FIFO,
-                          FIFO_Relaxed,
-                          Shared_Demand_Refresh,
-                          Shared_Continuous_Refresh)
-        with Convention => C;
-
-    for Present_Mode'Size use 32;
-
-    for Present_Mode use (Immediate => 0,
-                          Mailbox => 1,
-                          FIFO => 2,
-                          FIFO_Relaxed => 3,
-                          Shared_Demand_Refresh => 1_000_111_000,
-                          Shared_Continuous_Refresh => 1_000_111_001);
-
-    package Present_Mode_Vectors is
-        new Ada.Containers.Vectors(Positive, Present_Mode);
-
-    type Color_Space is (SRGB_Nonlinear,
-                         Display_P3_Nonlinear,
-                         Extended_SRGB_Linear,
-                         Display_P3_Linear,
-                         DCI_P3_Nonlinear,
-                         BT709_Linear,
-                         BT709_Nonlinear,
-                         BT2020_Linear,
-                         HDR10_ST2084,
-                         DolbyVision,
-                         HDR10_HLG,
-                         AdobeRGB_Linear,
-                         AdobeRGB_Nonlinear,
-                         Pass_Through,
-                         Extended_SRGB_Nonlinear,
-                         Display_Native)
-        with Convention => C;
-
-    for Color_Space'Size use 32;
-
-    for Color_Space use (SRGB_Nonlinear => 0,
-                         Display_P3_Nonlinear => 1_000_104_001,
-                         Extended_SRGB_Linear => 1_000_104_002,
-                         Display_P3_Linear => 1_000_104_003,
-                         DCI_P3_Nonlinear => 1_000_104_004,
-                         BT709_Linear => 1_000_104_005,
-                         BT709_Nonlinear => 1_000_104_006,
-                         BT2020_Linear => 1_000_104_007,
-                         HDR10_ST2084 => 1_000_104_008,
-                         DolbyVision => 1_000_104_009,
-                         HDR10_HLG => 1_000_104_010,
-                         AdobeRGB_Linear => 1_000_104_011,
-                         AdobeRGB_Nonlinear => 1_000_104_012,
-                         Pass_Through => 1_000_104_013,
-                         Extended_SRGB_Nonlinear => 1_000_104_014,
-                         Display_Native => 1_000_213_000);
-
-    type Query_Results_Status is (Error,
-                                  Not_Ready,
-                                  Complete)
-        with Convention => C;
-
-    for Query_Results_Status'Size use 32;
-
-    for Query_Results_Status use (Error => -1,
-                                  Not_Ready => 0,
-                                  Complete => 1);
-
-    type Std_Video_H264_Chroma_Format is (Monochrome,
-                                          Format_420,
-                                          Format_422,
-                                          Format_444,
-                                          Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Chroma_Format'Size use 32;
-
-    for Std_Video_H264_Chroma_Format use (Monochrome => 0,
-                                          Format_420 => 1,
-                                          Format_422 => 2,
-                                          Format_444 => 3,
-                                          Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Profile is (Baseline,
-                                    Main,
-                                    High,
-                                    High_444_Predictive,
-                                    Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Profile'Size use 32;
-
-    for Std_Video_H264_Profile use (Baseline => 66,
-                                    Main => 77,
-                                    High => 100,
-                                    High_444_Predictive => 244,
-                                    Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Level is (Level_1_0,
-                                  Level_1_1,
-                                  Level_1_2,
-                                  Level_1_3,
-                                  Level_2_0,
-                                  Level_2_1,
-                                  Level_2_2,
-                                  Level_3_0,
-                                  Level_3_1,
-                                  Level_3_2,
-                                  Level_4_0,
-                                  Level_4_1,
-                                  Level_4_2,
-                                  Level_5_0,
-                                  Level_5_1,
-                                  Level_5_2,
-                                  Level_6_0,
-                                  Level_6_1,
-                                  Level_6_2,
-                                  Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Level'Size use 32;
-
-    for Std_Video_H264_Level use (Level_1_0 => 0,
-                                  Level_1_1 => 1,
-                                  Level_1_2 => 2,
-                                  Level_1_3 => 3,
-                                  Level_2_0 => 4,
-                                  Level_2_1 => 5,
-                                  Level_2_2 => 6,
-                                  Level_3_0 => 7,
-                                  Level_3_1 => 8,
-                                  Level_3_2 => 9,
-                                  Level_4_0 => 10,
-                                  Level_4_1 => 11,
-                                  Level_4_2 => 12,
-                                  Level_5_0 => 13,
-                                  Level_5_1 => 14,
-                                  Level_5_2 => 15,
-                                  Level_6_0 => 16,
-                                  Level_6_1 => 17,
-                                  Level_6_2 => 18,
-                                  Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Poc is (Type_0,
-                                Type_1,
-                                Type_2,
-                                Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Poc'Size use 32;
-
-    for Std_Video_H264_Poc use (Type_0 => 0,
-                                Type_1 => 1,
-                                Type_2 => 2,
-                                Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Aspect_Ratio is (Unspecified,
-                                         Square,
-                                         Ratio_12_11,
-                                         Ratio_10_11,
-                                         Ratio_16_11,
-                                         Ratio_40_33,
-                                         Ratio_24_11,
-                                         Ratio_20_11,
-                                         Ratio_32_11,
-                                         Ratio_80_33,
-                                         Ratio_18_11,
-                                         Ratio_15_11,
-                                         Ratio_64_33,
-                                         Ratio_160_99,
-                                         Ratio_4_3,
-                                         Ratio_3_2,
-                                         Ratio_2_1,
-                                         Extended_SAR,
-                                         Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Aspect_Ratio'Size use 32;
-
-    for Std_Video_H264_Aspect_Ratio use (Unspecified => 0,
-                                         Square => 1,
-                                         Ratio_12_11 => 2,
-                                         Ratio_10_11 => 3,
-                                         Ratio_16_11 => 4,
-                                         Ratio_40_33 => 5,
-                                         Ratio_24_11 => 6,
-                                         Ratio_20_11 => 7,
-                                         Ratio_32_11 => 8,
-                                         Ratio_80_33 => 9,
-                                         Ratio_18_11 => 10,
-                                         Ratio_15_11 => 11,
-                                         Ratio_64_33 => 12,
-                                         Ratio_160_99 => 13,
-                                         Ratio_4_3 => 14,
-                                         Ratio_3_2 => 15,
-                                         Ratio_2_1 => 16,
-                                         Extended_SAR => 255,
-                                         Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Weighted_Bipred is (Default,
-                                            Explicit,
-                                            Implicit,
-                                            Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Weighted_Bipred'Size use 32;
-
-    for Std_Video_H264_Weighted_Bipred use (Default => 0,
-                                            Explicit => 1,
-                                            Implicit => 2,
-                                            Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Modification_Of_Pic_Nums is (Short_Term_Subtract,
-                                                     Short_Term_Add,
-                                                     Long_Term,
-                                                     IDC_End,
-                                                     Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Modification_Of_Pic_Nums'Size use 32;
-
-    for Std_Video_H264_Modification_Of_Pic_Nums use (Short_Term_Subtract => 0,
-                                                     Short_Term_Add => 1,
-                                                     Long_Term => 2,
-                                                     IDC_End => 3,
-                                                     Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Mem_Mgmt_Control_Op is (Op_End,
-                                                Unmark_Short_Term,
-                                                Unmark_Long_Term,
-                                                Mark_Long_Term,
-                                                Set_Max_Long_Term_Index,
-                                                Unmark_All,
-                                                Mark_Current_As_Long_Term,
-                                                Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Mem_Mgmt_Control_Op'Size use 32;
-
-    for Std_Video_H264_Mem_Mgmt_Control_Op use (Op_End => 0,
-                                                Unmark_Short_Term => 1,
-                                                Unmark_Long_Term => 2,
-                                                Mark_Long_Term => 3,
-                                                Set_Max_Long_Term_Index => 4,
-                                                Unmark_All => 5,
-                                                Mark_Current_As_Long_Term => 6,
-                                                Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Cabac_Init is (Init_0,
-                                       Init_1,
-                                       Init_2,
-                                       Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Cabac_Init'Size use 32;
-
-    for Std_Video_H264_Cabac_Init use (Init_0 => 0,
-                                       Init_1 => 1,
-                                       Init_2 => 2,
-                                       Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Disable_Deblocking_Filter is (Disabled,
-                                                      Enabled,
-                                                      Partial,
-                                                      Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Disable_Deblocking_Filter'Size use 32;
-
-    for Std_Video_H264_Disable_Deblocking_Filter use (Disabled => 0,
-                                                      Enabled => 1,
-                                                      Partial => 2,
-                                                      Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Slice_Type is (P,
-                                       B,
-                                       I,
-                                       Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Slice_Type'Size use 32;
-
-    for Std_Video_H264_Slice_Type use (P => 0,
-                                       B => 1,
-                                       I => 2,
-                                       Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Picture_Type is (P,
-                                         B,
-                                         I,
-                                         IDR,
-                                         Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Picture_Type'Size use 32;
-
-    for Std_Video_H264_Picture_Type use (P => 0,
-                                         B => 1,
-                                         I => 2,
-                                         IDR => 5,
-                                         Invalid => 16#7fffffff#);
-
-    type Std_Video_H264_Non_Vcl_Nalu_Type is (SPS,
-                                              PPS,
-                                              AUD,
-                                              Prefix,
-                                              End_Of_Sequence,
-                                              End_Of_Stream,
-                                              Precoded,
-                                              Invalid)
-        with Convention => C;
-
-    for Std_Video_H264_Non_Vcl_Nalu_Type'Size use 32;
-
-    for Std_Video_H264_Non_Vcl_Nalu_Type use (SPS => 0,
-                                              PPS => 1,
-                                              AUD => 2,
-                                              Prefix => 3,
-                                              End_Of_Sequence => 4,
-                                              End_Of_Stream => 5,
-                                              Precoded => 6,
-                                              Invalid => 16#7fffffff#);
-
-    type Std_Video_Decode_H264_Field_Order_Count is (Top,
-                                                     Bottom,
-                                                     Invalid)
-        with Convention => C;
-
-    for Std_Video_Decode_H264_Field_Order_Count'Size use 32;
-
-    for Std_Video_Decode_H264_Field_Order_Count use (Top => 0,
-                                                     Bottom => 1,
-                                                     Invalid => 16#7fffffff#);
-
-    type Performance_Counter_Unit is (Generic_Unit,
-                                      Percentage,
-                                      Nanoseconds,
-                                      Bytes,
-                                      Bytes_Per_Second,
-                                      Kelvin,
-                                      Watts,
-                                      Volts,
-                                      Amps,
-                                      Hertz,
-                                      Cycles)
-        with Convention => C;
-
-    for Performance_Counter_Unit'Size use 32;
-
-    for Performance_Counter_Unit use (Generic_Unit => 0,
-                                      Percentage => 1,
-                                      Nanoseconds => 2,
-                                      Bytes => 3,
-                                      Bytes_Per_Second => 4,
-                                      Kelvin => 5,
-                                      Watts => 6,
-                                      Volts => 7,
-                                      Amps => 8,
-                                      Hertz => 9,
-                                      Cycles => 10);
-
-    type Performance_Counter_Scope is (Command_Buffer_Scope,
-                                       Render_Pass_Scope,
-                                       Command_Scope)
-        with Convention => C;
-
-    for Performance_Counter_Scope'Size use 32;
-
-    for Performance_Counter_Scope use (Command_Buffer_Scope => 0,
-                                       Render_Pass_Scope => 1,
-                                       Command_Scope => 2);
-
-    type Performance_Counter_Storage is (Int32,
-                                         Int64,
-                                         Uint32,
-                                         Uint64,
-                                         Float32,
-                                         Float64)
-        with Convention => C;
-
-    for Performance_Counter_Storage'Size use 32;
-
-    for Performance_Counter_Storage use (Int32 => 0,
-                                         Int64 => 1,
-                                         Uint32 => 2,
-                                         Uint64 => 3,
-                                         Float32 => 4,
-                                         Float64 => 5);
-
-    type Std_Video_H265_Chroma_Format is (Monochrome,
-                                          Format_420,
-                                          Format_422,
-                                          Format_444,
-                                          Invalid)
-        with Convention => C;
-
-    for Std_Video_H265_Chroma_Format'Size use 32;
-
-    for Std_Video_H265_Chroma_Format use (Monochrome => 0,
-                                          Format_420 => 1,
-                                          Format_422 => 2,
-                                          Format_444 => 3,
-                                          Invalid => 16#7fffffff#);
-
-    type Std_Video_H265_Profile is (Main,
-                                    Main_10,
-                                    Main_Still_Picture,
-                                    Format_Range_Extensions,
-                                    SCC_Extensions,
-                                    Invalid)
-        with Convention => C;
-
-    for Std_Video_H265_Profile'Size use 32;
-
-    for Std_Video_H265_Profile use (Main => 1,
-                                    Main_10 => 2,
-                                    Main_Still_Picture => 3,
-                                    Format_Range_Extensions => 4,
-                                    SCC_Extensions => 9,
-                                    Invalid => 16#7fffffff#);
-    
-    type Std_Video_H265_Level is (Level_1_0,
-                                  Level_2_0,
-                                  Level_2_1,
-                                  Level_3_0,
-                                  Level_3_1,
-                                  Level_4_0,
-                                  Level_4_1,
-                                  Level_5_0,
-                                  Level_5_1,
-                                  Level_5_2,
-                                  Level_6_0,
-                                  Level_6_1,
-                                  Level_6_2,
-                                  Invalid)
-        with Convention => C;
-
-    for Std_Video_H265_Level'Size use 32;
- 
-    for Std_Video_H265_Level use (Level_1_0 => 0,
-                                  Level_2_0 => 1,
-                                  Level_2_1 => 2,
-                                  Level_3_0 => 3,
-                                  Level_3_1 => 4,
-                                  Level_4_0 => 5,
-                                  Level_4_1 => 6,
-                                  Level_5_0 => 7,
-                                  Level_5_1 => 8,
-                                  Level_5_2 => 9,
-                                  Level_6_0 => 10,
-                                  Level_6_1 => 11,
-                                  Level_6_2 => 12,
-                                  Invalid => 16#7fffffff#);
-   
-    type Std_Video_H265_Slice_Type is (B,
-                                       P,
-                                       I,
-                                       Invalid)
-        with Convention => C;
-
-    for Std_Video_H265_Slice_Type'Size use 32;
-
-    for Std_Video_H265_Slice_Type use (B => 0,
-                                       P => 1,
-                                       I => 2,
-                                       Invalid => 16#7fffffff#);
-
-    type Std_Video_H265_Picture_Type is (P,
-                                         B,
-                                         I,
-                                         IDR,
-                                         Invalid)
-        with Convention => C;
-
-    for Std_Video_H265_Picture_Type'Size use 32;
-
-    for Std_Video_H265_Picture_Type use (P => 0,
-                                         B => 1,
-                                         I => 2,
-                                         IDR => 3,
-                                         Invalid => 16#7fffffff#);
-
-    type Std_Video_H265_Aspect_Ratio is (Unspecified,
-                                         Square,
-                                         Ratio_12_11,
-                                         Ratio_10_11,
-                                         Ratio_16_11,
-                                         Ratio_40_33,
-                                         Ratio_24_11,
-                                         Ratio_20_11,
-                                         Ratio_32_11,
-                                         Ratio_80_33,
-                                         Ratio_18_11,
-                                         Ratio_15_11,
-                                         Ratio_64_33,
-                                         Ratio_160_99,
-                                         Ratio_4_3,
-                                         Ratio_3_2,
-                                         Ratio_2_1,
-                                         Extended_SAR,
-                                         Invalid)
-        with Convention => C;
-
-    for Std_Video_H265_Aspect_Ratio'Size use 32;
-
-    for Std_Video_H265_Aspect_Ratio use (Unspecified => 0,
-                                         Square => 1,
-                                         Ratio_12_11 => 2,
-                                         Ratio_10_11 => 3,
-                                         Ratio_16_11 => 4,
-                                         Ratio_40_33 => 5,
-                                         Ratio_24_11 => 6,
-                                         Ratio_20_11 => 7,
-                                         Ratio_32_11 => 8,
-                                         Ratio_80_33 => 9,
-                                         Ratio_18_11 => 10,
-                                         Ratio_15_11 => 11,
-                                         Ratio_64_33 => 12,
-                                         Ratio_160_99 => 13,
-                                         Ratio_4_3 => 14,
-                                         Ratio_3_2 => 15,
-                                         Ratio_2_1 => 16,
-                                         Extended_SAR => 255,
-                                         Invalid => 16#7fffffff#);
-
-    type Queue_Global_Priority is (Low,
-                                   Medium,
-                                   High,
-                                   Realtime)
-        with Convention => C;
-
-    for Queue_Global_Priority'Size use 32;
-
-    for Queue_Global_Priority use (Low => 128,
-                                   Medium => 256,
-                                   High => 512,
-                                   Realtime => 1024);
-
-    type Fragment_Shading_Rate_Combiner_Op is (Keep,
-                                               Replace,
-                                               Min,
-                                               Max,
-                                               Mul)
-        with Convention => C;
-
-    for Fragment_Shading_Rate_Combiner_Op'Size use 32;
-
-    for Fragment_Shading_Rate_Combiner_Op use (Keep => 0,
-                                               Replace => 1,
-                                               Min => 2,
-                                               Max => 3,
-                                               Mul => 4);
-
-    type Pipeline_Executable_Statistic_Format is (Bool32,
-                                                  Int64,
-                                                  Uint64,
-                                                  Float64)
-        with Convention => C;
-
-    for Pipeline_Executable_Statistic_Format'Size use 32;
-
-    for Pipeline_Executable_Statistic_Format use (Bool32 => 0,
-                                                  Int64 => 1,
-                                                  Uint64 => 2,
-                                                  Float64 => 3);
-
-    type Component_Type is (Float_16,
-                            Float_32,
-                            Float_64,
-                            SInt_8,
-                            SInt_16,
-                            SInt_32,
-                            SInt_64,
-                            UInt_8,
-                            UInt_16,
-                            UInt_32,
-                            UInt_64)
-        with Convention => C;
-
-    for Component_Type'Size use 32;
-
-    for Component_Type use (Float_16 => 0,
-                            Float_32 => 1,
-                            Float_64 => 2,
-                            SInt_8 => 3,
-                            SInt_16 => 4,
-                            SInt_32 => 5,
-                            SInt_64 => 6,
-                            UInt_8 => 7,
-                            UInt_16 => 8,
-                            UInt_32 => 9,
-                            UInt_64 => 10);
-
-    type Scope is (Scope_Device,
-                   Scope_Workgroup,
-                   Scope_Subgroup,
-                   Scope_Queue_Family)
-        with Convention => C;
-
-    for Scope'Size use 32;
-
-    for Scope use (Scope_Device => 1,
-                   Scope_Workgroup => 2,
-                   Scope_Subgroup => 3,
-                   Scope_Queue_Family => 5);
-
-    type Time_Domain is (Domain_Device,
-                         Clock_Monotonic,
-                         Clock_Monotonic_Raw,
-                         Query_Performance_Counter)
-        with Convention => C;
-
-    for Time_Domain'Size use 32;
-
-    for Time_Domain use (Domain_Device => 0,
-                         Clock_Monotonic => 1,
-                         Clock_Monotonic_Raw => 2,
-                         Query_Performance_Counter => 3);
-
-    package Time_Domain_Vectors is new Ada.Containers.Vectors
-        (Positive, Time_Domain);
-
-    type Debug_Report_Object_Type is (Debug_Unknown,
-                                      Debug_Instance,
-                                      Debug_Physical_Device,
-                                      Debug_Device,
-                                      Debug_Queue,
-                                      Debug_Semaphore,
-                                      Debug_Command_Buffer,
-                                      Debug_Fence,
-                                      Debug_Device_Memory,
-                                      Debug_Buffer,
-                                      Debug_Image,
-                                      Debug_Event,
-                                      Debug_Query_Pool,
-                                      Debug_Buffer_View,
-                                      Debug_Image_View,
-                                      Debug_Shader_Module,
-                                      Debug_Pipeline_Cache,
-                                      Debug_Pipeline_Layout,
-                                      Debug_Render_Pass,
-                                      Debug_Pipeline,
-                                      Debug_Descriptor_Set_Layout,
-                                      Debug_Sampler,
-                                      Debug_Descriptor_Pool,
-                                      Debug_Descriptor_Set,
-                                      Debug_Framebuffer,
-                                      Debug_Command_Pool,
-                                      Debug_Surface,
-                                      Debug_Swapchain,
-                                      Debug_Debug_Report_Callback,
-                                      Debug_Display,
-                                      Debug_Display_Mode,
-                                      Debug_Validation_Cache,
-                                      Debug_Cu_Module,
-                                      Debug_Cu_Function,
-                                      Debug_Descriptor_Update_Template,
-                                      Debug_Acceleration_Structure,
-                                      Debug_Sampler_YCbCr_Conversion,
-                                      Debug_Acceleration_Structure_NV,
-                                      Debug_Cuda_Module,
-                                      Debug_Cuda_Function,
-                                      Debug_Buffer_Collection)
-        with Convention => C;
-
-    for Debug_Report_Object_Type'Size use 32;
-
-    for Debug_Report_Object_Type use 
-        (Debug_Unknown => 0,
-         Debug_Instance => 1,
-         Debug_Physical_Device => 2,
-         Debug_Device => 3,
-         Debug_Queue => 4,
-         Debug_Semaphore => 5,
-         Debug_Command_Buffer => 6,
-         Debug_Fence => 7,
-         Debug_Device_Memory => 8,
-         Debug_Buffer => 9,
-         Debug_Image => 10,
-         Debug_Event => 11,
-         Debug_Query_Pool => 12,
-         Debug_Buffer_View => 13,
-         Debug_Image_View => 14,
-         Debug_Shader_Module => 15,
-         Debug_Pipeline_Cache => 16,
-         Debug_Pipeline_Layout => 17,
-         Debug_Render_Pass => 18,
-         Debug_Pipeline => 19,
-         Debug_Descriptor_Set_Layout => 20,
-         Debug_Sampler => 21,
-         Debug_Descriptor_Pool => 22,
-         Debug_Descriptor_Set => 23,
-         Debug_Framebuffer => 24,
-         Debug_Command_Pool => 25,
-         Debug_Surface => 26,
-         Debug_Swapchain => 27,
-         Debug_Debug_Report_Callback => 28,
-         Debug_Display => 29,
-         Debug_Display_Mode => 30,
-         Debug_Validation_Cache => 33,
-         Debug_Cu_Module => 1_000_029_000,
-         Debug_Cu_Function => 1_000_029_001,
-         Debug_Descriptor_Update_Template => 1_000_085_000,
-         Debug_Acceleration_Structure => 1_000_150_000,
-         Debug_Sampler_YCbCr_Conversion => 1_000_156_000,
-         Debug_Acceleration_Structure_NV => 1_000_165_000,
-         Debug_Cuda_Module => 1_000_307_000,
-         Debug_Cuda_Function => 1_000_307_001,
-         Debug_Buffer_Collection => 1_000_366_000);
-
-    type Rasterization_Order is (Strict,
-                                 Relaxed)
-        with Convention => C;
-
-    for Rasterization_Order'Size use 32;
-
-    for Rasterization_Order use (Strict => 0,
-                                 Relaxed => 1);
-
-    type Shader_Info_Type is (Statistics,
-                              Binary,
-                              Disassembly)
-        with Convention => C;
-
-    for Shader_Info_Type'Size use 32;
-
-    for Shader_Info_Type use (Statistics => 0,
-                              Binary => 1,
-                              Disassembly => 2);
-
-    type Validation_Check is (Check_All,
-                              Shaders)
-        with Convention => C;
-
-    for Validation_Check'Size use 32;
-
-    for Validation_Check use (Check_All => 0,
-                              Shaders => 1);
-
+    -- Vulkan 1.4
     type Pipeline_Robustness_Buffer_Behavior is (Device_Default,
                                                  Disabled,
                                                  Robust_Buffer_Access,
@@ -3643,6 +3038,32 @@ package Vulkan is
                                                 Disabled => 1,
                                                 Robust_Image_Access => 2,
                                                 Robust_Image_Access_2 => 3);
+
+    type Queue_Global_Priority is (Low,
+                                   Medium,
+                                   High,
+                                   Realtime)
+        with Convention => C;
+
+    for Queue_Global_Priority'Size use 32;
+
+    for Queue_Global_Priority use (Low => 128,
+                                   Medium => 256,
+                                   High => 512,
+                                   Realtime => 1024);
+
+    type Line_Rasterization_Mode is (Default,
+                                     Rectangular,
+                                     Bresenham,
+                                     Rectangular_Smooth)
+        with Convention => C;
+
+    for Line_Rasterization_Mode'Size use 32;
+
+    for Line_Rasterization_Mode use (Default => 0,
+                                     Rectangular => 1,
+                                     Bresenham => 2,
+                                     Rectangular_Smooth => 3);
 
     -- Bitfields.
     type Access_Flags is new Flags;
@@ -4882,195 +4303,12 @@ package Vulkan is
         constant Format_Feature_Flags_2 := 16#20000000000#;
     Format_Feature_2_Optical_Flow_Cost_Bit:
         constant Format_Feature_Flags_2 := 16#40000000000#;
-
-    -- Extensions
-    type Surface_Transform_Flags is new Flags;
-
-    Surface_Transform_No_Bit: constant Surface_Transform_Flags := 0;
-    Surface_Transform_Identity_Bit:
-        constant Surface_Transform_Flags := 16#00000001#;
-    Surface_Transform_Rotate_90_Bit:
-        constant Surface_Transform_Flags := 16#00000002#;
-    Surface_Transform_Rotate_180_Bit:
-        constant Surface_Transform_Flags := 16#00000004#;
-    Surface_Transform_Rotate_270_Bit:
-        constant Surface_Transform_Flags := 16#00000008#;
-    Surface_Transform_Horizontal_Mirror_Bit:
-        constant Surface_Transform_Flags := 16#00000010#;
-    Surface_Transform_Horizontal_Mirror_Rotate_90_Bit:
-        constant Surface_Transform_Flags := 16#00000020#;
-    Surface_Transform_Horizontal_Mirror_Rotate_180_Bit:
-        constant Surface_Transform_Flags := 16#00000040#;
-    Surface_Transform_Horizontal_Mirror_Rotate_270_Bit:
-        constant Surface_Transform_Flags := 16#00000080#;
-    Surface_Transform_Inherit_Bit:
-        constant Surface_Transform_Flags := 16#00000100#;
-
-    type Composite_Alpha_Flags is new Flags;
-
-    Composite_Alpha_No_Bit: constant Composite_Alpha_Flags := 0;
-    Composite_Alpha_Opaque_Bit: constant Composite_Alpha_Flags := 16#00000001#;
-    Composite_Alpha_Pre_Multiplied_Bit:
-        constant Composite_Alpha_Flags := 16#00000002#;
-    Composite_Alpha_Post_Multiplied_Bit:
-        constant Composite_Alpha_Flags := 16#00000004#;
-    Composite_Alpha_Inherit_Bit: constant Composite_Alpha_Flags := 16#00000008#;
-
-    type Swapchain_Create_Flags is new Flags;
-
-    Swapchain_Create_No_Bit: constant Swapchain_Create_Flags := 0;
-    Swapchain_Create_Split_Instance_Bind_Regions_Bit:
-        constant Swapchain_Create_Flags := 16#00000001#;
-    Swapchain_Create_Protected_Bit:
-        constant Swapchain_Create_Flags := 16#00000002#;
-    Swapchain_Create_Mutable_Format_Bit:
-        constant Swapchain_Create_Flags := 16#00000004#;
-
-    type Device_Group_Present_Mode_Flags is new Flags;
-
-    Device_Group_Present_Mode_No_Bit:
-        constant Device_Group_Present_Mode_Flags := 0;
-    Device_Group_Present_Mode_Local_Bit:
-        constant Device_Group_Present_Mode_Flags := 16#00000001#;
-    Device_Group_Present_Mode_Remote_Bit:
-        constant Device_Group_Present_Mode_Flags := 16#00000002#;
-    Device_Group_Present_Mode_Sum_Bit:
-        constant Device_Group_Present_Mode_Flags := 16#00000004#;
-    Device_Group_Present_Mode_Local_Multi_Device_Bit:
-        constant Device_Group_Present_Mode_Flags := 16#00000008#;
-
-    type Display_Mode_Create_Flags is new Flags;
-
-    Display_Mode_Create_No_Bit: constant Display_Mode_Create_Flags := 0;
-
-    type Display_Plane_Alpha_Flags is new Flags;
-
-    Display_Plane_Alpha_No_Bit: constant Display_Plane_Alpha_Flags := 0;
-    Display_Plane_Alpha_Opaque_Bit:
-        constant Display_Plane_Alpha_Flags := 16#00000001#;
-    Display_Plane_Alpha_Global_Bit:
-        constant Display_Plane_Alpha_Flags := 16#00000002#;
-    Display_Plane_Alpha_Per_Pixel_Bit:
-        constant Display_Plane_Alpha_Flags := 16#00000004#;
-    Display_Plane_Alpha_Per_Pixel_Premultiplied_Bit:
-        constant Display_Plane_Alpha_Flags := 16#00000008#;
-
-    type Display_Surface_Create_Flags is new Flags;
-
-    Display_Surface_Create_No_Bit: constant Display_Surface_Create_Flags := 0;
-
-    type Video_Codec_Operation_Flags is new Flags;
-
-    Video_Codec_Operation_No_Bit: constant Video_Codec_Operation_Flags := 0;
-    Video_Codec_Operation_Decode_H264_Bit:
-        constant Video_Codec_Operation_Flags := 16#00000001#;
-    Video_Codec_Operation_Decode_H265_Bit:
-        constant Video_Codec_Operation_Flags := 16#00000002#;
-
-    type Video_Chroma_Subsampling_Flags is new Flags;
-
-    Video_Chroma_Subsampling_Invalid_Bit:
-        constant Video_Chroma_Subsampling_Flags := 0;
-    Video_Chroma_Subsampling_Monochrome_Bit:
-        constant Video_Chroma_Subsampling_Flags := 16#00000001#;
-    Video_Chroma_Subsampling_420_Bit:
-        constant Video_Chroma_Subsampling_Flags := 16#00000002#;
-    Video_Chroma_Subsampling_422_Bit:
-        constant Video_Chroma_Subsampling_Flags := 16#00000004#;
-    Video_Chroma_Subsampling_444_Bit:
-        constant Video_Chroma_Subsampling_Flags := 16#00000008#;
-
-    type Video_Component_Bit_Depth_Flags is new Flags;
-
-    Video_Component_Bit_Depth_Invalid_Bit:
-        constant Video_Component_Bit_Depth_Flags := 0;
-    Video_Component_Bit_Depth_8_Bit:
-        constant Video_Component_Bit_Depth_Flags := 16#00000001#;
-    Video_Component_Bit_Depth_10_Bit:
-        constant Video_Component_Bit_Depth_Flags := 16#00000004#;
-    Video_Component_Bit_Depth_12_Bit:
-        constant Video_Component_Bit_Depth_Flags := 16#00000010#;
-
-    type Video_Capability_Flags is new Flags;
-
-    Video_Capability_No_Bit: constant Video_Capability_Flags := 0;
-    Video_Capability_Protected_Content_Bit:
-        constant Video_Capability_Flags := 16#00000001#;
-    Video_Capability_Separate_Reference_Images_Bit:
-        constant Video_Capability_Flags := 16#00000002#;
-
-    type Video_Session_Create_Flags is new Flags;
-
-    Video_Session_Create_No_Bit: constant Video_Session_Create_Flags := 0;
-    Video_Session_Create_Protected_Content_Bit:
-        constant Video_Session_Create_Flags := 16#00000001#;
-
-    type Video_Session_Parameters_Create_Flags is new Flags;
-
-    Video_Session_Parameters_Create_No_Bit:
-        constant Video_Session_Parameters_Create_Flags := 0;
-
-    type Video_Begin_Coding_Flags is new Flags;
-
-    Video_Begin_Coding_No_Bit: constant Video_Begin_Coding_Flags := 0;
-
-    type Video_End_Coding_Flags is new Flags;
-
-    Video_End_Coding_No_Bit: constant Video_End_Coding_Flags := 0;
-
-    type Video_Coding_Control_Flags is new Flags;
-
-    Video_Coding_Control_No_Bit: constant Video_Coding_Control_Flags := 0;
-    Video_Coding_Control_Reset_Bit:
-        constant Video_Coding_Control_Flags := 16#00000001#;
-
-    type Video_Decode_Capability_Flags is new Flags;
-
-    Video_Decode_Capability_No_Bit: constant Video_Decode_Capability_Flags := 0;
-    Video_Decode_Capability_DPB_And_Output_Coincide_Bit:
-        constant Video_Decode_Capability_Flags := 16#00000001#;
-    Video_Decode_Capability_DPB_And_Output_Distinct_Bit:
-        constant Video_Decode_Capability_Flags := 16#00000002#;
-
-    type Video_Decode_Usage_Flags is new Flags;
-
-    Video_Decode_Usage_Default_Bit: constant Video_Decode_Usage_Flags := 0;
-    Video_Decode_Usage_Transcoding_Bit:
-        constant Video_Decode_Usage_Flags := 16#00000001#;
-    Video_Decode_Usage_Offline_Bit:
-        constant Video_Decode_Usage_Flags := 16#00000002#;
-    Video_Decode_Usage_Streaming_Bit:
-        constant Video_Decode_Usage_Flags := 16#00000004#;
-
-    type Video_Decode_Flags is new Flags;
-
-    Video_Decode_No_Bit: constant Video_Decode_Flags := 0;
-
-    type Video_Decode_H264_Picture_Layout_Flags is new Flags;
-
-    Video_Decode_H264_Picture_Layout_Progressive_Bit:
-        constant Video_Decode_H264_Picture_Layout_Flags := 0;
-    Video_Decode_H264_Picture_Layout_Interlaced_Interleaved_Lines_Bit:
-        constant Video_Decode_H264_Picture_Layout_Flags := 16#00000001#;
-    Video_Decode_H264_Picture_Layout_Interlaces_Separate_Planes_Bit:
-        constant Video_Decode_H264_Picture_Layout_Flags := 16#00000002#;
-
-    type Performance_Counter_Description_Flags is new Flags;
-
-    Performance_Counter_Description_No_Bit:
-        constant Performance_Counter_Description_Flags := 0;
-    Performance_Counter_Description_Performance_Impacting_Bit:
-        constant Performance_Counter_Description_Flags := 16#00000001#;
-    Performance_Counter_Description_Performance_Impacted_Bit:
-        constant Performance_Counter_Description_Flags := 16#00000002#;
-
-    type Acquire_Profiling_Lock_Flags is new Flags;
-
-    Acquire_Profiling_Lock_No_Bit: constant Acquire_Profiling_Lock_Flags := 0;
-
+ 
+    -- Vulkan 1.4
     type Memory_Unmap_Flags is new Flags;
 
     Memory_Unmap_No_Bit: constant Memory_Unmap_Flags := 0;
+    Memory_Unmap_Reserve_Bit: constant Memory_Unmap_Flags := 16#00000001#;
 
     type Pipeline_Create_Flags_2 is new Flags_64;
     
@@ -5097,8 +4335,6 @@ package Vulkan is
         constant Pipeline_Create_Flags_2 := 16#00000200#;
     Pipeline_Create_2_Link_Time_Optimization_Bit:
         constant Pipeline_Create_Flags_2 := 16#00000400#;
-    Pipeline_Create_2_Retain_Link_Time_Optimization_Info_Bit:
-        constant Pipeline_Create_Flags_2 := 16#00800000#;
     Pipeline_Create_2_Library_Bit:
         constant Pipeline_Create_Flags_2 := 16#00000800#;
     Pipeline_Create_2_Ray_Tracing_Skip_Triangles_Bit:
@@ -5113,16 +4349,18 @@ package Vulkan is
         constant Pipeline_Create_Flags_2 := 16#00010000#;
     Pipeline_Create_2_Ray_Tracing_No_Null_Intersection_Shaders_Bit:
         constant Pipeline_Create_Flags_2 := 16#00020000#;
-    Pipeline_Create_2_Ray_Tracing_Shader_Group_Handle_Capture_Replay_Bit:
-        constant Pipeline_Create_Flags_2 := 16#00080000#;
     Pipeline_Create_2_Indirect_Bindable_Bit:
         constant Pipeline_Create_Flags_2 := 16#00040000#;
+    Pipeline_Create_2_Ray_Tracing_Shader_Group_Handle_Capture_Replay_Bit:
+        constant Pipeline_Create_Flags_2 := 16#00080000#;
     Pipeline_Create_2_Ray_Tracing_Allow_Motion_Bit:
         constant Pipeline_Create_Flags_2 := 16#00100000#;
     Pipeline_Create_2_Rendering_Fragment_Shading_Rate_Attachment_Bit:
         constant Pipeline_Create_Flags_2 := 16#00200000#;
     Pipeline_Create_2_Rendering_Fragment_Density_Map_Attachment_Bit:
         constant Pipeline_Create_Flags_2 := 16#00400000#;
+    Pipeline_Create_2_Retain_Link_Time_Optimization_Info_Bit:
+        constant Pipeline_Create_Flags_2 := 16#00800000#;
     Pipeline_Create_2_Ray_Tracing_Opacity_Micromap_Bit:
         constant Pipeline_Create_Flags_2 := 16#01000000#;
     Pipeline_Create_2_Color_Attachment_Feedback_Loop_Bit:
@@ -5131,12 +4369,18 @@ package Vulkan is
         constant Pipeline_Create_Flags_2 := 16#04000000#;
     Pipeline_Create_2_No_Protected_Access_Bit:
         constant Pipeline_Create_Flags_2 := 16#08000000#;
-    Pipeline_Create_2_Protected_Access_Only_Bit:
-        constant Pipeline_Create_Flags_2 := 16#40000000#;
     Pipeline_Create_2_Ray_Tracing_Displacement_Micromap_Bit:
         constant Pipeline_Create_Flags_2 := 16#10000000#;
     Pipeline_Create_2_Descriptor_Buffer_Bit:
         constant Pipeline_Create_Flags_2 := 16#20000000#;
+    Pipeline_Create_2_Protected_Access_Only_Bit:
+        constant Pipeline_Create_Flags_2 := 16#40000000#;
+    Pipeline_Create_2_Capture_Data_Bit:
+        constant Pipeline_Create_Flags_2 := 16#80000000#;
+    Pipeline_Create_2_Execution_Graph_Bit:
+        constant Pipeline_Create_Flags_2 := 16#100000000#;
+    Pipeline_Create_2_Enable_Legacy_Dithering_Bit:
+        constant Pipeline_Create_Flags_2 := 16#400000000#;
 
     type Buffer_Usage_Flags_2 is new Flags_64;
 
@@ -5159,8 +4403,6 @@ package Vulkan is
         constant Buffer_Usage_Flags_2 := 16#00000080#;
     Buffer_Usage_2_Indirect_Buffer_Bit:
         constant Buffer_Usage_Flags_2 := 16#00000100#;
-    Buffer_Usage_2_Execution_Graph_Scratch_Bit:
-        constant Buffer_Usage_Flags_2 := 16#02000000#;
     Buffer_Usage_2_Conditional_Rendering_Bit:
         constant Buffer_Usage_Flags_2 := 16#00000200#;
     Buffer_Usage_2_Shader_Binding_Table_Bit:
@@ -5175,6 +4417,10 @@ package Vulkan is
         constant Buffer_Usage_Flags_2 := 16#00002000#;
     Buffer_Usage_2_Video_Decode_Dst_Bit:
         constant Buffer_Usage_Flags_2 := 16#00004000#;
+    Buffer_Usage_2_Video_Encode_Dst_Bit:
+        constant Buffer_Usage_Flags_2 := 16#00008000#;
+    Buffer_Usage_2_Video_Encode_Src_Bit:
+        constant Buffer_Usage_Flags_2 := 16#00010000#;
     Buffer_Usage_2_Shader_Device_Address_Bit:
         constant Buffer_Usage_Flags_2 := 16#00020000#;
     Buffer_Usage_2_Acceleration_Structure_Build_Input_Read_Only_Bit:
@@ -5185,92 +4431,22 @@ package Vulkan is
         constant Buffer_Usage_Flags_2 := 16#00200000#;
     Buffer_Usage_2_Resource_Descriptor_Buffer_Bit:
         constant Buffer_Usage_Flags_2 := 16#00400000#;
-    Buffer_Usage_2_Push_Descriptors_Descriptor_Buffer_Bit:
-        constant Buffer_Usage_Flags_2 := 16#04000000#;
     Buffer_Usage_2_Micromap_Build_Input_Read_Only_Bit:
         constant Buffer_Usage_Flags_2 := 16#00800000#;
     Buffer_Usage_2_Micromap_Storage_Bit:
         constant Buffer_Usage_Flags_2 := 16#01000000#;
+    Buffer_Usage_2_Execution_Graph_Scratch_Bit:
+        constant Buffer_Usage_Flags_2 := 16#02000000#;
+    Buffer_Usage_2_Push_Descriptors_Descriptor_Buffer_Bit:
+        constant Buffer_Usage_Flags_2 := 16#04000000#;
+    Buffer_Usage_2_Preprocess_Buffer_Bit:
+        constant Buffer_Usage_Flags_2 := 16#80000000#;
 
-    type Debug_Report_Flags is new Flags;
+    type Host_Image_Copy_Flags is new Flags;
 
-    Debug_Report_No_Bit: constant Debug_Report_Flags := 0;
-    Debug_Report_Information_Bit: constant Debug_Report_Flags := 16#00000001#;
-    Debug_Report_Warning_Bit: constant Debug_Report_Flags := 16#00000002#;
-    Debug_Report_Performance_Warning_Bit:
-        constant Debug_Report_Flags := 16#00000004#;
-    Debug_Report_Error_Bit: constant Debug_Report_Flags := 16#00000008#;
-    Debug_Report_Debug_Bit: constant Debug_Report_Flags := 16#00000010#;
+    Host_Image_Copy_No_Bit: constant Host_Image_Copy_Flags := 0;
+    Host_Image_Copy_Memcpy: constant Host_Image_Copy_Flags := 16#00000001#;
 
-    type Pipeline_Rasterization_State_Stream_Create_Flags is new Flags;
-
-    Pipeline_Rasterization_State_Stream_Create_No_Bit:
-        constant Pipeline_Rasterization_State_Stream_Create_Flags := 0;
-
-    type External_Memory_Handle_Type_Flags_NV is new Flags;
-
-    External_Memory_Handle_Type_No_Bit_NV:
-        constant External_Memory_Handle_Type_Flags_NV := 0;
-    External_Memory_Handle_Type_Opaque_Win32_Bit_NV:
-        constant External_Memory_Handle_Type_Flags_NV := 16#00000001#;
-    External_Memory_Handle_Type_Opaque_Win32_KMT_Bit_NV:
-        constant External_Memory_Handle_Type_Flags_NV := 16#00000002#;
-    External_Memory_Handle_Type_D3D11_Image_Bit_NV:
-        constant External_Memory_Handle_Type_Flags_NV := 16#00000004#;
-    External_Memory_Handle_Type_D3D11_Image_KMT_Bit_NV:
-        constant External_Memory_Handle_Type_Flags_NV := 16#00000008#;
-
-    type External_Memory_Feature_Flags_NV is new Flags;
-
-    External_Memory_Feature_No_Bit_NV:
-        constant External_Memory_Feature_Flags_NV := 0;
-    External_Memory_Feature_Dedicated_Only_Bit_NV:
-        constant External_Memory_Feature_Flags_NV := 16#00000001#;
-    External_Memory_Feature_Exportable_Bit_NV:
-        constant External_Memory_Feature_Flags_NV := 16#00000002#;
-    External_Memory_Feature_Importable_Bit_NV:
-        constant External_Memory_Feature_Flags_NV := 16#00000004#;
-
-    type Conditional_Rendering_Flags is new Flags;
-
-    Conditional_Rendering_No_Bit: constant Conditional_Rendering_Flags := 0;
-    Conditional_Rendering_Inverted_Bit:
-        constant Conditional_Rendering_Flags := 16#00000001#;
-
-    type Debug_Utils_Messenger_Callback_Data_Flags is new Flags;
-
-    Debug_Utils_Messenger_Callback_Data_No_Bit:
-        constant Debug_Utils_Messenger_Callback_Data_Flags := 0;
-
-    type Debug_Utils_Message_Severity_Flags is new Flags;
-
-    Debug_Utils_Message_Severity_No_Bit:
-        constant Debug_Utils_Message_Severity_Flags := 0;
-    Debug_Utils_Message_Severity_Verbose_Bit:
-        constant Debug_Utils_Message_Severity_Flags := 16#00000001#;
-    Debug_Utils_Message_Severity_Info_Bit:
-        constant Debug_Utils_Message_Severity_Flags := 16#00000010#;
-    Debug_Utils_Message_Severity_Warning_Bit:
-        constant Debug_Utils_Message_Severity_Flags := 16#00000100#;
-    Debug_Utils_Message_Severity_Error_Bit:
-        constant Debug_Utils_Message_Severity_Flags := 16#00001000#;
-
-    type Debug_Utils_Message_Type_Flags is new Flags;
-
-    Debug_Utils_Message_Type_No_Bit:
-        constant Debug_Utils_Message_Type_Flags := 0;
-    Debug_Utils_Message_Type_General_Bit:
-        constant Debug_Utils_Message_Type_Flags := 16#00000001#;
-    Debug_Utils_Message_Type_Validation_Bit:
-        constant Debug_Utils_Message_Type_Flags := 16#00000002#;
-    Debug_Utils_Message_Type_Performance_Bit:
-        constant Debug_Utils_Message_Type_Flags := 16#00000004#;
-
-    type Debug_Utils_Messenger_Create_Flags is new Flags;
-
-    Debug_Utils_Messenger_Create_No_Bit:
-        constant Debug_Utils_Messenger_Create_Flags := 0;
- 
     -- Version number types.
     type Version_Number is new Interfaces.Unsigned_32;
     type Major_Version is mod 2 ** 7;
@@ -5304,6 +4480,7 @@ package Vulkan is
 
     -- Relational operators for Version_Numbers.
     -- Variant is not considered.
+    function "=" (Left, Right: in Version_Number) return Boolean;
     function "<" (Left, Right: in Version_Number) return Boolean;
     function "<=" (Left, Right: in Version_Number) return Boolean;
     function ">" (Left, Right: in Version_Number) return Boolean;
@@ -5314,6 +4491,7 @@ package Vulkan is
     function API_Version_1_1 return Version_Number is (Create_Version(1, 1));
     function API_Version_1_2 return Version_Number is (Create_Version(1, 2));
     function API_Version_1_3 return Version_Number is (Create_Version(1, 3));
+    function API_Version_1_4 return Version_Number is (Create_Version(1, 4));
 
     -- Base structure types.
     type In_Structure is tagged;
@@ -8535,1775 +7713,63 @@ Integer_Dot_Product_Accumulating_Saturating_4x8Bit_Packed_Mixed_Signedness_Accel
         Create_Info: Image_Create_Info_Access;
         Plane_Aspect: Image_Aspect_Flags := Image_Aspect_No_Bit;
     end record;
-    
-    -- Extensions
-    type Surface_Capabilities is
-    record
-        Min_Image_Count: Interfaces.Unsigned_32;
-        Max_Image_Count: Interfaces.Unsigned_32;
-        Current_Extent: Extent_2D;
-        Min_Image_Extent: Extent_2D;
-        Max_Image_Extent: Extent_2D;
-        Max_Image_Array_Layers: Interfaces.Unsigned_32;
-        Supported_Transforms:
-            Surface_Transform_Flags := Surface_Transform_No_Bit;
-        Current_Transform:
-            Surface_Transform_Flags := Surface_Transform_No_Bit;
-        Supported_Composite_Alpha:
-            Composite_Alpha_Flags := Composite_Alpha_No_Bit;
-        Supported_Usage_Flags: Image_Usage_Flags := Image_Usage_No_Bit;
-    end record
-        with Convention => C;
 
-    type Surface_Format is
+    -- Vulkan 1.4
+    type Physical_Device_Vulkan_1_4_Features is new Out_Structure
+        (Physical_Device_Vulkan_1_4_Features_Type) with
     record
-        Format: Vulkan.Format;
-        Color_Space: Vulkan.Color_Space;
-    end record
-        with Convention => C;
-
-    package Surface_Format_Vectors is
-        new Ada.Containers.Vectors(Positive, Surface_Format);
-
-    type Swapchain_Create_Info is
-        new In_Structure(Swapchain_Create_Info_Type) with
-    record
-        Flags: Swapchain_Create_Flags := Swapchain_Create_No_Bit;
-        Surface: Vulkan.Surface;
-        Min_Image_Count: Interfaces.Unsigned_32;
-        Image_Format: Format;
-        Image_Color_Space: Color_Space;
-        Image_Extent: Extent_2D;
-        Image_Array_Layers: Interfaces.Unsigned_32;
-        Image_Usage: Image_Usage_Flags := Image_Usage_No_Bit;
-        Image_Sharing_Mode: Sharing_Mode;
-        Queue_Family_Indices: Queue_Family_Index_Vectors.Vector;
-        Pre_Transform: Surface_Transform_Flags := Surface_Transform_No_Bit;
-        Composite_Alpha: Composite_Alpha_Flags := Composite_Alpha_No_Bit;
-        Present_Mode: Vulkan.Present_Mode;
-        Clipped: Boolean;
-        Old_Swapchain: Swapchain;
+        Global_Priority_Query: Boolean;
+        Shader_Subgroup_Rotate: Boolean;
+        Shader_Subgroup_Rotate_Clustered: Boolean;
+        Shader_Float_Controls_2: Boolean;
+        Shader_Expect_Assume: Boolean;
+        Rectangular_Lines: Boolean;
+        Bresenham_Lines: Boolean;
+        Smooth_Lines: Boolean;
+        Stippled_Rectangular_Lines: Boolean;
+        Stippled_Bresenham_Lines: Boolean;
+        Stippled_Smooth_Lines: Boolean;
+        Vertex_Attribute_Instance_Rate_Divisor: Boolean;
+        Vertex_Attribute_Instance_Rate_Zero_Divisor: Boolean;
+        Index_Type_Uint8: Boolean;
+        Dynamic_Rendering_Local_Read: Boolean;
+        Maintenance_5: Boolean;
+        Maintenance_6: Boolean;
+        Pipeline_Protected_Access: Boolean;
+        Pipeline_Robustness: Boolean;
+        Host_Image_Copy: Boolean;
+        Push_Descriptor: Boolean;
     end record;
 
-    package Swapchain_Create_Info_Vectors is
-        new Ada.Containers.Vectors(Positive, Swapchain_Create_Info);
-
-    type Present_Info is new In_Structure(Present_Info_Type) with
-    record
-        Wait_Semaphores: Semaphore_Vectors.Vector;
-        Swapchains: Swapchain_Vectors.Vector;
-        Image_Indices: Unsigned_32_Vectors.Vector;
-        Results: Result_Vectors.Vector;
-    end record;
-
-    type Present_Mask_Array is array (1 .. Max_Device_Group_Size)
-        of Interfaces.Unsigned_32
-        with Convention => C;
-    
-    type Image_Swapchain_Create_Info is
-        new In_Structure(Image_Swapchain_Create_Info_Type) with
-    record
-        Swapchain: Vulkan.Swapchain;
-    end record;
-
-    type Bind_Image_Memory_Swapchain_Info is
-        new In_Structure(Bind_Image_Memory_Swapchain_Info_Type) with
-    record
-        Swapchain: Vulkan.Swapchain;
-        Image_Index: Interfaces.Unsigned_32;
-    end record;
-
-    type Acquire_Next_Image_Info is
-        new In_Structure(Acquire_Next_Image_Info_Type) with
-    record
-        Swapchain: Vulkan.Swapchain;
-        Timeout: Interfaces.Unsigned_64;
-        Semaphore: Vulkan.Semaphore;
-        Fence: Vulkan.Fence;
-        Device_Mask: Interfaces.Unsigned_32;
-    end record;
-
-    type Device_Group_Present_Capabilities is
-        new Out_Structure(Device_Group_Present_Capabilities_Type) with
-    record
-        Present_Mask: Present_Mask_Array;
-        Modes: Device_Group_Present_Mode_Flags
-                := Device_Group_Present_Mode_No_Bit;
-    end record;
-
-    type Device_Group_Present_Info is
-        new In_Structure(Device_Group_Present_Info_Type) with
-    record
-        Swapchain_Count: Interfaces.Unsigned_32;
-        Device_Masks: Unsigned_32_Vectors.Vector;
-        Mode: Device_Group_Present_Mode_Flags
-                := Device_Group_Present_Mode_No_Bit;
-    end record;
-
-    type Device_Group_Swapchain_Create_Info is
-        new In_Structure(Device_Group_Swapchain_Create_Info_Type) with
-    record
-        Modes: Device_Group_Present_Mode_Flags
-                := Device_Group_Present_Mode_No_Bit;
-    end record;
-
-    type Display_Mode_Parameters is
-    record
-        Visible_Region: Extent_2D;
-        Refresh_Rate: Interfaces.Unsigned_32;
-    end record
-        with Convention => C;
-
-    type Display_Mode_Create_Info is
-        new In_Structure(Display_Mode_Create_Info_Type) with
-    record
-        Flags: Display_Mode_Create_Flags := Display_Mode_Create_No_Bit;
-        Parameters: Display_Mode_Parameters;
-    end record;
-
-    type Display_Mode_Properties is
-    record
-        Display_Mode: Vulkan.Display_Mode;
-        Parameters: Display_Mode_Parameters;
-    end record
-        with Convention => C;
-
-    package Display_Mode_Properties_Vectors is
-        new Ada.Containers.Vectors(Positive, Display_Mode_Properties);
-    
-    type Display_Plane_Capabilities is
-    record
-        Supported_Alpha: Display_Plane_Alpha_Flags :=
-            Display_Plane_Alpha_No_Bit;
-        Min_Src_Position: Offset_2D;
-        Max_Src_Position: Offset_2D;
-        Min_Src_Extent: Extent_2D;
-        Max_Src_Extent: Extent_2D;
-        Min_Dst_Position: Offset_2D;
-        Max_Dst_Position: Offset_2D;
-        Min_Dst_Extent: Extent_2D;
-        Max_Dst_Extent: Extent_2D;
-    end record
-        with Convention => C;
-
-    type Display_Plane_Properties is
-    record
-        Current_Display: Display;
-        Current_Stack_Index: Interfaces.Unsigned_32;
-    end record
-        with Convention => C;
-
-    package Display_Plane_Properties_Vectors is
-        new Ada.Containers.Vectors(Positive, Display_Plane_Properties);
-
-    type Display_Properties is
-    record
-        Display: Vulkan.Display;
-        Display_Name: Ada.Strings.Unbounded.Unbounded_String;
-        Physical_Dimensions: Extent_2D;
-        Physical_Resolution: Extent_2D;
-        Supported_Transforms: Surface_Transform_Flags :=
-            Surface_Transform_No_Bit;
-        Plane_Reorder_Possible: Boolean;
-        Persistent_Content: Boolean;
-    end record;
-
-    package Display_Properties_Vectors is
-        new Ada.Containers.Vectors(Positive, Display_Properties);
-
-    type Display_Surface_Create_Info is
-        new In_Structure(Display_Surface_Create_Info_Type) with
-    record
-        Flags: Display_Surface_Create_Flags := Display_Surface_Create_No_Bit;
-        Display_Mode: Vulkan.Display_Mode;
-        Plane_Index: Interfaces.Unsigned_32;
-        Plane_Stack_Index: Interfaces.Unsigned_32;
-        Transform: Surface_Transform_Flags := Surface_Transform_No_Bit;
-        Global_Alpha: Float;
-        Alpha_Mode: Display_Plane_Alpha_Flags := Display_Plane_Alpha_No_Bit;
-        Image_Extent: Extent_2D;
-    end record;
-
-    type Display_Present_Info is
-        new In_Structure(Display_Present_Info_Type) with
-    record
-        Src_Rect: Rect_2D;
-        Dst_Rect: Rect_2D;
-        Persistent: Boolean;
-    end record;
-
-    type Queue_Family_Query_Result_Status_Properties is new Out_Structure
-        (Queue_Family_Query_Result_Status_Properties_Type) with
-    record
-        Query_Result_Status_Support: Boolean;
-    end record;
-
-    type Queue_Family_Video_Properties is new Out_Structure
-        (Queue_Family_Video_Properties_Type) with
-    record
-        Video_Codec_Operations: Video_Codec_Operation_Flags :=
-            Video_Codec_Operation_No_Bit;
-    end record;
-
-    type Video_Profile_Info is new In_Structure(Video_Profile_Info_Type) with
-    record
-        Video_Codec_Operation: Video_Codec_Operation_Flags :=
-            Video_Codec_Operation_No_Bit;
-        Chroma_Subsampling: Video_Chroma_Subsampling_Flags :=
-            Video_Chroma_Subsampling_Invalid_Bit;
-        Luma_Bit_Depth: Video_Component_Bit_Depth_Flags :=
-            Video_Component_Bit_Depth_Invalid_Bit;
-        Chroma_Bit_Depth: Video_Component_Bit_Depth_Flags :=
-            Video_Component_Bit_Depth_Invalid_Bit;
-    end record;
-
-    type Video_Profile_Info_Access is access constant Video_Profile_Info
-        with Storage_Size => 0;
-
-    package Video_Profile_Info_Vectors is new Ada.Containers.Vectors
-        (Positive, Video_Profile_Info);
-
-    type Video_Profile_List_Info is new In_Structure
-        (Video_Profile_List_Info_Type) with
-    record
-        Profiles: Video_Profile_Info_Vectors.Vector;
-    end record;
-
-    type Video_Capabilities is new Out_Structure(Video_Capabilities_Type) with
-    record
-        Flags: Video_Capability_Flags := Video_Capability_No_Bit;
-        Min_Bitstream_Buffer_Offset_Alignment: Device_Size;
-        Min_Bitstream_Buffer_Size_Alignment: Device_Size;
-        Picture_Access_Granularity: Extent_2D;
-        Min_Coded_Extent: Extent_2D;
-        Max_Coded_Extent: Extent_2D;
-        Max_DPB_Slots: Interfaces.Unsigned_32;
-        Max_Active_Reference_Pictures: Interfaces.Unsigned_32;
-        Std_Header_Version: Extension_Properties;
-    end record;
-
-    type Physical_Device_Video_Format_Info is new In_Structure
-        (Physical_Device_Video_Format_Info_Type) with
-    record
-        Image_Usage: Image_Usage_Flags := Image_Usage_No_Bit;
-    end record;
-
-    type Video_Format_Properties is new Out_Structure
-        (Video_Format_Properties_Type) with
-    record
-        Format: Vulkan.Format;
-        Component_Mapping: Vulkan.Component_Mapping;
-        Image_Create_Flags: Vulkan.Image_Create_Flags := Image_Create_No_Bit;
-        Image_Type: Vulkan.Image_Type;
-        Image_Tiling: Vulkan.Image_Tiling;
-        Image_Usage_Flags: Vulkan.Image_Usage_Flags := Image_Usage_No_Bit;
-    end record;
-
-    package Video_Format_Properties_Vectors is new Ada.Containers.Vectors
-        (Positive, Video_Format_Properties);
-
-    type Video_Picture_Resource_Info is new In_Structure
-        (Video_Picture_Resource_Info_Type) with
-    record
-        Coded_Offset: Offset_2D;
-        Coded_Extent: Extent_2D;
-        Base_Array_Layer: Array_Layers;
-        Image_View_Binding: Image_View;
-    end record;
-
-    type Video_Picture_Resource_Info_Access is
-        access constant Video_Picture_Resource_Info
-        with Storage_Size => 0;
-
-    type Video_Reference_Slot_Info is new In_Structure
-        (Video_Reference_Slot_Info_Type) with
-    record
-        Slot_Index: Interfaces.Unsigned_32;
-        Picture_Resource: Video_Picture_Resource_Info_Access;
-    end record;
-
-    type Video_Reference_Slot_Info_Access is
-        access constant Video_Reference_Slot_Info
-        with Storage_Size => 0;
-
-    package Video_Reference_Slot_Info_Vectors is new Ada.Containers.Vectors
-        (Positive, Video_Reference_Slot_Info);
-
-    type Video_Session_Memory_Requirements is new Out_Structure
-        (Video_Session_Memory_Requirements_Type) with
-    record
-        Memory_Bind_Index: Interfaces.Unsigned_32;
-        Memory_Requirements: Vulkan.Memory_Requirements;
-    end record;
-
-    package Video_Session_Memory_Requirements_Vectors is
-        new Ada.Containers.Vectors(Positive, Video_Session_Memory_Requirements);
-
-    type Bind_Video_Session_Memory_Info is new In_Structure
-        (Bind_Video_Session_Memory_Info_Type) with
-    record
-        Memory_Bind_Index: Interfaces.Unsigned_32;
-        Memory: Device_Memory;
-        Memory_Offset: Device_Size;
-        Memory_Size: Device_Size;
-    end record;
-
-    package Bind_Video_Session_Memory_Info_Vectors is new Ada.Containers.Vectors
-        (Positive, Bind_Video_Session_Memory_Info);
-
-    type Video_Session_Create_Info is new In_Structure
-        (Video_Session_Create_Info_Type) with
-    record
-        Queue_Family_Index: Vulkan.Queue_Family_Index;
-        Flags: Video_Session_Create_Flags := Video_Session_Create_No_Bit;
-        Video_Profile: Video_Profile_Info_Access;
-        Picture_Format: Format;
-        Max_Coded_Extent: Extent_2D;
-        Reference_Picture_Format: Format;
-        Max_DPB_Slots: Interfaces.Unsigned_32;
-        Max_Active_Reference_Pictures: Interfaces.Unsigned_32;
-        Std_Header_Version: Extension_Properties_Access;
-    end record;
-
-    type Video_Session_Parameters_Create_Info is new In_Structure
-        (Video_Session_Parameters_Create_Info_Type) with
-    record
-        Flags: Video_Session_Parameters_Create_Flags :=
-            Video_Session_Parameters_Create_No_Bit;
-        Video_Session_Parameters_Template: Video_Session_Parameters;
-        Video_Session: Vulkan.Video_Session;
-    end record;
-
-    type Video_Session_Parameters_Update_Info is new In_Structure
-        (Video_Session_Parameters_Update_Info_Type) with
-    record
-        Update_Sequence_Count: Interfaces.Unsigned_32;
-    end record;
-
-    type Video_Begin_Coding_Info is new In_Structure
-        (Video_Begin_Coding_Info_Type) with
-    record
-        Flags: Video_Begin_Coding_Flags := Video_Begin_Coding_No_Bit;
-        Video_Session: Vulkan.Video_Session;
-        Video_Session_Parameters: Vulkan.Video_Session_Parameters;
-        Reference_Slots: Video_Reference_Slot_Info_Vectors.Vector;
-    end record;
-
-    type Video_End_Coding_Info is new In_Structure
-        (Video_End_Coding_Info_Type) with
-    record
-        Flags: Video_End_Coding_Flags := Video_End_Coding_No_Bit;
-    end record;
-
-    type Video_Coding_Control_Info is new In_Structure
-        (Video_Coding_Control_Info_Type) with
-    record
-        Flags: Video_Coding_Control_Flags := Video_Coding_Control_No_Bit;
-    end record;
-
-    type Video_Decode_Capabilities is new Out_Structure
-        (Video_Decode_Capabilities_Type) with
-    record
-        Flags: Video_Decode_Capability_Flags := Video_Decode_Capability_No_Bit;
-    end record;
-
-    type Video_Decode_Usage_Info is new In_Structure
-        (Video_Decode_Usage_Info_Type) with
-    record
-        Video_Usage_Hints: Video_Decode_Usage_Flags :=
-            Video_Decode_Usage_Default_Bit;
-    end record;
-
-    type Video_Decode_Info is new In_Structure(Video_Decode_Info_Type) with
-    record
-        Flags: Video_Decode_Flags := Video_Decode_No_Bit;
-        Src_Buffer: Buffer;
-        Src_Buffer_Offset: Device_Size;
-        Src_Buffer_Range: Device_Size;
-        Dst_Picture_Resource: Video_Picture_Resource_Info;
-        Setup_Reference_Slot: Video_Reference_Slot_Info_Access;
-        Reference_Slots: Video_Reference_Slot_Info_Vectors.Vector;
-    end record;
- 
-    type Std_Video_H264_Sps_Vui_Flags is
-    record
-        Aspect_Ratio_Info_Present_Flag: Packed_Bit := 0;
-        Overscan_Info_Present_Flag: Packed_Bit := 0;
-        Overscan_Appropriate_Flag: Packed_Bit := 0;
-        Video_Signal_Type_Present_Flag: Packed_Bit := 0;
-        Video_Full_Range_Flag: Packed_Bit := 0;
-        Color_Description_Present_Flag: Packed_Bit := 0;
-        Chroma_LOC_Info_Present_Flag: Packed_Bit := 0;
-        Timing_Info_Present_Flag: Packed_Bit := 0;
-        Fixed_Frame_Rate_Flag: Packed_Bit := 0;
-        Bitstream_Restriction_Flag: Packed_Bit := 0;
-        NAL_HRD_Parameters_Present_Flag: Packed_Bit := 0;
-        VLC_HRD_Parameters_Present_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H264_Sps_Vui_Flags use
-    record
-        Aspect_Ratio_Info_Present_Flag at 0 range 0 .. 0;
-        Overscan_Info_Present_Flag at 0 range 1 .. 1;
-        Overscan_Appropriate_Flag at 0 range 2 .. 2;
-        Video_Signal_Type_Present_Flag at 0 range 3 .. 3;
-        Video_Full_Range_Flag at 0 range 4 .. 4;
-        Color_Description_Present_Flag at 0 range 5 .. 5;
-        Chroma_LOC_Info_Present_Flag at 0 range 6 .. 6;
-        Timing_Info_Present_Flag at 0 range 7 .. 7;
-        Fixed_Frame_Rate_Flag at 0 range 8 .. 8;
-        Bitstream_Restriction_Flag at 0 range 9 .. 9;
-        NAL_HRD_Parameters_Present_Flag at 0 range 10 .. 10;
-        VLC_HRD_Parameters_Present_Flag at 0 range 11 .. 11;
-    end record;
-
-    type Std_Video_H264_CPB_Cnt_List_32 is array 
-        (1 .. Std_Video_H264_CPB_Cnt_List_Size) of Interfaces.Unsigned_32
-        with Convention => C;
-
-    type Std_Video_H264_CPB_Cnt_List_8 is array 
-        (1 .. Std_Video_H264_CPB_Cnt_List_Size) of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H264_Hrd_Parameters is
-    record
-        CPB_Cnt_Minus_1: Interfaces.Unsigned_8;
-        Bit_Rate_Scale: Interfaces.Unsigned_8;
-        CPB_Size_Scale: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Bit_Rate_Value_Minus_1: Std_Video_H264_CPB_Cnt_List_32;
-        CPB_Size_Value_Minus_1: Std_Video_H264_CPB_Cnt_List_32;
-        CBR_Flag: Std_Video_H264_CPB_Cnt_List_8;
-        Initial_CPB_Removal_Delay_Length_Minus_1: Interfaces.Unsigned_32;
-        CPB_Removal_Delay_Length_Minus_1: Interfaces.Unsigned_32;
-        DPB_Output_Delay_Length_Minus_1: Interfaces.Unsigned_32;
-        Time_Offset_Length: Interfaces.Unsigned_32;
-    end record
-        with Convention => C;
-
-    type Std_Video_H264_Hrd_Parameters_Access is
-        access constant Std_Video_H264_Hrd_Parameters
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H264_Sequence_Parameter_Set_Vui is
-    record
-        Flags: Std_Video_H264_Sps_Vui_Flags;
-        Aspect_Ratio: Std_Video_H264_Aspect_Ratio;
-        Sar_Width: Interfaces.Unsigned_16;
-        Sar_Height: Interfaces.Unsigned_16;
-        Video_Format: Interfaces.Unsigned_8;
-        Colour_Primaries: Interfaces.Unsigned_8;
-        Transfer_Characteristics: Interfaces.Unsigned_8;
-        Matrix_Coefficients: Interfaces.Unsigned_8;
-        Num_Units_In_Tick: Interfaces.Unsigned_32;
-        Time_Scale: Interfaces.Unsigned_32;
-        Max_Num_Reorder_Frames: Interfaces.Unsigned_8;
-        Max_Dec_Frame_Buffering: Interfaces.Unsigned_8;
-        Chroma_Sample_LOC_Type_Top_Field: Interfaces.Unsigned_8;
-        Chroma_Sample_LOC_Type_Bottom_Field: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_32;
-        Hrd_Parameters: Std_Video_H264_Hrd_Parameters_Access;
-    end record
-        with Convention => C;
-
-    type Std_Video_H264_Sequence_Parameter_Set_Vui_Access is
-        access constant Std_Video_H264_Sequence_Parameter_Set_Vui
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H264_Sps_Flags is
-    record
-        Constraint_Set_0_Flag: Packed_Bit := 0;
-        Constraint_Set_1_Flag: Packed_Bit := 0;
-        Constraint_Set_2_Flag: Packed_Bit := 0;
-        Constraint_Set_3_Flag: Packed_Bit := 0;
-        Constraint_Set_4_Flag: Packed_Bit := 0;
-        Constraint_Set_5_Flag: Packed_Bit := 0;
-        Direct_8x8_Inference_Flag: Packed_Bit := 0;
-        Mb_Adaptive_Frame_Field_Flag: Packed_Bit := 0;
-        Frame_Mbs_Only_Flag: Packed_Bit := 0;
-        Delta_Pic_Order_Always_Zero_Flag: Packed_Bit := 0;
-        Separate_Colour_Plane_Flag: Packed_Bit := 0;
-        Gaps_In_Frame_Num_Value_Allowed_Flag: Packed_Bit := 0;
-        QPPrime_Y_Zero_Transform_Bypass_Flag: Packed_Bit := 0;
-        Frame_Cropping_Flag: Packed_Bit := 0;
-        Seq_Scaling_Matrix_Present_Flag: Packed_Bit := 0;
-        Vui_Parameters_Present_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H264_Sps_Flags use
-    record
-        Constraint_Set_0_Flag at 0 range 0 .. 0;
-        Constraint_Set_1_Flag at 0 range 1 .. 1;
-        Constraint_Set_2_Flag at 0 range 2 .. 2;
-        Constraint_Set_3_Flag at 0 range 3 .. 3;
-        Constraint_Set_4_Flag at 0 range 4 .. 4;
-        Constraint_Set_5_Flag at 0 range 5 .. 5;
-        Direct_8x8_Inference_Flag at 0 range 6 .. 6;
-        Mb_Adaptive_Frame_Field_Flag at 0 range 7 .. 7;
-        Frame_Mbs_Only_Flag at 0 range 8 .. 8;
-        Delta_Pic_Order_Always_Zero_Flag at 0 range 9 .. 9;
-        Separate_Colour_Plane_Flag at 0 range 10 .. 10;
-        Gaps_In_Frame_Num_Value_Allowed_Flag at 0 range 11 .. 11;
-        QPPrime_Y_Zero_Transform_Bypass_Flag at 0 range 12 .. 12;
-        Frame_Cropping_Flag at 0 range 13 .. 13;
-        Seq_Scaling_Matrix_Present_Flag at 0 range 14 .. 14;
-        Vui_Parameters_Present_Flag at 0 range 15 .. 15;
-    end record;
-
-    type Std_Video_H264_Scaling_List_4x4 is
-        array (1 .. Std_Video_H264_Scaling_List_4x4_Num_Lists,
-               1 .. Std_Video_H264_Scaling_List_4x4_Num_Elements)
-               of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H264_Scaling_List_8x8 is
-        array (1 .. Std_Video_H264_Scaling_List_8x8_Num_Lists,
-               1 .. Std_Video_H264_Scaling_List_8x8_Num_Elements)
-               of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H264_Scaling_Lists is
-    record
-        Scaling_List_Present_Mask: Interfaces.Unsigned_16;
-        Use_Default_Scaling_Matrix_Mask: Interfaces.Unsigned_16;
-        Scaling_List_4x4: Std_Video_H264_Scaling_List_4x4;
-        Scaling_List_8x8: Std_Video_H264_Scaling_List_8x8;
-    end record
-        with Convention => C;
-
-    type Std_Video_H264_Scaling_Lists_Access is
-        access constant Std_Video_H264_Scaling_Lists
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Integer_32_Access is access constant Interfaces.Integer_32
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H264_Sequence_Parameter_Set is
-    record
-        Flags: Std_Video_H264_Sps_Flags;
-        Profile: Std_Video_H264_Profile;
-        Level: Std_Video_H264_Level;
-        Chroma_Format: Std_Video_H264_Chroma_Format;
-        Seq_Parameter_Set_ID: Interfaces.Unsigned_8;
-        Bit_Depth_Luma_Minus_8: Interfaces.Unsigned_8;
-        Bit_Depth_Chroma_Minus_8: Interfaces.Unsigned_8;
-        Log_2_Max_Frame_Num_Minus_4: Interfaces.Unsigned_8;
-        Pic_Order_Cnt_Type: Std_Video_H264_Poc;
-        Offset_For_Non_Ref_Pic: Interfaces.Integer_32;
-        Offset_For_Top_To_Bottom_Field: Interfaces.Integer_32;
-        Log_2_Max_Pic_Order_Cnt_LSB_Minus_4: Interfaces.Unsigned_8;
-        Num_Ref_Frames_In_Pic_Order_Cnt_Cycle: Interfaces.Unsigned_8;
-        Max_Num_Ref_Frames: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Pic_Width_In_MBs_Minus_1: Interfaces.Unsigned_32;
-        Pic_Height_In_Map_Units_Minus_1: Interfaces.Unsigned_32;
-        Frame_Crop_Left_Offset: Interfaces.Unsigned_32;
-        Frame_Crop_Right_Offset: Interfaces.Unsigned_32;
-        Frame_Crop_Top_Offset: Interfaces.Unsigned_32;
-        Frame_Crop_Bottom_Offset: Interfaces.Unsigned_32;
-        Reserved_2: Interfaces.Unsigned_32;
-        Offset_For_Ref_Frame: Integer_32_Access;
-        Scaling_Lists: Std_Video_H264_Scaling_Lists_Access;
-        Sequence_Parameter_Set_Vui:
-            Std_Video_H264_Sequence_Parameter_Set_Vui_Access;
-    end record
-        with Convention => C;
-
-    package Std_Video_H264_Sequence_Parameter_Set_Vectors is
-        new Ada.Containers.Vectors(Positive,
-                                   Std_Video_H264_Sequence_Parameter_Set);
-
-    type Std_Video_H264_Pps_Flags is
-    record
-        Transform_8x8_Mode_Flag: Packed_Bit := 0;
-        Redundant_Pic_Cnt_Present_Flag: Packed_Bit := 0;
-        Constrained_Intra_Pred_Flag: Packed_Bit := 0;
-        Deblocking_Filter_Control_Present_Flag: Packed_Bit := 0;
-        Weighted_Pred_Flag: Packed_Bit := 0;
-        Bottom_Field_Pic_Order_In_Frame_Present_Flag: Packed_Bit := 0;
-        Entropy_Coding_Mode_Flag: Packed_Bit := 0;
-        Pic_Scaling_Matrix_Present_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H264_Pps_Flags use
-    record
-        Transform_8x8_Mode_Flag at 0 range 0 .. 0;
-        Redundant_Pic_Cnt_Present_Flag at 0 range 1 .. 1;
-        Constrained_Intra_Pred_Flag at 0 range 2 .. 2;
-        Deblocking_Filter_Control_Present_Flag at 0 range 3 .. 3;
-        Weighted_Pred_Flag at 0 range 4 .. 4;
-        Bottom_Field_Pic_Order_In_Frame_Present_Flag at 0 range 5 .. 5;
-        Entropy_Coding_Mode_Flag at 0 range 6 .. 6;
-        Pic_Scaling_Matrix_Present_Flag at 0 range 7 .. 7;
-    end record;
-
-    type Std_Video_H264_Picture_Parameter_Set is
-    record
-        Flags: Std_Video_H264_Pps_Flags;
-        Seq_Parameter_Set_Id: Interfaces.Unsigned_8;
-        Pic_Parameter_Set_Id: Interfaces.Unsigned_8;
-        Num_Ref_Idx_L0_Default_Active_Minus_1: Interfaces.Unsigned_8;
-        Num_Ref_Idx_L1_Default_Active_Minus_1: Interfaces.Unsigned_8;
-        Weighted_Bipred: Std_Video_H264_Weighted_Bipred;
-        Pic_Init_Qp_Minus_26: Interfaces.Integer_8;
-        Pic_Init_Qs_Minus_26: Interfaces.Integer_8;
-        Chroma_Qp_Index_Offset: Interfaces.Integer_8;
-        Second_Chroma_Qp_Index_Offset: Interfaces.Integer_8;
-        Scaling_Lists: Std_Video_H264_Scaling_Lists_Access;
-    end record
-        with Convention => C;
-
-    package Std_Video_H264_Picture_Parameter_Set_Vectors is
-        new Ada.Containers.Vectors(Positive,
-                                   Std_Video_H264_Picture_Parameter_Set);
-
-    type Std_Video_Decode_H264_Picture_Info_Flags is
-    record
-        Field_Pic_Flag: Packed_Bit := 0;
-        Is_Intra: Packed_Bit := 0;
-        Idr_Pic_Flag: Packed_Bit := 0;
-        Bottom_Field_Flag: Packed_Bit := 0;
-        Is_Reference: Packed_Bit := 0;
-        Complementary_Field_Pair: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_Decode_H264_Picture_Info_Flags use
-    record
-        Field_Pic_Flag at 0 range 0 .. 0;
-        Is_Intra at 0 range 1 .. 1;
-        Idr_Pic_Flag at 0 range 2 .. 2;
-        Bottom_Field_Flag at 0 range 3 .. 3;
-        Is_Reference at 0 range 4 .. 4;
-        Complementary_Field_Pair at 0 range 5 .. 5;
-    end record;
-
-    type Std_Video_Decode_H264_Field_Order_Count_List is
-        array (1 .. Std_Video_Decode_H264_Field_Order_Count_List_Size)
-        of Interfaces.Integer_32
-        with Convention => C;
-
-    type Std_Video_Decode_H264_Picture_Info is
-    record
-        Flags: Std_Video_Decode_H264_Picture_Info_Flags;
-        Seq_Parameter_Set_ID: Interfaces.Unsigned_8;
-        Pic_Parameter_Set_ID: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Reserved_2: Interfaces.Unsigned_8;
-        Frame_Num: Interfaces.Unsigned_16;
-        Idr_Pic_ID: Interfaces.Unsigned_16;
-        Pic_Order_Count: Std_Video_Decode_H264_Field_Order_Count_List;
-    end record
-        with Convention => C;
-
-    type Std_Video_Decode_H264_Picture_Info_Access is
-        access constant Std_Video_Decode_H264_Picture_Info
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_Decode_H264_Reference_Info_Flags is
-    record
-        Top_Field_Flag: Packed_Bit := 0;
-        Bottom_Field_Flag: Packed_Bit := 0;
-        Used_For_Long_Term_Reference: Packed_Bit := 0;
-        Is_Non_Existing: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_Decode_H264_Reference_Info_Flags use
-    record
-        Top_Field_Flag at 0 range 0 .. 0;
-        Bottom_Field_Flag at 0 range 1 .. 1;
-        Used_For_Long_Term_Reference at 0 range 2 .. 2;
-        Is_Non_Existing at 0 range 3 .. 3;
-    end record;
-
-    type Std_Video_Decode_H264_Reference_Info is
-    record
-        Flags: Std_Video_Decode_H264_Reference_Info_Flags;
-        Frame_Num: Interfaces.Unsigned_16;
-        Reserved: Interfaces.Unsigned_16;
-        Pic_Order_Cnt: Std_Video_Decode_H264_Field_Order_Count_List;
-    end record
-        with Convention => C;
-
-    type Std_Video_Decode_H264_Reference_Info_Access is
-        access constant Std_Video_Decode_H264_Reference_Info
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Video_Decode_H264_Profile_Info is new In_Structure
-        (Video_Decode_H264_Profile_Info_Type) with
-    record
-        Std_Profile: Std_Video_H264_Profile;
-        Picture_Layout: Video_Decode_H264_Picture_Layout_Flags := 
-            Video_Decode_H264_Picture_Layout_Progressive_Bit;
-    end record;
-
-    type Video_Decode_H264_Capabilities is new Out_Structure
-        (Video_Decode_H264_Capabilities_Type) with
-    record
-        Max_Level: Std_Video_H264_Level;
-        Field_Offset_Granularity: Offset_2D;
-    end record;
-
-    type Video_Decode_H264_Session_Parameters_Add_Info is new In_Structure
-        (Video_Decode_H264_Session_Parameters_Add_Info_Type) with
-    record
-        Std_SPSs: Std_Video_H264_Sequence_Parameter_Set_Vectors.Vector;
-        Std_PPSs: Std_Video_H264_Picture_Parameter_Set_Vectors.Vector;
-    end record;
-
-    type Video_Decode_H264_Session_Parameters_Add_Info_Access is
-        access constant Video_Decode_H264_Session_Parameters_Add_Info
-        with Convention => C,
-              Storage_Size => 0;
-
-    type Video_Decode_H264_Session_Parameters_Create_Info is new In_Structure
-        (Video_Decode_H264_Session_Parameters_Create_Info_Type) with
-    record
-        Max_Std_SPS_Count: Interfaces.Unsigned_32;
-        Max_Std_PPS_Count: Interfaces.Unsigned_32;
-        Parameters_Add_Info:
-            Video_Decode_H264_Session_Parameters_Add_Info_Access;
-    end record;
-
-    type Video_Decode_H264_Picture_Info is new In_Structure
-        (Video_Decode_H264_Picture_Info_Type) with
-    record
-        Std_Picture_Info: Std_Video_Decode_H264_Picture_Info_Access;
-        Slice_Offsets: Unsigned_32_Vectors.Vector;
-    end record;
-
-    type Video_Decode_H264_DPB_Slot_Info is new In_Structure
-        (Video_Decode_H264_DPB_Slot_Info_Type) with
-    record
-        Std_Reference_Info: Std_Video_Decode_H264_Reference_Info_Access;
-    end record;
-
-    type Rendering_Fragment_Shading_Rate_Attachment_Info is new In_Structure
-        (Rendering_Fragment_Shading_Rate_Attachment_Info_Type) with
-    record
-        Image_View: Vulkan.Image_View;
-        Image_Layout: Vulkan.Image_Layout;
-        Shading_Rate_Attachment_Texel_Size: Extent_2D;
-    end record;
-
-    type Rendering_Fragment_Density_Map_Attachment_Info is new In_Structure
-        (Rendering_Fragment_Density_Map_Attachment_Info_Type) with
-    record
-        Image_View: Vulkan.Image_View;
-        Image_Layout: Vulkan.Image_Layout;
-    end record;
-
-    package Sample_Count_Flags_Vectors is new Ada.Containers.Vectors
-        (Positive, Sample_Count_Flags);
-
-    type Attachment_Sample_Count_Info is new In_Structure
-        (Attachment_Sample_Count_Info_Type) with
-    record
-        Color_Attachment_Samples: Sample_Count_Flags_Vectors.Vector;
-        Depth_Stencil_Attachment_Samples: Sample_Count_Flags :=
-            Sample_Count_No_Bit;
-    end record;
-
-    type Multiview_Per_View_Attributes_Info is new In_Structure
-        (Multiview_Per_View_Attributes_Info_Type) with
-    record
-        Per_View_Attributes: Boolean;
-        Per_View_Attributes_Position_X_Only: Boolean;
-    end record;
-
-    type Import_Memory_FD_Info is new In_Structure
-        (Import_Memory_FD_Info_Type) with
-    record
-        Handle_Type: External_Memory_Handle_Type_Flags :=
-            External_Memory_Handle_Type_No_Bit;
-        FD: File_Descriptor;
-    end record;
-
-    type Memory_FD_Properties is new Out_Structure
-        (Memory_FD_Properties_Type) with
-    record
-        Memory_Type_Bits: Interfaces.Unsigned_32;
-    end record;
-
-    type Memory_Get_FD_Info is new In_Structure(Memory_Get_FD_Info_Type) with
-    record
-        Memory: Device_Memory;
-        Handle_Type: External_Memory_Handle_Type_Flags :=
-            External_Memory_Handle_Type_No_Bit;
-    end record;
-
-    type Import_Semaphore_FD_Info is new In_Structure
-        (Import_Semaphore_FD_Info_Type) with
-    record
-        Semaphore: Vulkan.Semaphore;
-        Flags: Semaphore_Import_Flags := Semaphore_Import_No_Bit;
-        Handle_Type: External_Semaphore_Handle_Type_Flags :=
-            External_Semaphore_Handle_Type_No_Bit;
-        FD: File_Descriptor;
-    end record;
-
-    type Semaphore_Get_FD_Info is new In_Structure
-        (Semaphore_Get_FD_Info_Type) with
-    record
-        Semaphore: Vulkan.Semaphore;
-        Handle_Type: External_Semaphore_Handle_Type_Flags :=
-            External_Semaphore_Handle_Type_No_Bit;
-    end record;
-
-    type Physical_Device_Push_Descriptor_Properties is new Out_Structure
-        (Physical_Device_Push_Descriptor_Properties_Type) with
-    record
+    package Image_Layout_Vectors is new Ada.Containers.Vectors(Positive,
+                                                               Image_Layout);
+
+    type Physical_Device_Vulkan_1_4_Properties is new Out_Structure
+        (Physical_Device_Vulkan_1_4_Properties_Type) with
+    record
+        Line_Sub_Pixel_Precision_Bits: Interfaces.Unsigned_32;
+        Max_Vertex_Attrib_Divisor: Interfaces.Unsigned_32;
+        Supports_Non_Zero_First_Instance: Boolean;
         Max_Push_Descriptors: Interfaces.Unsigned_32;
-    end record;
-
-    type Rect_Layer is
-    record
-        Offset: Offset_2D;
-        Extent: Extent_2D;
-        Layer: Array_Layers;
-    end record
-        with Convention => C;
-
-    package Rect_Layer_Vectors is new Ada.Containers.Vectors
-        (Positive, Rect_Layer);
-
-    type Present_Region is
-    record
-        Rectangles: Rect_Layer_Vectors.Vector;
-    end record;
-
-    package Present_Region_Vectors is new Ada.Containers.Vectors
-        (Positive, Present_Region);
-
-    type Present_Regions is new In_Structure(Present_Regions_Type) with
-    record
-        Swapchain_Count: Interfaces.Unsigned_32;
-        Regions: Present_Region_Vectors.Vector;
-    end record;
-
-    type Shared_Present_Surface_Capabilities is new Out_Structure
-        (Shared_Present_Surface_Capabilities_Type) with
-    record
-        Shared_Present_Supported_Usage_Flags: Image_Usage_Flags :=
-            Image_Usage_No_Bit;
-    end record;
-
-    type Import_Fence_FD_Info is new In_Structure
-        (Import_Fence_FD_Info_Type) with
-    record
-        Fence: Vulkan.Fence;
-        Flags: Fence_Import_Flags := Fence_Import_No_Bit;
-        Handle_Type: External_Fence_Handle_Type_Flags :=
-            External_Fence_Handle_Type_No_Bit;
-        FD: File_Descriptor;
-    end record;
-
-    type Fence_Get_FD_Info is new In_Structure(Fence_Get_FD_Info_Type) with
-    record
-        Fence: Vulkan.Fence;
-        Handle_Type: External_Fence_Handle_Type_Flags :=
-            External_Fence_Handle_Type_No_Bit;
-    end record;
-
-    type Physical_Device_Performance_Query_Features is new Out_Structure
-        (Physical_Device_Performance_Query_Features_Type) with
-    record
-        Performance_Counter_Query_Pools: Boolean;
-        Performance_Counter_Multiple_Query_Pools: Boolean;
-    end record;
-
-    type Physical_Device_Performance_Query_Properties is new Out_Structure
-        (Physical_Device_Performance_Query_Properties_Type) with
-    record
-        Allow_Command_Buffer_Query_Copies: Boolean;
-    end record;
-
-    type Performance_Counter is new Out_Structure(Performance_Counter_Type) with
-    record
-        Unit: Performance_Counter_Unit;
-        Scope: Performance_Counter_Scope;
-        Storage: Performance_Counter_Storage;
-        UUID: Vulkan.UUID;
-    end record;
-
-    package Performance_Counter_Vectors is new Ada.Containers.Vectors
-        (Positive, Performance_Counter);
-
-    type Performance_Counter_Description is new Out_Structure
-        (Performance_Counter_Description_Type) with
-    record
-        Flags: Performance_Counter_Description_Flags :=
-            Performance_Counter_Description_No_Bit;
-        Name: Ada.Strings.Unbounded.Unbounded_String;
-        Category: Ada.Strings.Unbounded.Unbounded_String;
-        Description: Ada.Strings.Unbounded.Unbounded_String;
-    end record;
-
-    package Performance_Counter_Description_Vectors is
-        new Ada.Containers.Vectors(Positive, Performance_Counter_Description);
-
-    type Query_Pool_Performance_Create_Info is new In_Structure
-        (Query_Pool_Performance_Create_Info_Type) with
-    record
-        Queue_Family_Index: Vulkan.Queue_Family_Index;
-        Counter_Indices: Unsigned_32_Vectors.Vector;
-    end record;
-
-    -- Since this is passed directly into the query system via
-    -- a void* I can't really wrap it in any convenient way.
-    -- Use with caution.
-    type Peformance_Counter_Result(Storage: Performance_Counter_Storage) is
-    record
-        case Storage is
-            when Int32 =>
-                Int32: Interfaces.Integer_32;
-            when Int64 =>
-                Int64: Interfaces.Integer_64;
-            when Uint32 =>
-                Uint32: Interfaces.Unsigned_32;
-            when Uint64 =>
-                Uint64: Interfaces.Unsigned_64;
-            when Float32 =>
-                Float32: Interfaces.C.C_float;
-            when Float64 =>
-                Float64: Interfaces.C.double;
-        end case;
-    end record
-        with Convention => C,
-             Unchecked_Union;
-
-    type Acquire_Profiling_Lock_Info is new In_Structure
-        (Acquire_Profiling_Lock_Info_Type) with
-    record
-        Flags: Acquire_Profiling_Lock_Flags := Acquire_Profiling_Lock_No_Bit;
-        Timeout: Interfaces.Unsigned_64;
-    end record;
-
-    type Performance_Query_Submit_Info is new In_Structure
-        (Performance_Query_Submit_Info_Type) with
-    record
-        Counter_Pass_Index: Interfaces.Unsigned_32;
-    end record;
-
-    type Physical_Device_Surface_Info_2 is new In_Structure
-        (Physical_Device_Surface_Info_2_Type) with
-    record
-        Surface: Vulkan.Surface;
-    end record;
-
-    type Surface_Capabilities_2 is new Out_Structure
-        (Surface_Capabilities_2_Type) with
-    record
-        Surface_Capabilities: Vulkan.Surface_Capabilities;
-    end record;
-
-    type Surface_Format_2 is new Out_Structure(Surface_Format_2_Type) with
-    record
-        Surface_Format: Vulkan.Surface_Format;
-    end record;
-
-    package Surface_Format_2_Vectors is new Ada.Containers.Vectors
-        (Positive, Surface_Format_2);
-
-    type Display_Properties_2 is new Out_Structure
-        (Display_Properties_2_Type) with
-    record
-        Display_Properties: Vulkan.Display_Properties;
-    end record;
-
-    package Display_Properties_2_Vectors is new Ada.Containers.Vectors
-        (Positive, Display_Properties_2);
-
-    type Display_Plane_Properties_2 is new Out_Structure
-        (Display_Plane_Properties_2_Type) with
-    record
-        Display_Plane_Properties: Vulkan.Display_Plane_Properties;
-    end record;
-
-    package Display_Plane_Properties_2_Vectors is new Ada.Containers.Vectors
-        (Positive, Display_Plane_Properties_2);
-
-    type Display_Mode_Properties_2 is new Out_Structure
-        (Display_Mode_Properties_2_Type) with
-    record
-        Display_Mode_Properties: Vulkan.Display_Mode_Properties;
-    end record;
-
-    package Display_Mode_Properties_2_Vectors is new Ada.Containers.Vectors
-        (Positive, Display_Mode_Properties_2);
-
-    type Display_Plane_Info_2 is new In_Structure
-        (Display_Plane_Info_2_Type) with
-    record
-        Mode: Display_Mode;
-        Plane_Index: Interfaces.Unsigned_32;
-    end record;
-
-    type Display_Plane_Capabilities_2 is new Out_Structure
-        (Display_Plane_Capabilities_2_Type) with
-    record
-        Capabilities: Display_Plane_Capabilities;
-    end record;
-
-    type Physical_Device_Shader_Clock_Features is new Out_Structure
-        (Physical_Device_Shader_Clock_Features_Type) with
-    record
-        Shader_Subgroup_Clock: Boolean;
-        Shader_Device_Clock: Boolean;
-    end record;
-
-    type Std_Video_H265_Sub_Layers_List_8 is
-        array (1 .. Std_Video_H265_Sub_Layers_List_Size)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-    
-    type Std_Video_H265_Sub_Layers_List_16 is
-        array (1 .. Std_Video_H265_Sub_Layers_List_Size)
-        of Interfaces.Unsigned_16
-        with Convention => C;
-
-    type Std_Video_H265_Sub_Layers_List_32 is
-        array (1 .. Std_Video_H265_Sub_Layers_List_Size)
-        of Interfaces.Unsigned_32
-        with Convention => C;
-
-    type Std_Video_H265_Dec_Pic_Buf_Mgr is
-    record
-        Max_Latency_Increase_Plus_1: Std_Video_H265_Sub_Layers_List_32;
-        Max_Dec_Pic_Buffering_Minus_1: Std_Video_H265_Sub_Layers_List_8;
-        Max_Num_Reorder_Pics: Std_Video_H265_Sub_Layers_List_8;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Dec_Pic_Buf_Mgr_Access is
-        access constant Std_Video_H265_Dec_Pic_Buf_Mgr
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_CPB_Cnt_List is
-        array (1 .. Std_Video_H265_CPB_Cnt_List_Size)
-        of Interfaces.Unsigned_32
-        with Convention => C;
-
-    type Std_Video_H265_Sub_Layer_Hrd_Parameters is
-    record
-        Bit_Rate_Value_Minus_1: Std_Video_H265_CPB_Cnt_List;
-        CPB_Size_Value_Minus_1: Std_Video_H265_CPB_Cnt_List;
-        CPB_Size_DU_Value_Minus_1: Std_Video_H265_CPB_Cnt_List;
-        Bit_Rate_DU_Value_Minus_1: Std_Video_H265_CPB_Cnt_List;
-        CBR_Flag: Interfaces.Unsigned_32;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Sub_Layer_Hrd_Parameters_Access is
-        access constant Std_Video_H265_Sub_Layer_Hrd_Parameters
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_Hrd_Flags is
-    record
-        NAL_Hrd_Parameters_Present_Flag: Packed_Bit := 0;
-        VCL_Hrd_Parameters_Present_Flag: Packed_Bit := 0;
-        Sub_Pic_Hrd_Params_Present_Flag: Packed_Bit := 0;
-        Sub_Pic_CPB_Params_In_Pic_Timing_SEI_Flag: Packed_Bit := 0;
-        Fixed_Pic_Rate_General_Flag: Packed_Bit := 0;
-        Fixed_Pic_Rate_Within_CVS_Flag: Packed_Bit := 0;
-        Low_Delay_Hrd_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_Hrd_Flags use
-    record
-        NAL_Hrd_Parameters_Present_Flag at 0 range 0 .. 0;
-        VCL_Hrd_Parameters_Present_Flag at 0 range 1 .. 1;
-        Sub_Pic_Hrd_Params_Present_Flag at 0 range 2 .. 2;
-        Sub_Pic_CPB_Params_In_Pic_Timing_SEI_Flag at 0 range 3 .. 3;
-        Fixed_Pic_Rate_General_Flag at 0 range 4 .. 11;
-        Fixed_Pic_Rate_Within_CVS_Flag at 0 range 12 .. 19;
-        Low_Delay_Hrd_Flag at 0 range 20 .. 27;
-    end record;
-
-    type Reserved_16 is array (Positive range <>) of Interfaces.Unsigned_16
-        with Convention => C;
-
-    type Std_Video_H265_Hrd_Parameters is
-    record
-        Flags: Std_Video_H265_Hrd_Flags;
-        Tick_Divisor_Minus_2: Interfaces.Unsigned_8;
-        DU_CPB_Removal_Delay_Increment_Length_Minus_1: Interfaces.Unsigned_8;
-        DPB_Output_Delay_DU_Length_Minus_1: Interfaces.Unsigned_8;
-        Bit_Rate_Scale: Interfaces.Unsigned_8;
-        CPB_Size_Scale: Interfaces.Unsigned_8;
-        CPB_Size_DU_Scale: Interfaces.Unsigned_8;
-        Initial_CPB_Removal_Delay_Length_Minus_1: Interfaces.Unsigned_8;
-        AU_CPB_Removal_Delay_Length_Minus_1: Interfaces.Unsigned_8;
-        DPB_Output_Delay_Length_Minus_1: Interfaces.Unsigned_8;
-        CPB_Cnt_Minus_1: Std_Video_H265_Sub_Layers_List_8;
-        Elemental_Duration_In_TC_Minus_1: Std_Video_H265_Sub_Layers_List_16;
-        Reserved: Reserved_16(1 .. 3);
-        Sub_Layer_Hrd_Parameters_NAL:
-            Std_Video_H265_Sub_Layer_Hrd_Parameters_Access;
-        Sub_Layer_Hrd_Parameters_VCL:
-            Std_Video_H265_Sub_Layer_Hrd_Parameters_Access;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Hrd_Parameters_Access is
-        access constant Std_Video_H265_Hrd_Parameters
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_VPS_Flags is
-    record
-        VPS_Temporal_ID_Nesting_Flag: Packed_Bit := 0;
-        VPS_Sub_Layer_Ordering_Info_Present_Flag: Packed_Bit := 0;
-        VPS_Timing_Info_Present_Flag: Packed_Bit := 0;
-        VPS_POC_Proportional_To_Timing_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_VPS_Flags use
-    record
-        VPS_Temporal_ID_Nesting_Flag at 0 range 0 .. 0;
-        VPS_Sub_Layer_Ordering_Info_Present_Flag at 0 range 1 .. 1;
-        VPS_Timing_Info_Present_Flag at 0 range 2 .. 2;
-        VPS_POC_Proportional_To_Timing_Flag at 0 range 3 .. 3;
-    end record;
-
-    type Std_Video_H265_Profile_Tier_Level_Flags is
-    record
-        General_Tier_Flag: Packed_Bit := 0;
-        General_Progressive_Source_Flag: Packed_Bit := 0;
-        General_Interlaced_Source_Flag: Packed_Bit := 0;
-        General_Non_Packed_Constraint_Flag: Packed_Bit := 0;
-        General_Frame_Only_Constraint_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_Profile_Tier_Level_Flags use
-    record
-        General_Tier_Flag at 0 range 0 .. 0;
-        General_Progressive_Source_Flag at 0 range 1 .. 1;
-        General_Interlaced_Source_Flag at 0 range 2 .. 2;
-        General_Non_Packed_Constraint_Flag at 0 range 3 .. 3;
-        General_Frame_Only_Constraint_Flag at 0 range 4 .. 4;
-    end record;
-
-    type Std_Video_H265_Profile_Tier_Level is
-    record
-        Flags: Std_Video_H265_Profile_Tier_Level_Flags;
-        General_Profile: Std_Video_H265_Profile;
-        General_Level: Std_Video_H265_Level;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Profile_Tier_Level_Access is
-        access constant Std_Video_H265_Profile_Tier_Level
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_Video_Parameter_Set is
-    record
-        Flags: Std_Video_H265_VPS_Flags;
-        VPS_Video_Parameter_Set_ID: Interfaces.Unsigned_8;
-        VPS_Max_Sub_Layers_Minus_1: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Reserved_2: Interfaces.Unsigned_8;
-        VPS_Num_Units_In_Tick: Interfaces.Unsigned_32;
-        VPS_Time_Scale: Interfaces.Unsigned_32;
-        VPS_Num_Ticks_POC_Diff_One_Minus_1: Interfaces.Unsigned_32;
-        Reserved_3: Interfaces.Unsigned_32;
-        Dec_Pic_Buf_Mgr: Std_Video_H265_Dec_Pic_Buf_Mgr_Access;
-        Hrd_Parameters: Std_Video_H265_Hrd_Parameters_Access;
-        Profile_Tier_Level: Std_Video_H265_Profile_Tier_Level_Access;
-    end record
-        with Convention => C;
-
-    package Std_Video_H265_Video_Parameter_Set_Vectors is
-        new Ada.Containers.Vectors(Positive,
-                                   Std_Video_H265_Video_Parameter_Set);
-
-    type Std_Video_H265_Scaling_List_4x4_List is
-        array (1 .. Std_Video_H265_Scaling_List_4x4_Num_Lists,
-               1 .. Std_Video_H265_Scaling_List_4x4_Num_Elements)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_List_8x8_List is
-        array (1 .. Std_Video_H265_Scaling_List_8x8_Num_Lists,
-               1 .. Std_Video_H265_Scaling_List_8x8_Num_Elements)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_List_16x16_List is
-        array (1 .. Std_Video_H265_Scaling_List_16x16_Num_Lists,
-               1 .. Std_Video_H265_Scaling_List_16x16_Num_Elements)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_List_32x32_List is
-        array (1 .. Std_Video_H265_Scaling_List_32x32_Num_Lists,
-               1 .. Std_Video_H265_Scaling_List_32x32_Num_Elements)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_List_16x16 is
-        array (1 .. Std_Video_H265_Scaling_List_16x16_Num_Lists)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_List_32x32 is
-        array (1 .. Std_Video_H265_Scaling_List_32x32_Num_Lists)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_Lists is
-    record
-        Scaling_List_4x4: Std_Video_H265_Scaling_List_4x4_List;
-        Scaling_List_8x8: Std_Video_H265_Scaling_List_8x8_List;
-        Scaling_List_16x16: Std_Video_H265_Scaling_List_16x16_List;
-        Scaling_List_32x32: Std_Video_H265_Scaling_List_32x32_List;
-        Scaling_List_DC_Coef_16x16: Std_Video_H265_Scaling_List_16x16;
-        Scaling_List_DC_Coef_32x32: Std_Video_H265_Scaling_List_32x32;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Scaling_Lists_Access is
-        access constant Std_Video_H265_Scaling_Lists
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_SPS_VUI_Flags is
-    record
-        Aspect_Ratio_Info_Present_Flag: Packed_Bit := 0;
-        Overscan_Info_Present_Flag: Packed_Bit := 0;
-        Overscan_Appropriate_Flag: Packed_Bit := 0;
-        Video_Signal_Type_Present_Flag: Packed_Bit := 0;
-        Video_Full_Range_Flag: Packed_Bit := 0;
-        Colour_Description_Present_Flag: Packed_Bit := 0;
-        Chroma_LOC_Info_Present_Flag: Packed_Bit := 0;
-        Neutral_Chroma_Indication_Flag: Packed_Bit := 0;
-        Field_Seq_Flag: Packed_Bit := 0;
-        Frame_Field_Info_Present_Flag: Packed_Bit := 0;
-        Default_Display_Window_Flag: Packed_Bit := 0;
-        VUI_Timing_Info_Present_Flag: Packed_Bit := 0;
-        VUI_POC_Proportional_To_Timing_Flag: Packed_Bit := 0;
-        VUI_Hrd_Parameters_Present_Flag: Packed_Bit := 0;
-        Bitstream_Restriction_Flag: Packed_Bit := 0;
-        Tiles_Fixed_Structure_Flag: Packed_Bit := 0;
-        Motion_Vectors_Over_Pic_Boundaries_Flag: Packed_Bit := 0;
-        Restricted_Ref_Pic_Lists_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_SPS_VUI_Flags use
-    record
-        Aspect_Ratio_Info_Present_Flag at 0 range 0 .. 0;
-        Overscan_Info_Present_Flag at 0 range 1 .. 1;
-        Overscan_Appropriate_Flag at 0 range 2 .. 2;
-        Video_Signal_Type_Present_Flag at 0 range 3 .. 3;
-        Video_Full_Range_Flag at 0 range 4 .. 4;
-        Colour_Description_Present_Flag at 0 range 5 .. 5;
-        Chroma_LOC_Info_Present_Flag at 0 range 6 .. 6;
-        Neutral_Chroma_Indication_Flag at 0 range 7 .. 7;
-        Field_Seq_Flag at 0 range 8 .. 8;
-        Frame_Field_Info_Present_Flag at 0 range 9 .. 9;
-        Default_Display_Window_Flag at 0 range 10 .. 10;
-        VUI_Timing_Info_Present_Flag at 0 range 11 .. 11;
-        VUI_POC_Proportional_To_Timing_Flag at 0 range 12 .. 12;
-        VUI_Hrd_Parameters_Present_Flag at 0 range 13 .. 13;
-        Bitstream_Restriction_Flag at 0 range 14 .. 14;
-        Tiles_Fixed_Structure_Flag at 0 range 15 .. 15;
-        Motion_Vectors_Over_Pic_Boundaries_Flag at 0 range 16 .. 16;
-        Restricted_Ref_Pic_Lists_Flag at 0 range 17 .. 17;
-    end record;
-
-    type Std_Video_H265_Sequence_Parameter_Set_VUI is
-    record
-        Flags: Std_Video_H265_SPS_VUI_Flags;
-        Aspect_Ratio: Std_Video_H265_Aspect_Ratio;
-        SAR_Width: Interfaces.Unsigned_16;
-        SAR_Height: Interfaces.Unsigned_16;
-        Video_Format: Interfaces.Unsigned_8;
-        Colour_Primaries: Interfaces.Unsigned_8;
-        Transfer_Characteristics: Interfaces.Unsigned_8;
-        Matrix_Coeffs: Interfaces.Unsigned_8;
-        Chroma_Sample_LOC_Type_Top_Field: Interfaces.Unsigned_8;
-        Chroma_Sample_LOC_Type_Bottom_Field: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Reserved_2: Interfaces.Unsigned_8;
-        Def_Disp_Win_Left_Offset: Interfaces.Unsigned_16;
-        Def_Disp_Win_Right_Offset: Interfaces.Unsigned_16;
-        Def_Disp_Win_Top_Offset: Interfaces.Unsigned_16;
-        Def_Disp_Win_Bottom_Offset: Interfaces.Unsigned_16;
-        VUI_Num_Units_In_Tick: Interfaces.Unsigned_32;
-        VUI_Time_Scale: Interfaces.Unsigned_32;
-        VUI_Num_Ticks_POC_Diff_One_Minus_1: Interfaces.Unsigned_32;
-        Min_Spation_Segmentation: Interfaces.Unsigned_16;
-        Reserved_3: Interfaces.Unsigned_16;
-        Max_Bytes_Per_Pic_Denom: Interfaces.Unsigned_8;
-        Mex_Bits_Per_Min_CU_Denom: Interfaces.Unsigned_8;
-        Log2_Max_MV_Length_Horizontal: Interfaces.Unsigned_8;
-        Log2_Max_MV_Length_Vertical: Interfaces.Unsigned_8;
-        Hrd_Parameters: Std_Video_H265_Hrd_Parameters_Access;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Sequence_Parameter_Set_VUI_Access is
-        access constant Std_Video_H265_Sequence_Parameter_Set_VUI
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_Predictor_Palette_Components_List is array
-        (1 .. Std_Video_H265_Predictor_Palette_Components_List_Size,
-         1 .. Std_Video_H265_Predictor_Palette_Comp_Entries_List_Size)
-        of Interfaces.Unsigned_16
-        with Convention => C;
-
-    type Std_Video_H265_Predictor_Palette_Entries is
-    record
-        Predictor_Palette_Entries:
-            Std_Video_H265_Predictor_Palette_Components_List;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Predictor_Palette_Entries_Access is
-        access constant Std_Video_H265_Predictor_Palette_Entries
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_Sps_Flags is
-    record
-        SPS_Temporal_ID_Nesting_Flag: Packed_Bit := 0;
-        Separate_Colour_Plane_Flag: Packed_Bit := 0;
-        Conformance_Window_Flag: Packed_Bit := 0;
-        SPS_Sub_Layer_Ordering_Info_Present_Flag: Packed_Bit := 0;
-        Scaling_List_Enabled_Flag: Packed_Bit := 0;
-        SPS_Scaling_List_Data_Present_Flag: Packed_Bit := 0;
-        Amp_Enabled_Flag: Packed_Bit := 0;
-        Sample_Adaptive_Offset_Enabled_Flag: Packed_Bit := 0;
-        PCM_Enabled_Flag: Packed_Bit := 0;
-        PCM_Loop_Filter_Disabled_Flag: Packed_Bit := 0;
-        Long_Term_Ref_Pics_Present_Flag: Packed_Bit := 0;
-        SPS_Temporal_MVP_Enabled_Flag: Packed_Bit := 0;
-        Strong_Intra_Smoothing_Enabled_Flag: Packed_Bit := 0;
-        VUI_Parameters_Present_Flag: Packed_Bit := 0;
-        SPS_Extension_Present_Flag: Packed_Bit := 0;
-        SPS_Range_Extension_Flag: Packed_Bit := 0;
-        Transform_Skip_Rotation_Enabled_Flag: Packed_Bit := 0;
-        Transform_Skip_Context_Enabled_Flag: Packed_Bit := 0;
-        Implicit_RDPCM_Enabled_Flag: Packed_Bit := 0;
-        Explicit_RDPCM_Enabled_Flag: Packed_Bit := 0;
-        Extended_Precision_Processing_Flag: Packed_Bit := 0;
-        Intra_Smoothing_Disabled_Flag: Packed_Bit := 0;
-        High_Precision_Offsets_Enabled_Flag: Packed_Bit := 0;
-        Persistent_Rice_Adaptation_Enabled_Flag: Packed_Bit := 0;
-        CABAC_Bypass_Alignment_Enabled_Flag: Packed_Bit := 0;
-        SPS_SCC_Extension_Flag: Packed_Bit := 0;
-        SPS_Curr_Pic_Ref_Enabled_Flag: Packed_Bit := 0;
-        Palette_Mode_Enabled_Flag: Packed_Bit := 0;
-        SPS_Palette_Predictor_Initializers_Present_Flag: Packed_Bit := 0;
-        Intra_Boundary_Filtering_Disabled_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_Sps_Flags use
-    record
-        SPS_Temporal_ID_Nesting_Flag at 0 range 0 .. 0;
-        Separate_Colour_Plane_Flag at 0 range 1 .. 1;
-        Conformance_Window_Flag at 0 range 2 .. 2;
-        SPS_Sub_Layer_Ordering_Info_Present_Flag at 0 range 3 .. 3;
-        Scaling_List_Enabled_Flag at 0 range 4 .. 4;
-        SPS_Scaling_List_Data_Present_Flag at 0 range 5 .. 5;
-        Amp_Enabled_Flag at 0 range 6 .. 6;
-        Sample_Adaptive_Offset_Enabled_Flag at 0 range 7 .. 7;
-        PCM_Enabled_Flag at 0 range 8 .. 8;
-        PCM_Loop_Filter_Disabled_Flag at 0 range 9 .. 9;
-        Long_Term_Ref_Pics_Present_Flag at 0 range 10 .. 10;
-        SPS_Temporal_MVP_Enabled_Flag at 0 range 11 .. 11;
-        Strong_Intra_Smoothing_Enabled_Flag at 0 range 12 .. 12;
-        VUI_Parameters_Present_Flag at 0 range 13 .. 13;
-        SPS_Extension_Present_Flag at 0 range 14 .. 14;
-        SPS_Range_Extension_Flag at 0 range 15 .. 15;
-        Transform_Skip_Rotation_Enabled_Flag at 0 range 16 .. 16;
-        Transform_Skip_Context_Enabled_Flag at 0 range 17 .. 17;
-        Implicit_RDPCM_Enabled_Flag at 0 range 18 .. 18;
-        Explicit_RDPCM_Enabled_Flag at 0 range 19 .. 19;
-        Extended_Precision_Processing_Flag at 0 range 20 .. 20;
-        Intra_Smoothing_Disabled_Flag at 0 range 21 .. 21;
-        High_Precision_Offsets_Enabled_Flag at 0 range 22 .. 22;
-        Persistent_Rice_Adaptation_Enabled_Flag at 0 range 23 .. 23;
-        CABAC_Bypass_Alignment_Enabled_Flag at 0 range 24 .. 24;
-        SPS_SCC_Extension_Flag at 0 range 25 .. 25;
-        SPS_Curr_Pic_Ref_Enabled_Flag at 0 range 26 .. 26;
-        Palette_Mode_Enabled_Flag at 0 range 27 .. 27;
-        SPS_Palette_Predictor_Initializers_Present_Flag at 0 range 28 .. 28;
-        Intra_Boundary_Filtering_Disabled_Flag at 0 range 29 .. 29;
-    end record;
-
-    type Std_Video_H265_Short_Term_Ref_Pic_Set_Flags is
-    record
-        Inter_Ref_Pic_Set_Prediction_Flag: Packed_Bit := 0;
-        Delta_RPS_Sign: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_Short_Term_Ref_Pic_Set_Flags use
-    record
-        Inter_Ref_Pic_Set_Prediction_Flag at 0 range 0 .. 0;
-        Delta_RPS_Sign at 0 range 1 .. 1;
-    end record;
-
-    type Std_Video_H265_Max_DPB_List is
-        array (1 .. Std_Video_H265_Max_DPB_Size) of Interfaces.Unsigned_16
-        with Convention => C;
-
-    type Std_Video_H265_Short_Term_Ref_Pic_Set is
-    record
-        Flags: Std_Video_H265_Short_Term_Ref_Pic_Set_Flags;
-        Delta_IDX_Minus_1: Interfaces.Unsigned_32;
-        Use_Delta_Flag: Interfaces.Unsigned_16;
-        Abs_Delta_RPS_Minus_1: Interfaces.Unsigned_16;
-        Used_By_Curr_Pic_Flag: Interfaces.Unsigned_16;
-        Used_By_Curr_Pic_S0_Flag: Interfaces.Unsigned_16;
-        Used_By_Curr_Pic_S1_Flag: Interfaces.Unsigned_16;
-        Reserved_1: Interfaces.Unsigned_16;
-        Reserved_2: Interfaces.Unsigned_8;
-        Reserved_3: Interfaces.Unsigned_8;
-        Num_Negative_Pics: Interfaces.Unsigned_8;
-        Num_Positive_Pics: Interfaces.Unsigned_8;
-        Delta_POC_S0_Minus_1: Std_Video_H265_Max_DPB_List;
-        Delta_POC_S1_Minus_1: Std_Video_H265_Max_DPB_List;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Short_Term_Ref_Pic_Set_Access is
-        access constant Std_Video_H265_Short_Term_Ref_Pic_Set
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_Max_Long_Term_Ref_Pics_List is
-        array (1 .. Std_Video_H265_Max_Long_Term_Ref_Pics_SPS)
-        of Interfaces.Unsigned_32
-        with Convention => C;
-
-    type Std_Video_H265_Long_Term_Ref_Pics_SPS is
-    record
-        Used_By_Curr_Pic_LT_SPS_Flag: Interfaces.Unsigned_32;
-        LT_Ref_Pic_POC_LSB_SPS: Std_Video_H265_Max_Long_Term_Ref_Pics_List;
-    end record
-        with Convention => C;
-
-    type Std_Video_H265_Long_Term_Ref_Pics_SPS_Access is
-        access constant Std_Video_H265_Long_Term_Ref_Pics_SPS
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_H265_Sequence_Parameter_Set is
-    record
-        Flags: Std_Video_H265_SPS_Flags;
-        Chroma_Format: Std_Video_H265_Chroma_Format;
-        Pic_Width_In_Luma_Samples: Interfaces.Unsigned_32;
-        Pic_Height_in_Luma_Samples: Interfaces.Unsigned_32;
-        SPS_Video_Parameter_Set_ID: Interfaces.Unsigned_8;
-        SPS_Max_Sub_Layers_Minus_1: Interfaces.Unsigned_8;
-        SPS_Seq_Parameter_Set_ID: Interfaces.Unsigned_8;
-        Bit_Depth_Luma_Minus_8: Interfaces.Unsigned_8;
-        Bit_Depth_Chroma_Minus_8: Interfaces.Unsigned_8;
-        Log2_Max_Pic_Order_Cnt_LSB_Minus_4: Interfaces.Unsigned_8;
-        Log2_Min_Luma_Coding_Block_Size_Minus_3: Interfaces.Unsigned_8;
-        Log2_Diff_Max_Min_Luma_Coding_Block_Size: Interfaces.Unsigned_8;
-        Log2_Min_Luma_Transform_Block_Size_Minus_2: Interfaces.Unsigned_8;
-        Log2_Diff_Max_Min_Luma_Transform_Block_Size: Interfaces.Unsigned_8;
-        Max_Transform_Hierarchy_Depth_Inter: Interfaces.Unsigned_8;
-        Max_Transform_Hierarchy_Depth_Intra: Interfaces.Unsigned_8;
-        Num_Short_Term_Ref_Pic_Sets: Interfaces.Unsigned_8;
-        Num_Long_Term_Ref_Pics_SPS: Interfaces.Unsigned_8;
-        PCM_Sample_Bit_Depth_Luma_Minus_1: Interfaces.Unsigned_8;
-        PCM_Sample_Bit_Depth_Chroma_Minus_1: Interfaces.Unsigned_8;
-        Log2_Min_PCM_Luma_Coding_Block_Size_Minus_3: Interfaces.Unsigned_8;
-        Log2_Diff_Max_Min_PCM_Luma_Coding_Block_Size: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Reserved_2: Interfaces.Unsigned_8;
-        Palette_Max_Size: Interfaces.Unsigned_8;
-        Delta_Palette_Max_Predictor_Size: Interfaces.Unsigned_8;
-        Motion_Vector_Resolution_Control: Interfaces.Unsigned_8;
-        SPS_Num_Palette_Predictor_Initializer_Minus_1: Interfaces.Unsigned_8;
-        Conf_Win_Left_Offset: Interfaces.Unsigned_32;
-        Conf_Win_Right_Offset: Interfaces.Unsigned_32;
-        Conf_Win_Top_Offset: Interfaces.Unsigned_32;
-        Conf_Win_Bottom_Offset: Interfaces.Unsigned_32;
-        Profile_Tier_Level: Std_Video_H265_Profile_Tier_Level_Access;
-        Dec_Pic_Buf_Mgr: Std_Video_H265_Dec_Pic_Buf_Mgr_Access;
-        Scaling_Lists: Std_Video_H265_Scaling_Lists_Access;
-        Short_Term_Ref_Pic_Set: Std_Video_H265_Short_Term_Ref_Pic_Set_Access;
-        Long_Term_Ref_Pics_SPS: Std_Video_H265_Long_Term_Ref_Pics_SPS_Access;
-        Sequence_Parameter_Set_VUI:
-            Std_Video_H265_Sequence_Parameter_Set_VUI_Access;
-        Predictor_Palette_Entries:
-            Std_Video_H265_Predictor_Palette_Entries_Access;
-    end record
-        with Convention => C;
-
-    package Std_Video_H265_Sequence_Parameter_Set_Vectors is
-        new Ada.Containers.Vectors(Positive,
-                                   Std_Video_H265_Sequence_Parameter_Set);
-
-    type Std_Video_H265_PPS_Flags is
-    record
-        Dependent_Slice_Segments_Enabled_Flag: Packed_Bit := 0;
-        Output_Flag_Present_Flag: Packed_Bit := 0;
-        Sign_Data_Hiding_Enabled_Flag: Packed_Bit := 0;
-        Cabac_Init_Present_Flag: Packed_Bit := 0;
-        Constrained_Intra_Pred_Flag: Packed_Bit := 0;
-        Transform_Skip_Enabled_Flag: Packed_Bit := 0;
-        CU_QP_Delta_Enabled_Flag: Packed_Bit := 0;
-        PPS_Slice_Chroma_QP_Offsets_Present_Flag: Packed_Bit := 0;
-        Weighted_Pred_Flag: Packed_Bit := 0;
-        Weighted_Bipred_Flag: Packed_Bit := 0;
-        Transquant_Bypass_Enabled_Flag: Packed_Bit := 0;
-        Tiles_Enabled_Flag: Packed_Bit := 0;
-        Entropy_Coding_Sync_Enabled_Flag: Packed_Bit := 0;
-        Uniform_Spacing_Flag: Packed_Bit := 0;
-        Loop_Filter_Across_Tiles_Enabled_Flag: Packed_Bit := 0;
-        PPS_Loop_Filer_Across_Slices_Enabled_Flag: Packed_Bit := 0;
-        Deblocking_Filter_Control_Present_Flag: Packed_Bit := 0;
-        Deblocking_Filter_Override_Enabled_Flag: Packed_Bit := 0;
-        PPS_Deblocking_Filter_Disabled_Flag: Packed_Bit := 0;
-        PPS_Scaling_List_Data_Present_Flag: Packed_Bit := 0;
-        Lists_Modification_Present_Flag: Packed_Bit := 0;
-        Slice_Segment_Header_Extension_Present_Flag: Packed_Bit := 0;
-        PPS_Extension_Present_Flag: Packed_Bit := 0;
-        Cross_Component_Prediction_Enabled_Flag: Packed_Bit := 0;
-        Chroma_QP_Offset_List_Enabled_Flag: Packed_Bit := 0;
-        PPS_Curr_Pic_Ref_Enabled_Flag: Packed_Bit := 0;
-        Residual_Adaptive_Colour_Transform_Enabled_Flag: Packed_Bit := 0;
-        PPS_Slice_Act_QP_Offsets_Present_Flag: Packed_Bit := 0;
-        PPS_Palette_Predictor_Initializers_Present_Flag: Packed_Bit := 0;
-        Monochrome_Palette_Flag: Packed_Bit := 0;
-        PPS_Range_Extension_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_H265_PPS_Flags use
-    record
-        Dependent_Slice_Segments_Enabled_Flag at 0 range 0 .. 0;
-        Output_Flag_Present_Flag at 0 range 1 .. 1;
-        Sign_Data_Hiding_Enabled_Flag at 0 range 2 .. 2;
-        Cabac_Init_Present_Flag at 0 range 3 .. 3;
-        Constrained_Intra_Pred_Flag at 0 range 4 .. 4;
-        Transform_Skip_Enabled_Flag at 0 range 5 .. 5;
-        CU_QP_Delta_Enabled_Flag at 0 range 6 .. 6;
-        PPS_Slice_Chroma_QP_Offsets_Present_Flag at 0 range 7 .. 7;
-        Weighted_Pred_Flag at 0 range 8 .. 8;
-        Weighted_Bipred_Flag at 0 range 9 .. 9;
-        Transquant_Bypass_Enabled_Flag at 0 range 10 .. 10;
-        Tiles_Enabled_Flag at 0 range 11 .. 11;
-        Entropy_Coding_Sync_Enabled_Flag at 0 range 12 .. 12;
-        Uniform_Spacing_Flag at 0 range 13 .. 13;
-        Loop_Filter_Across_Tiles_Enabled_Flag at 0 range 14 .. 14;
-        PPS_Loop_Filer_Across_Slices_Enabled_Flag at 0 range 15 .. 15;
-        Deblocking_Filter_Control_Present_Flag at 0 range 16 .. 16;
-        Deblocking_Filter_Override_Enabled_Flag at 0 range  17 .. 17;
-        PPS_Deblocking_Filter_Disabled_Flag at 0 range 18 .. 18;
-        PPS_Scaling_List_Data_Present_Flag at 0 range 19 .. 19;
-        Lists_Modification_Present_Flag at 0 range 20 .. 20;
-        Slice_Segment_Header_Extension_Present_Flag at 0 range 21 .. 21;
-        PPS_Extension_Present_Flag at 0 range 22 .. 22;
-        Cross_Component_Prediction_Enabled_Flag at 0 range 23 .. 23;
-        Chroma_QP_Offset_List_Enabled_Flag at 0 range 24 .. 24;
-        PPS_Curr_Pic_Ref_Enabled_Flag at 0 range 25 .. 25;
-        Residual_Adaptive_Colour_Transform_Enabled_Flag at 0 range 26 .. 26;
-        PPS_Slice_Act_QP_Offsets_Present_Flag at 0 range 27 .. 27;
-        PPS_Palette_Predictor_Initializers_Present_Flag at 0 range 28 .. 28;
-        Monochrome_Palette_Flag at 0 range 29 .. 29;
-        PPS_Range_Extension_Flag at 0 range 30 .. 30;
-    end record;
-
-    type Std_Video_H265_Chroma_QP_Offset_List is
-        array (1 .. Std_Video_H265_Chroma_QP_Offset_List_Size)
-        of Interfaces.Integer_8
-        with Convention => C;
-
-    type Std_Video_H265_Chroma_QP_Offset_Tile_Cols_List is
-        array (1 .. Std_Video_H265_Chroma_QP_Offset_Tile_Cols_List_Size)
-        of Interfaces.Unsigned_16
-        with Convention => C;
-
-    type Std_Video_H265_Chroma_QP_Offset_Tile_Rows_List is
-        array (1 .. Std_Video_H265_Chroma_QP_Offset_Tile_Rows_List_Size)
-        of Interfaces.Unsigned_16
-        with Convention => C;
-
-    type Std_Video_H265_Picture_Parameter_Set is
-    record
-        Flags: Std_Video_H265_PPS_Flags;
-        PPC_Pic_Parameter_Set_ID: Interfaces.Unsigned_8;
-        PPS_Seq_Parameter_Set_ID: Interfaces.Unsigned_8;
-        SPS_Video_Parameter_Set_ID: Interfaces.Unsigned_8;
-        Num_Extra_Slice_Header_Bits: Interfaces.Unsigned_8;
-        Num_Ref_Idx_L0_Default_Active_Minus_1: Interfaces.Unsigned_8;
-        Num_Ref_Idx_L1_Default_Active_Minus_1: Interfaces.Unsigned_8;
-        Init_QP_Minus_26: Interfaces.Integer_8;
-        Diff_CU_QP_Delta_Depth: Interfaces.Unsigned_8;
-        PPS_CB_QP_Offset: Interfaces.Integer_8;
-        PPS_CR_QP_Offset: Interfaces.Integer_8;
-        PPS_Beta_Offset_Div_2: Interfaces.Integer_8;
-        PPS_TC_Offset_Div_2: Interfaces.Integer_8;
-        Log2_Parallel_Merge_Level_Minus_2: Interfaces.Unsigned_8;
-        Log2_Max_Transform_Skip_Block_Size_Minus_2: Interfaces.Unsigned_8;
-        Diff_CU_Chroma_QP_Offset_Depth: Interfaces.Unsigned_8;
-        Chroma_QP_Offset_List_Len_Minus_1: Interfaces.Unsigned_8;
-        CB_QP_Offset_List: Std_Video_H265_Chroma_QP_Offset_List;
-        CR_QP_Offset_List: Std_Video_H265_Chroma_QP_Offset_List;
-        Log2_SAO_Offset_Scale_Luma: Interfaces.Unsigned_8;
-        Log2_SAO_Offset_Scale_Chroma: Interfaces.Unsigned_8;
-        PPS_Act_Y_QP_Offset_Plus_5: Interfaces.Integer_8;
-        PPS_Act_CB_QP_Offset_Plus_5: Interfaces.Integer_8;
-        PPS_Act_CR_QP_Offset_Plus_3: Interfaces.Integer_8;
-        PPS_Num_Palette_Predictor_Initializers: Interfaces.Unsigned_8;
-        Luma_Bit_Depth_Entry_Minus_8: Interfaces.Unsigned_8;
-        Chroma_Bit_Depth_Entry_Minus_8: Interfaces.Unsigned_8;
-        Num_Tile_Columns_Minus_1: Interfaces.Unsigned_8;
-        Num_Tile_Rows_Minus_1: Interfaces.Unsigned_8;
-        Reserved_1: Interfaces.Unsigned_8;
-        Reserved_2: Interfaces.Unsigned_8;
-        Column_Width_Minus_1: Std_Video_H265_Chroma_QP_Offset_Tile_Cols_List;
-        Row_Height_Minus_1: Std_Video_H265_Chroma_QP_Offset_Tile_Rows_List;
-        Reserved_3: Interfaces.Unsigned_32;
-        Scaling_Lists: Std_Video_H264_Scaling_Lists_Access;
-        Predictor_Palette_Entries:
-            Std_Video_H265_Predictor_Palette_Entries_Access;
-    end record
-        with Convention => C;
-
-    package Std_Video_H265_Picture_Parameter_Set_Vectors is
-        new Ada.Containers.Vectors(Positive,
-                                   Std_Video_H265_Picture_Parameter_Set);
-
-    type Std_Video_Decode_H265_Picture_Info_Flags is
-    record
-        IRAP_Pic_Flag: Packed_Bit := 0;
-        IDR_Pic_Flag: Packed_Bit := 0;
-        Is_Reference: Packed_Bit := 0;
-        Short_Term_Ref_Pic_Set_SPS_Flag: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_Decode_H265_Picture_Info_Flags use
-    record
-        IRAP_Pic_Flag at 0 range 0 .. 0;
-        IDR_Pic_Flag at 0 range 1 .. 1;
-        Is_Reference at 0 range 2 .. 2;
-        Short_Term_Ref_Pic_Set_SPS_Flag at 0 range 3 .. 3;
-    end record;
-
-    type Std_Video_Decode_H265_Ref_Pic_Set_List is
-        array (1 .. Std_Video_Decode_H265_Ref_Pic_Set_List_Size)
-        of Interfaces.Unsigned_8
-        with Convention => C;
-
-    type Std_Video_Decode_H265_Picture_Info is
-    record
-        Flags: Std_Video_Decode_H265_Picture_Info_Flags;
-        SPS_Video_Parameter_Set_ID: Interfaces.Unsigned_8;
-        PPS_Seq_Parameter_Set_ID: Interfaces.Unsigned_8;
-        PPS_Pic_Parameter_Set_ID: Interfaces.Unsigned_8;
-        Num_Delta_POCS_Of_Ref_RPS_Idx: Interfaces.Unsigned_8;
-        Pic_Order_Cnt_Val: Interfaces.Integer_32;
-        Num_Bits_For_ST_Ref_Pic_Set_In_Slice: Interfaces.Unsigned_16;
-        Reserved: Interfaces.Unsigned_16;
-        Ref_Pic_Set_Curr_Before: Std_Video_Decode_H265_Ref_Pic_Set_List;
-        Ref_Pic_Set_Curr_After: Std_Video_Decode_H265_Ref_Pic_Set_List;
-        Ref_Pic_Set_Lt_Curr: Std_Video_Decode_H265_Ref_Pic_Set_List;
-    end record
-        with Convention => C;
-
-    type Std_Video_Decode_H265_Picture_Info_Access is
-        access constant Std_Video_Decode_H265_Picture_Info
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Std_Video_Decode_H265_Reference_Info_Flags is
-    record
-        Used_For_Long_Term_Reference: Packed_Bit := 0;
-        Unused_For_Reference: Packed_Bit := 0;
-    end record
-        with Convention => C;
-
-    for Std_Video_Decode_H265_Reference_Info_Flags use
-    record
-        Used_For_Long_Term_Reference at 0 range 0 .. 0;
-        Unused_For_Reference at 0 range 1 .. 1;
-    end record;
-
-    type Std_Video_Decode_H265_Reference_Info is
-    record
-        Flags: Std_Video_Decode_H265_Reference_Info_Flags;
-        Pic_Order_Cnt_Val: Interfaces.Integer_32;
-    end record
-        with Convention => C;
-
-    type Std_Video_Decode_H265_Reference_Info_Access is
-        access constant Std_Video_Decode_H265_Reference_Info
-        with Convention => C,
-             Storage_Size => 0;
-
-    type Video_Decode_H265_Profile_Info is new In_Structure
-        (Video_Decode_H265_Profile_Info_Type) with
-    record
-        Std_Profile: Std_Video_H265_Profile;
-    end record;
-
-    type Video_Decode_H265_Capabilities is new Out_Structure
-        (Video_Decode_H265_Capabilities_Type) with
-    record
-        Max_Level: Std_Video_H265_Level;
-    end record;
-
-    type Video_Decode_H265_Session_Parameters_Add_Info is new In_Structure
-        (Video_Decode_H265_Session_Parameters_Add_Info_Type) with
-    record
-        Std_VPSs: Std_Video_H265_Video_Parameter_Set_Vectors.Vector;
-        Std_SPSs: Std_Video_H265_Sequence_Parameter_Set_Vectors.Vector;
-        Std_PPSs: Std_Video_H265_Picture_Parameter_Set_Vectors.Vector;
-    end record;
-
-    type Video_Decode_H265_Session_Parameters_Add_Info_Access is
-        access constant Video_Decode_H265_Session_Parameters_Add_Info
-        with Storage_Size => 0;
-
-    type Video_Decode_H265_Session_Parameters_Create_Info is new In_Structure
-        (Video_Decode_H265_Session_Parameters_Create_Info_Type) with
-    record
-        Max_Std_VPS_Count: Interfaces.Unsigned_32;
-        Max_Std_SPS_Count: Interfaces.Unsigned_32;
-        Max_Std_PPS_Count: Interfaces.Unsigned_32;
-        Parameters_Add_Info:
-            Video_Decode_H265_Session_Parameters_Add_Info_Access;
-    end record;
-
-    type Video_Decode_H265_Picture_Info is new In_Structure
-        (Video_Decode_H265_Picture_Info_Type) with
-    record
-        Std_Picture_Info: Std_Video_Decode_H265_Picture_Info_Access;
-        Slice_Segment_Offsets: Unsigned_32_Vectors.Vector;
-    end record;
-
-    type Video_Decode_H265_DPB_Slot_Info is new In_Structure
-        (Video_Decode_H265_DPB_Slot_Info_Type) with
-    record
-        Std_Reference_Info: Std_Video_Decode_H265_Reference_Info_Access;
+        Dynamic_Rendering_Local_Read_Depth_Stencil_Attachments: Boolean;
+        Dynamic_Rendering_Local_Read_Multisampled_Attachments: Boolean;
+        Early_Fragment_Multisample_Coverage_After_Sample_Counting: Boolean;
+        Early_Fragment_Sample_Mask_Test_Before_Sample_Counting: Boolean;
+        Depth_Stencil_Swizzle_One_Support: Boolean;
+        Polygon_Mode_Point_Size: Boolean;
+        Non_Strict_Single_Pixel_Wide_Lines_Use_Parallelogram: Boolean;
+        Non_Strict_Wide_Lines_Use_Parallelogram: Boolean;
+        Block_Texel_View_Compatible_Multiple_Layers: Boolean;
+        Max_Combined_Image_Sampler_Descriptor_Count: Interfaces.Unsigned_32;
+        Fragment_Shading_Rate_Clamp_Combiner_Inputs: Boolean;
+        Default_Robustness_Storage_Buffers: Pipeline_Robustness_Buffer_Behavior;
+        Default_Robustness_Uniform_Buffers: Pipeline_Robustness_Buffer_Behavior;
+        Default_Robustness_Vertex_Inputs: Pipeline_Robustness_Buffer_Behavior;
+        Default_Robustness_Images: Pipeline_Robustness_Image_Behavior;
+        Copy_Src_Layouts: Image_Layout_Vectors.Vector;
+        Copy_Dst_Layouts: Image_Layout_Vectors.Vector;
+        Optimal_Tiling_Layout_UUID: UUID;
+        Identical_Memory_Type_Requirements: Boolean;
     end record;
 
     type Device_Queue_Global_Priority_Create_Info is new In_Structure
@@ -10329,151 +7795,89 @@ Integer_Dot_Product_Accumulating_Saturating_4x8Bit_Packed_Mixed_Signedness_Accel
         Priorities: Queue_Global_Priority_Array;
     end record;
 
-    type Fragment_Shading_Rate_Attachment_Info is new In_Structure
-        (Fragment_Shading_Rate_Attachment_Info_Type) with
+    type Physical_Device_Shader_Subgroup_Rotate_Features is new Out_Structure
+        (Physical_Device_Shader_Subgroup_Rotate_Features_Type) with
     record
-        Fragment_Shading_Rate_Attachment: Attachment_Reference_2_Access;
-        Shading_Rate_Attachment_Texel_Size: Extent_2D;
+        Shader_Subgroup_Rotate: Boolean;
+        Shader_Subgroup_Rotate_Clustered: Boolean;
     end record;
 
-    type Fragment_Shading_Rate_Combiner_Op_Array is
-        array (1 .. 2) of Fragment_Shading_Rate_Combiner_Op
+    type Physical_Device_Shader_Float_Controls_2_Features is new Out_Structure
+        (Physical_Device_Shader_Float_Controls_2_Features_Type) with
+    record
+        Shader_Float_Controls_2: Boolean;
+    end record;
+
+    type Physical_Device_Shader_Expect_Assume_Features is new Out_Structure
+        (Physical_Device_Shader_Expect_Assume_Features_Type) with
+    record
+        Shader_Expect_Assume: Boolean;
+    end record;
+
+    type Physical_Device_Line_Rasterization_Features is new Out_Structure
+        (Physical_Device_Line_Rasterization_Features_Type) with
+    record
+        Rectangular_Lines: Boolean;
+        Bresenham_Lines: Boolean;
+        Smooth_Lines: Boolean;
+        Stippled_Rectangular_Lines: Boolean;
+        Stippled_Bresenham_Lines: Boolean;
+        Stippled_Smooth_Lines: Boolean;
+    end record;
+
+    type Physical_Device_Line_Rasterization_Properties is new Out_Structure
+        (Physical_Device_Line_Rasterization_Properties_Type) with
+    record
+        Line_Sub_Pixel_Precision_Bits: Interfaces.Unsigned_32;
+    end record;
+
+    type Pipeline_Rasterization_Line_State_Create_Info is new In_Structure
+        (Pipeline_Rasterization_Line_State_Create_Info_Type) with
+    record
+        Line_Rasterization_Mode: Vulkan.Line_Rasterization_Mode;
+        Stippled_Line_Enable: Boolean;
+        Line_Stipple_Factor: Interfaces.Unsigned_32;
+        Line_Stipple_Pattern: Interfaces.Unsigned_16;
+    end record;
+
+    type Physical_Device_Vertex_Attribute_Divisor_Properties is
+        new Out_Structure
+            (Physical_Device_Vertex_Attribute_Divisor_Properties_Type) with
+    record
+        Max_Vertex_Attrib_Divisor: Interfaces.Unsigned_32;
+        Supports_Non_Zero_First_Instance: Boolean;
+    end record;
+
+    type Vertex_Input_Binding_Divisor_Description is
+    record
+        Binding: Interfaces.Unsigned_32;
+        Divisor: Interfaces.Unsigned_32;
+    end record
         with Convention => C;
 
-    type Pipeline_Fragment_Shading_Rate_State_Create_Info is new In_Structure
-        (Pipeline_Fragment_Shading_Rate_State_Create_Info_Type) with
-    record
-        Fragment_Size: Extent_2D;
-        Combiner_Ops: Fragment_Shading_Rate_Combiner_Op_Array;
-    end record;
-
-    type Physical_Device_Fragment_Shading_Rate_Features is new Out_Structure
-        (Physical_Device_Fragment_Shading_Rate_Features_Type) with
-    record
-        Pipeline_Fragment_Shading_Rate: Boolean;
-        Primitive_Fragment_Shading_Rate: Boolean;
-        Attachment_Fragment_Shading_Rate: Boolean;
-    end record;
-
-    type Physical_Device_Fragment_Shading_Rate_Properties is new Out_Structure
-        (Physical_Device_Fragment_Shading_Rate_Properties_Type) with
-    record
-        Min_Fragment_Shading_Rate_Attachment_Texel_Size: Extent_2D;
-        Max_Fragment_Shading_Rate_Attachment_Texel_Size: Extent_2D;
-        Max_Fragment_Shading_Rate_Attachment_Texel_Size_Aspect_Ratio:
-            Interfaces.Unsigned_32;
-        Primitive_Fragment_Shading_Rate_With_Multiple_Viewports: Boolean;
-        Layered_Shading_Rate_Attachments: Boolean;
-        Fragment_Shading_Rate_Non_Trivial_Combiner_Ops: Boolean;
-        Max_Fragment_Size: Extent_2D;
-        Max_Fragment_Size_Aspect_Ratio: Interfaces.Unsigned_32;
-        Max_Fragment_Shading_Rate_Coverage_Samples: Interfaces.Unsigned_32;
-        Max_Fragment_Shading_Rate_Rasterization_Samples: Sample_Count_Flags :=
-            Sample_Count_No_Bit;
-        Fragment_Shading_Rate_With_Shader_Depth_Stencil_Writes: Boolean;
-        Fragment_Shading_Rate_With_Sample_Mask: Boolean;
-        Fragment_Shading_Rate_With_Shader_Sample_Mask: Boolean;
-        Fragment_Shading_Rate_With_Conservative_Rasterization: Boolean;
-        Fragment_Shading_Rate_With_Fragment_Shader_Interlock: Boolean;
-        Fragment_Shading_Rate_With_Custom_Sample_Locations: Boolean;
-        Fragment_Shading_Rate_Strict_Multiply_Combiner: Boolean;
-    end record;
-
-    type Physical_Device_Fragment_Shading_Rate is new Out_Structure
-        (Physical_Device_Fragment_Shading_Rate_Type) with
-    record
-        Sample_Counts: Sample_Count_Flags := Sample_Count_No_Bit;
-        Fragment_Size: Extent_2D;
-    end record;
-
-    package Physical_Device_Fragment_Shading_Rate_Vectors is
+    package Vertex_Input_Binding_Divisor_Description_Vectors is
         new Ada.Containers.Vectors(Positive,
-                                   Physical_Device_Fragment_Shading_Rate);
+                                   Vertex_Input_Binding_Divisor_Description);
 
-    type Surface_Protected_Capabilities is new In_Structure
-        (Surface_Protected_Capabilities_Type) with
+    type Pipeline_Vertex_Input_Divisor_State_Create_Info is new In_Structure
+        (Pipeline_Vertex_Input_Divisor_State_Create_Info_Type) with
     record
-        Supports_Protected: Boolean;
+        Vertex_Binding_Divisors:
+            Vertex_Input_Binding_Divisor_Description_Vectors.Vector;
     end record;
 
-    type Physical_Device_Present_Wait_Features is new Out_Structure
-        (Physical_Device_Present_Wait_Features_Type) with
+    type Physical_Device_Vertex_Attribute_Divisor_Features is new Out_Structure
+        (Physical_Device_Vertex_Attribute_Divisor_Features_Type) with
     record
-        Present_Wait: Boolean;
+        Vertex_Attribute_Instance_Rate_Divisor: Boolean;
+        Vertex_Attribute_Instance_Rate_Zero_Divisor: Boolean;
     end record;
 
-    type Physical_Device_Pipeline_Executable_Properties_Features is
-        new Out_Structure
-            (Physical_Device_Pipeline_Executable_Properties_Features_Type) with
+    type Physical_Device_Index_Type_Uint8_Features is new Out_Structure
+        (Physical_Device_Index_Type_Uint8_Features_Type) with
     record
-        Pipeline_Executable_Info: Boolean;
+        Index_Type_Uint8: Boolean;
     end record;
-
-    type Pipeline_Info is new In_Structure(Pipeline_Info_Type) with
-    record
-        Pipeline: Vulkan.Pipeline;
-    end record;
-
-    type Pipeline_Executable_Properties is new Out_Structure
-        (Pipeline_Executable_Properties_Type) with
-    record
-        Stages: Shader_Stage_Flags := Shader_Stage_No_Bit;
-        Name: Ada.Strings.Unbounded.Unbounded_String;
-        Description: Ada.Strings.Unbounded.Unbounded_String;
-        Subgroup_Size: Interfaces.Unsigned_32;
-    end record;
-
-    package Pipeline_Executable_Properties_Vectors is new Ada.Containers.Vectors
-        (Positive, Pipeline_Executable_Properties);
-
-    type Pipeline_Executable_Info is new In_Structure
-        (Pipeline_Executable_Info_Type) with
-    record
-        Pipeline: Vulkan.Pipeline;
-        Executable_Index: Interfaces.Unsigned_32;
-    end record;
-
-    type Pipeline_Executable_Statistic_Value
-        (Format: Pipeline_Executable_Statistic_Format) is
-    record
-        case Format is
-            when Bool32 =>
-                B32: Boolean;
-            when Int64 =>
-                I64: Interfaces.Integer_64;
-            when UInt64 =>
-                U64: Interfaces.Unsigned_64;
-            when Float64 =>
-                F64: Interfaces.C.double;
-        end case;
-    end record;
-
-    type Pipeline_Executable_Statistic
-        (Format: Pipeline_Executable_Statistic_Format) is
-            new Out_Structure(Pipeline_Executable_Statistic_Type) with
-    record
-        Name: Ada.Strings.Unbounded.Unbounded_String;
-        Description: Ada.Strings.Unbounded.Unbounded_String;
-        Value: Pipeline_Executable_Statistic_Value(Format);
-    end record;
-
-    package Pipeline_Executable_Statistic_Vectors is
-        new Ada.Containers.Indefinite_Vectors
-        (Positive, Pipeline_Executable_Statistic);
-
-    type Pipeline_Executable_Internal_Representation is new Out_Structure
-        (Pipeline_Executable_Internal_Representation_Type) with
-    record
-        Name: Ada.Strings.Unbounded.Unbounded_String;
-        Description: Ada.Strings.Unbounded.Unbounded_String;
-        Is_Text: Boolean;
-        Data_Size: Interfaces.C.size_t;
-        Data: Interfaces.C.Extensions.void_ptr;
-    end record;
-
-    package Pipeline_Executable_Internal_Representation_Vectors is
-        new Ada.Containers.Vectors
-            (Positive, Pipeline_Executable_Internal_Representation);
 
     type Memory_Map_Info is new In_Structure(Memory_Map_Info_Type) with
     record
@@ -10488,102 +7892,6 @@ Integer_Dot_Product_Accumulating_Saturating_4x8Bit_Packed_Mixed_Signedness_Accel
         Flags: Memory_Unmap_Flags := Memory_Unmap_No_Bit;
         Memory: Device_Memory;
     end record;
-
-    type Pipeline_Library_Create_Info is new In_Structure
-        (Pipeline_Library_Create_Info_Type) with
-    record
-        Libraries: Pipeline_Vectors.Vector;
-    end record;
-
-    package Unsigned_64_Vectors is new Ada.Containers.Vectors
-        (Positive, Interfaces.Unsigned_64, Interfaces."=");
-
-    type Present_ID is new In_Structure(Present_ID_Type) with
-    record
-        Present_IDs: Unsigned_64_Vectors.Vector;
-    end record;
-
-    type Physical_Device_Present_ID_Features is new Out_Structure
-        (Physical_Device_Present_ID_Features_Type) with
-    record
-        Present_ID: Boolean;
-    end record;
-
-    type Queue_Family_Checkpoint_Properties_2 is new Out_Structure
-        (Queue_Family_Checkpoint_Properties_2_Type) with
-    record
-        Checkpoint_Execution_Stage_Mask: Pipeline_Stage_Flags_2 :=
-            Pipeline_Stage_2_None;
-    end record;
-
-    type Checkpoint_Data_2 is new Out_Structure(Checkpoint_Data_2_Type) with
-    record
-        Stage: Pipeline_Stage_Flags_2 := Pipeline_Stage_2_None;
-        Checkpoint_Marker: Interfaces.C.Extensions.void_ptr;
-    end record;
-
-    package Checkpoint_Data_2_Vectors is new Ada.Containers.Vectors
-        (Positive, Checkpoint_Data_2);
-
-    type Physical_Device_Fragment_Shader_Barycentric_Features is
-        new Out_Structure
-            (Physical_Device_Fragment_Shader_Barycentric_Features_Type) with
-    record
-        Fragment_Shader_Barycentric: Boolean;
-    end record;
-
-    type Physical_Device_Fragment_Shader_Barycentric_Properties is
-        new Out_Structure
-            (Physical_Device_Fragment_Shader_Barycentric_Properties_Type) with
-    record
-        Tri_Strip_Vertex_Order_Independent_Of_Provoking_Vertex: Boolean;
-    end record;
-
-    type Physical_Device_Shader_Subgroup_Uniform_Control_Flow_Features is
-        new Out_Structure
-            (Physical_Device_Shader_Subgroup_Uniform_Control_Flow_Features_Type)
-                with
-    record
-        Shader_Subgroup_Uniform_Control_Flow: Boolean;
-    end record;
-
-    type Physical_Device_Workgroup_Memory_Explicit_Layout_Features is
-        new Out_Structure
-            (Physical_Device_Workgroup_Memory_Explicit_Layout_Features_Type)
-                with
-    record
-        Workgroup_Memory_Explicit_Layout: Boolean;
-        Workgroup_Memory_Explicit_Layout_Scalar_Block_Layout: Boolean;
-        Workgroup_Memory_Explicit_Layout_8_Bit_Access: Boolean;
-        Workgroup_Memory_Explicit_Layout_16_Bit_Access: Boolean;
-    end record;
-
-    type Physical_Device_Ray_Tracing_Maintenance_1_Features is
-        new Out_Structure
-            (Physical_Device_Ray_Tracing_Maintenance_1_Features_Type) with
-    record
-        Ray_Tracing_Maintenance_1: Boolean;
-        Ray_Tracing_Pipeline_Trace_Rays_Indirect_2: Boolean;
-    end record;
-
-    type Trace_Rays_Indirect_Command_2 is
-    record
-        Raygen_Shader_Record_Address: Device_Address;
-        Raygen_Shader_Record_Size: Device_Size;
-        Miss_Shader_Binding_Table_Address: Device_Address;
-        Miss_Shader_Binding_Table_Size: Device_Size;
-        Miss_Shader_Binding_Table_Stride: Device_Size;
-        Hit_Shader_Binding_Table_Address: Device_Address;
-        Hit_Shader_Binding_Table_Size: Device_Size;
-        Hit_Shader_Binding_Table_Stride: Device_Size;
-        Callable_Shader_Binding_Table_Address: Device_Address;
-        Callable_Shader_Binding_Table_Size: Device_Size;
-        Callable_Shader_Binding_Table_Stride: Device_Size;
-        Width: Vulkan.Width;
-        Height: Vulkan.Height;
-        Depth: Vulkan.Depth;
-    end record
-        with Convention => C;
 
     type Physical_Device_Maintenance_5_Features is new Out_Structure
         (Physical_Device_Maintenance_5_Features_Type) with
@@ -10643,99 +7951,36 @@ Integer_Dot_Product_Accumulating_Saturating_4x8Bit_Packed_Mixed_Signedness_Accel
         Flags: Buffer_Usage_Flags_2 := Buffer_Usage_2_No_Bit;
     end record;
 
-    type Physical_Device_Ray_Tracing_Position_Fetch_Features is
+    type Physical_Device_Push_Descriptor_Properties is new Out_Structure
+        (Physical_Device_Push_Descriptor_Properties_Type) with
+    record
+        Max_Push_Descriptors: Interfaces.Unsigned_32;
+    end record;
+
+    type Physical_Device_Dynamic_Rendering_Local_Read_Features is
         new Out_Structure
-            (Physical_Device_Ray_Tracing_Position_Fetch_Features_Type) with
+            (Physical_Device_Dynamic_Rendering_Local_Read_Features_Type) with
     record
-        Ray_Tracing_Position_Fetch: Boolean;
+        Dynamic_Rendering_Local_Read: Boolean;
     end record;
 
-    type Cooperative_Matrix_Properties is new Out_Structure
-        (Cooperative_Matrix_Properties_Type) with
+    type Rendering_Attachment_Location_Info is new In_Structure
+        (Rendering_Attachment_Location_Info_Type) with
     record
-        M_Size: Interfaces.Unsigned_32;
-        N_Size: Interfaces.Unsigned_32;
-        K_Size: Interfaces.Unsigned_32;
-        A_Type: Component_Type;
-        B_Type: Component_Type;
-        C_Type: Component_Type;
-        Result_Type: Component_Type;
-        Saturating_Accumulation: Boolean;
-        Scope: Vulkan.Scope;
+        Color_Attachment_Locations: Unsigned_32_Vectors.Vector;
     end record;
 
-    package Cooperative_Matrix_Properties_Vectors is new Ada.Containers.Vectors
-        (Positive, Cooperative_Matrix_Properties);
+    type Unsigned_32_Access is access constant Interfaces.Unsigned_32
+        with Convention => C,
+             Storage_Size => 0;
 
-    type Physical_Device_Cooperative_Matrix_Features is new Out_Structure
-        (Physical_Device_Cooperative_Matrix_Features_Type) with
+    type Rendering_Input_Attachment_Index_Info is new In_Structure
+        (Rendering_Input_Attachment_Index_Info_Type) with
     record
-        Cooperative_Matrix: Boolean;
-        Cooperative_Matrix_Robust_Buffer_Access: Boolean;
+        Color_Attachment_Input_Indices: Unsigned_32_Vectors.Vector;
+        Depth_Input_Attachment_Index: Unsigned_32_Access;
+        Stencil_Input_Attachment_Index: Unsigned_32_Access;
     end record;
-
-    type Physical_Device_Cooperative_Matrix_Properties is new Out_Structure
-        (Physical_Device_Cooperative_Matrix_Properties_Type) with
-    record
-        Cooperative_Matrix_Supported_Stages: Shader_Stage_Flags :=
-            Shader_Stage_No_Bit;
-    end record;
-
-    type Physical_Device_Video_Maintenance_1_Features is new Out_Structure
-        (Physical_Device_Video_Maintenance_1_Features_Type) with
-    record
-        Video_Maintenance_1: Boolean;
-    end record;
-
-    type Video_Inline_Query_Info is
-        new In_Structure(Video_Inline_Query_Info_Type) with
-    record
-        Query_Pool: Vulkan.Query_Pool;
-        First_Query: Interfaces.Unsigned_32;
-        Query_Count: Interfaces.Unsigned_32;
-    end record;
-
-    type Physical_Device_Vertex_Attribute_Divisor_Properties is
-        new Out_Structure
-            (Physical_Device_Vertex_Attribute_Divisor_Properties_Type) with
-    record
-        Max_Vertex_Attrib_Divisor: Interfaces.Unsigned_32;
-        Supports_Non_Zero_First_Instance: Boolean;
-    end record;
-
-    type Vertex_Input_Binding_Divisor_Description is
-    record
-        Binding: Interfaces.Unsigned_32;
-        Divisor: Interfaces.Unsigned_32;
-    end record
-        with Convention => C;
-
-    package Vertex_Input_Binding_Divisor_Description_Vectors is
-        new Ada.Containers.Vectors(Positive,
-                                   Vertex_Input_Binding_Divisor_Description);
-
-    type Pipeline_Vertex_Input_Divisor_State_Create_Info is new In_Structure
-        (Pipeline_Vertex_Input_Divisor_State_Create_Info_Type) with
-    record
-        Vertex_Binding_Divisors:
-            Vertex_Input_Binding_Divisor_Description_Vectors.Vector;
-    end record;
-
-    type Physical_Device_Vertex_Attribute_Divisor_Features is new Out_Structure
-        (Physical_Device_Vertex_Attribute_Divisor_Features_Type) with
-    record
-        Vertex_Attribute_Instance_Rate_Divisor: Boolean;
-        Vertex_Attribute_Instance_Rate_Zero_Divisor: Boolean;
-    end record;
-
-    type Calibrated_Timestamp_Info is
-        new In_Structure(Calibrated_Timestamp_Info_Type) with
-    record
-        Time_Domain: Vulkan.Time_Domain;
-    end record;
-
-    package Calibrated_Timestamp_Info_Vectors is new Ada.Containers.Vectors
-        (Positive, Calibrated_Timestamp_Info);
 
     type Physical_Device_Maintenance_6_Features is new Out_Structure
         (Physical_Device_Maintenance_6_Features_Type) with
@@ -10797,254 +8042,10 @@ Integer_Dot_Product_Accumulating_Saturating_4x8Bit_Packed_Mixed_Signedness_Accel
         Data: Interfaces.C.Extensions.void_ptr;
     end record;
 
-    type Set_Descriptor_Buffer_Offsets_Info is new In_Structure
-        (Set_Descriptor_Buffer_Offsets_Info_Type) with
+    type Physical_Device_Pipeline_Protected_Access_Features is new Out_Structure
+        (Physical_Device_Pipeline_Protected_Access_Features_Type) with
     record
-        Stage_Flags: Shader_Stage_Flags := Shader_Stage_No_Bit;
-        Layout: Pipeline_Layout;
-        First_Set: Interfaces.Unsigned_32;
-        Buffer_Indices: Unsigned_32_Vectors.Vector;
-        Offsets: Device_Size_Vectors.Vector;
-    end record;
-
-    type Bind_Descriptor_Buffer_Embedded_Samplers_Info is new In_Structure
-        (Bind_Descriptor_Buffer_Embedded_Samplers_Info_Type) with
-    record
-        Stage_Flags: Shader_Stage_Flags := Shader_Stage_No_Bit;
-        Layout: Pipeline_Layout;
-        Set: Interfaces.Unsigned_32;
-    end record;
-
-    type Debug_Report_Callback_Function is
-        access function(Flags: in Debug_Report_Flags;
-                        Object_Type: in Debug_Report_Object_Type;
-                        Object: in Object_Handle;
-                        Location: in Interfaces.C.size_t;
-                        Message_Code: in Interfaces.Integer_32;
-                        Layer_Prefix, Message: in String;
-                        User_Data: in Interfaces.C.Extensions.void_ptr)
-        return Boolean;
-
-    type Debug_Report_Callback_Create_Info is new In_Structure
-        (Debug_Report_Callback_Create_Info_Type) with
-    record
-        Flags: Debug_Report_Flags := Debug_Report_No_Bit;
-        Callback: Debug_Report_Callback_Function;
-        User_Data: Interfaces.C.Extensions.void_ptr;
-    end record;
-
-    type Pipeline_Rasterization_State_Rasterization_Order is new In_Structure
-        (Pipeline_Rasterization_State_Rasterization_Order_Type) with
-    record
-        Rasterization_Order: Vulkan.Rasterization_Order;
-    end record;
-
-    type Debug_Marker_Object_Name_Info is new In_Structure
-        (Debug_Marker_Object_Name_Info_Type) with
-    record
-        Object_Type: Debug_Report_Object_Type;
-        Object: Object_Handle;
-        Object_Name: Ada.Strings.Unbounded.Unbounded_String;
-    end record;
-
-    type Debug_Marker_Object_Tag_Info is new In_Structure
-        (Debug_Marker_Object_Tag_Info_Type) with
-    record
-        Object_Type: Debug_Report_Object_Type;
-        Object: Object_Handle;
-        Tag_Name: Interfaces.Unsigned_64;
-        Tag_Size: Interfaces.C.size_t;
-        Tag: Interfaces.C.Extensions.void_ptr;
-    end record;
-
-    type Debug_Color is array (1 .. 4) of aliased Interfaces.C.C_float
-        with Convention => C;
- 
-    type Debug_Marker_Marker_Info is new In_Structure
-        (Debug_Marker_Marker_Info_Type) with
-    record
-        Marker_Name: Ada.Strings.Unbounded.Unbounded_String;
-        Color: Debug_Color;
-    end record;
-    
-    type Dedicated_Allocation_Image_Create_Info is new In_Structure
-        (Dedicated_Allocation_Image_Create_Info_Type) with
-    record
-        Dedicated_Allocation: Boolean;
-    end record;
-
-    type Dedicated_Allocation_Buffer_Create_Info is new In_Structure
-        (Dedicated_Allocation_Buffer_Create_Info_Type) with
-    record
-        Dedicated_Allocation: Boolean;
-    end record;
-
-    type Dedicated_Allocation_Memory_Allocate_Info is new In_Structure
-        (Dedicated_Allocation_Memory_Allocate_Info_Type) with
-    record
-        Image: Vulkan.Image;
-        Buffer: Vulkan.Buffer;
-    end record;
-
-    type Physical_Device_Transform_Feedback_Features is new Out_Structure
-        (Physical_Device_Transform_Feedback_Features_Type) with
-    record
-        Transform_Feedback: Boolean;
-        Geometry_Streams: Boolean;
-    end record;
-
-    type Physical_Device_Transform_Feedback_Properties is new Out_Structure
-        (Physical_Device_Transform_Feedback_Properties_Type) with
-    record
-        Max_Transform_Feedback_Streams: Interfaces.Unsigned_32;
-        Max_Transform_Feedback_Buffers: Interfaces.Unsigned_32;
-        Max_Transform_Feedback_Buffer_Size: Device_Size;
-        Max_Transform_Feedback_Stream_Data_Size: Interfaces.Unsigned_32;
-        Max_Transform_Feedback_Buffer_Data_Size: Interfaces.Unsigned_32;
-        Max_Transform_Feedback_Buffer_Data_Stride: Interfaces.Unsigned_32;
-        Transform_Feedback_Queries: Boolean;
-        Transform_Feedback_Streams_Lines_Triangles: Boolean;
-        Transform_Feedback_Rasterization_Stream_Select: Boolean;
-        Transform_Feedback_Draw: Boolean;
-    end record;
-
-    type Pipeline_Rasterization_State_Stream_Create_Info is new In_Structure
-        (Pipeline_Rasterization_State_Stream_Create_Info_Type) with
-    record
-        Flags: Pipeline_Rasterization_State_Stream_Create_Flags :=
-            Pipeline_Rasterization_State_Stream_Create_No_Bit;
-            Rasterization_Stream: Interfaces.Unsigned_32;
-    end record;
-
-    type Cu_Module_Create_Info is new In_Structure
-        (Cu_Module_Create_Info_Type) with
-    record
-        Data_Size: Interfaces.C.size_t;
-        Data: Interfaces.C.Extensions.void_ptr;
-    end record;
-
-    type Cu_Function_Create_Info is new In_Structure
-        (Cu_Function_Create_Info_Type) with
-    record
-        Module: Cu_Module;
-        Name: Ada.Strings.Unbounded.Unbounded_String;
-    end record;
-
-    package Void_Pointer_Vectors is new Ada.Containers.Vectors
-        (Positive, Interfaces.C.Extensions.void_ptr, System."=");
-
-    type Cu_Launch_Info is new In_Structure(Cu_Launch_Info_Type) with
-    record
-        Cu_Function: Vulkan.Cu_Function;
-        Grid_Dim_X: Interfaces.Unsigned_32;
-        Grid_Dim_Y: Interfaces.Unsigned_32;
-        Grid_Dim_Z: Interfaces.Unsigned_32;
-        Block_Dim_X: Interfaces.Unsigned_32;
-        Block_Dim_Y: Interfaces.Unsigned_32;
-        Block_Dim_Z: Interfaces.Unsigned_32;
-        Shared_Mem_Bytes: Interfaces.Unsigned_32;
-        Params: Void_Pointer_Vectors.Vector;
-        Extras: Void_Pointer_Vectors.Vector;
-    end record;
-
-    type Image_View_Handle_Info is new In_Structure
-        (Image_View_Handle_Info_Type) with
-    record
-        Image_View: Vulkan.Image_View;
-        Descriptor_Type: Vulkan.Descriptor_Type;
-        Sampler: Vulkan.Sampler;
-    end record;
-
-    type Image_View_Address_Properties is new Out_Structure
-        (Image_View_Address_Properties_Type) with
-    record
-        Device_Address: Vulkan.Device_Address;
-        Size: Device_Size;
-    end record;
-
-    type Texture_LOD_Gather_Format_Properties is new Out_Structure
-        (Texture_LOD_Gather_Format_Properties_Type) with
-    record
-        Supports_Texture_Gather_LOD_Bias: Boolean;
-    end record;
-
-    type Shader_Resource_Usage is
-    record
-        Num_Used_Vgprs: Interfaces.Unsigned_32;
-        Num_Used_Sgprs: Interfaces.Unsigned_32;
-        LDS_Size_Per_Local_Work_Group: Interfaces.Unsigned_32;
-        LDS_Usage_Size_In_Bytes: Interfaces.C.size_t;
-        Scratch_Mem_Usage_In_Bytes: Interfaces.C.size_t;
-    end record
-        with Convention => C;
-
-    type Compute_Work_Group_Size_Array is
-        array (1 .. 3) of Interfaces.Unsigned_32
-        with Convention => C;
-
-    type Shader_Statistics_Info is
-    record
-        Shader_Stage_Mask: Shader_Stage_Flags := Shader_Stage_No_Bit;
-        Resource_Usage: Shader_Resource_Usage;
-        Num_Physical_Vgprs: Interfaces.Unsigned_32;
-        Num_Physical_Sgprs: Interfaces.Unsigned_32;
-        Num_Available_Vgprs: Interfaces.Unsigned_32;
-        Num_Available_Sgprs: Interfaces.Unsigned_32;
-        Compute_Work_Group_Size: Compute_Work_Group_Size_Array;
-    end record
-        with Convention => C;
-
-    type Physical_Device_Corner_Sampled_Image_Features is new Out_Structure
-        (Physical_Device_Corner_Sampled_Image_Features_Type) with
-    record
-        Corner_Sampled_Image: Boolean;
-    end record;
-
-    type External_Image_Format_Properties_NV is
-    record
-        Image_Format_Properties: Vulkan.Image_Format_Properties;
-        External_Memory_Features: External_Memory_Feature_Flags_NV :=
-            External_Memory_Feature_No_Bit_NV;
-        Export_From_Imported_Handle_Types:
-            External_Memory_Handle_Type_Flags_NV :=
-                External_Memory_Handle_Type_No_Bit_NV;
-        Compatible_Handle_Types: External_Memory_Handle_Type_Flags_NV :=
-            External_Memory_Handle_Type_No_Bit_NV;
-    end record
-        with Convention => C;
-
-    type External_Memory_Image_Create_Info_NV is new In_Structure
-        (External_Memory_Image_Create_Info_NV_Type) with
-    record
-        Handle_Types: External_Memory_Handle_Type_Flags_NV :=
-            External_Memory_Handle_Type_No_Bit_NV;
-    end record;
-
-    type Export_Memory_Allocate_Info_NV is new In_Structure
-        (Export_Memory_Allocate_Info_NV_Type) with
-    record
-        Handle_Types: External_Memory_Handle_Type_Flags_NV :=
-            External_Memory_Handle_Type_No_Bit_NV;
-    end record;
-
-    package Validation_Check_Vectors is new Ada.Containers.Vectors
-        (Positive, Validation_Check);
-
-    type Validation_Flags is new In_Structure(Validation_Flags_Type) with
-    record
-        Disabled_Validation_Checks: Validation_Check_Vectors.Vector;
-    end record;
-
-    type Image_View_ASTC_Decode_Mode is new In_Structure
-        (Image_View_ASTC_Decode_Mode_Type) with
-    record
-        Decode_Mode: Format;
-    end record;
-
-    type Physical_Device_ASTC_Decode_Features is new Out_Structure
-        (Physical_Device_ASTC_Decode_Features_Type) with
-    record
-        Decode_Mode_Shared_Exponent: Boolean;
+        Pipeline_Protected_Access: Boolean;
     end record;
 
     type Physical_Device_Pipeline_Robustness_Features is new Out_Structure
@@ -11071,86 +8072,110 @@ Integer_Dot_Product_Accumulating_Saturating_4x8Bit_Packed_Mixed_Signedness_Accel
         Images: Pipeline_Robustness_Image_Behavior;
     end record;
 
-    type Conditional_Rendering_Begin_Info is new In_Structure
-        (Conditional_Rendering_Begin_Info_Type) with
+    type Physical_Device_Host_Image_Copy_Features is new Out_Structure
+        (Physical_Device_Host_Image_Copy_Features_Type) with
     record
-        Buffer: Vulkan.Buffer;
-        Offset: Device_Size;
-        Flags: Conditional_Rendering_Flags := Conditional_Rendering_No_Bit;
-    end record;
-    
-    type Physical_Device_Conditional_Rendering_Features is new Out_Structure
-        (Physical_Device_Conditional_Rendering_Features_Type) with
-    record
-        Conditional_Rendering: Boolean;
-        Inherited_Conditional_Rendering: Boolean;
+        Host_Image_Copy: Boolean;
     end record;
 
-    type Command_Buffer_Inheritance_Conditional_Rendering_Info is
-        new In_Structure
-            (Command_Buffer_Inheritance_Conditional_Rendering_Info_Type) with
+    type Image_Layout_Access is access all Image_Layout
+        with Convention => C,
+             Storage_Size => 0;
+
+    -- Unfortunately, due to the way this structure works, you'll
+    -- have to provid the pointers directly rather than just having
+    -- a vector filled.
+    type Physical_Device_Host_Image_Copy_Properties is new Out_Structure
+        (Physical_Device_Host_Image_Copy_Properties_Type) with
     record
-        Conditional_Rendering_Enable: Boolean;
+        Copy_Src_Layout_Count: Interfaces.Unsigned_32;
+        Copy_Src_Layouts: Image_Layout_Access;
+        Copy_Dst_Layout_Count: Interfaces.Unsigned_32;
+        Copy_Dst_Layouts: Image_Layout_Access;
+        Optimal_Tiling_Layout_UUID: UUID;
+        Identical_Memory_Type_Requirements: Boolean;
     end record;
 
-    type Debug_Utils_Label is new In_Structure(Debug_Utils_Label_Type) with
+    type Memory_To_Image_Copy is new In_Structure
+        (Memory_To_Image_Copy_Type) with
     record
-        Label_Name: Ada.Strings.Unbounded.Unbounded_String;
-        Color: Debug_Color;
+        Host_Pointer: Interfaces.C.Extensions.void_ptr;
+        Memory_Row_Length: Interfaces.Unsigned_32;
+        Memory_Image_Height: Interfaces.Unsigned_32;
+        Image_Subresource: Image_Subresource_Layers;
+        Image_Offset: Offset_3D;
+        Image_Extent: Extent_3D;
     end record;
 
-    type Debug_Utils_Object_Name_Info is
-        new In_Structure(Debug_Utils_Object_Name_Info_Type) with
+    package Memory_To_Image_Copy_Vectors is
+        new Ada.Containers.Vectors(Positive, Memory_To_Image_Copy);
+
+    type Image_To_Memory_Copy is new In_Structure
+        (Image_To_Memory_Copy_Type) with
     record
-        Object_Type: Vulkan.Object_Type;
-        Object_Handle: Vulkan.Object_Handle;
-        Object_Name: Ada.Strings.Unbounded.Unbounded_String;
+        Host_Pointer: Interfaces.C.Extensions.void_ptr;
+        Memory_Row_Length: Interfaces.Unsigned_32;
+        Memory_Image_Height: Interfaces.Unsigned_32;
+        Image_Subresource: Image_Subresource_Layers;
+        Image_Offset: Offset_3D;
+        Image_Extent: Extent_3D;
     end record;
 
-    package Debug_Utils_Label_Vectors is
-        new Ada.Containers.Vectors(Positive, Debug_Utils_Label);
+    package Image_To_Memory_Copy_Vectors is
+        new Ada.Containers.Vectors(Positive, Image_To_Memory_Copy);
 
-    package Debug_Utils_Object_Name_Info_Vectors is
-        new Ada.Containers.Vectors(Positive, Debug_Utils_Object_Name_Info);
-
-    type Debug_Utils_Messenger_Callback_Data is
-        new In_Structure(Debug_Utils_Messenger_Callback_Data_Type) with
+    type Copy_Memory_To_Image_Info is new In_Structure
+        (Copy_Memory_To_Image_Info_Type) with
     record
-        Flags: Debug_Utils_Messenger_Callback_Data_Flags :=
-            Debug_Utils_Messenger_Callback_Data_No_Bit;
-        Message_ID_Name: Ada.Strings.Unbounded.Unbounded_String;
-        Message_ID_Number: Interfaces.Integer_32;
-        Message: Ada.Strings.Unbounded.Unbounded_String;
-        Queue_Labels: Debug_Utils_Label_Vectors.Vector;
-        Cmd_Buf_Labels: Debug_Utils_Label_Vectors.Vector;
-        Objects: Debug_Utils_Object_Name_Info_Vectors.Vector;
+        Flags: Host_Image_Copy_Flags := Host_Image_Copy_No_Bit;
+        Dst_Image: Image;
+        Dst_Image_Layout: Image_Layout;
+        Regions: Memory_To_Image_Copy_Vectors.Vector;
     end record;
 
-    type Debug_Messenger_Callback is access function
-        (Message_Severity: in Debug_Utils_Message_Severity_Flags;
-         Message_Types: in Debug_Utils_Message_Type_Flags;
-         Callback_Data: in Debug_Utils_Messenger_Callback_Data;
-         User_Data: in Interfaces.C.Extensions.void_ptr) return Boolean;
-
-    type Debug_Utils_Messenger_Create_Info is
-        new In_Structure(Debug_Utils_Messenger_Create_Info_Type) with
+    type Copy_Image_To_Memory_Info is new In_Structure
+        (Copy_Image_To_Memory_Info_Type) with
     record
-        Flags: Debug_Utils_Messenger_Create_Flags :=
-            Debug_Utils_Messenger_Create_No_Bit;
-        Message_Severity: Debug_Utils_Message_Severity_Flags;
-        Message_Type: Debug_Utils_Message_Type_Flags;
-        User_Callback: Debug_Messenger_Callback;
-        User_Data: Interfaces.C.Extensions.void_ptr := System.Null_Address;
+        Flags: Host_Image_Copy_Flags := Host_Image_Copy_No_Bit;
+        Src_Image: Image;
+        Src_Image_Layout: Image_Layout;
+        Regions: Image_To_Memory_Copy_Vectors.Vector;
     end record;
 
-    type Debug_Utils_Object_Tag_Info is
-        new In_Structure(Debug_Utils_Object_Tag_Info_Type) with
+    type Copy_Image_To_Image_Info is
+        new In_Structure(Copy_Image_To_Image_Info_Type) with
     record
-        Object_Type: Vulkan.Object_Type;
-        Object_Handle: Vulkan.Object_Handle;
-        Tag_Name: Interfaces.Unsigned_64;
-        Tag_Size: Interfaces.C.size_t;
-        Tag: Interfaces.C.Extensions.void_ptr;
+        Flags: Host_Image_Copy_Flags := Host_Image_Copy_No_Bit;
+        Src_Image: Image;
+        Src_Image_Layout: Image_Layout;
+        Dst_Image: Image;
+        Dst_Image_Layout: Image_Layout;
+        Regions: Image_Copy_2_Vectors.Vector;
+    end record;
+
+    type Host_Image_Layout_Transition_Info is new In_Structure
+        (Host_Image_Layout_Transition_Info_Type) with
+    record
+        Image: Vulkan.Image;
+        Old_Layout: Image_Layout;
+        New_Layout: Image_Layout;
+        Subresource_Range: Image_Subresource_Range;
+    end record;
+
+    package Host_Image_Layout_Transition_Info_Vectors is
+        new Ada.Containers.Vectors(Positive, Host_Image_Layout_Transition_Info);
+
+    type Subresource_Host_Memcpy_Size is new Out_Structure
+        (Subresource_Host_Memcpy_Size_Type) with
+    record
+        Size: Device_Size;
+    end record;
+
+    type Host_Image_Copy_Device_Performance_Query is new Out_Structure
+        (Host_Image_Copy_Device_Performance_Query_Type) with
+    record
+        Optimal_Device_Access: Boolean;
+        Identical_Memory_Layout: Boolean;
     end record;
 end Vulkan;
 

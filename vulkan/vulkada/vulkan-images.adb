@@ -14,13 +14,14 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Image related subprograms
 
 with Vulkan.Extension_Records;
 with Vulkan.Exceptions;
 with Vulkan.C_V1_1;
+with Vulkan.C_V1_4;
 
 package body Vulkan.Images is
     procedure Bind(Device: in Vulkan.Device;
@@ -147,5 +148,147 @@ package body Vulkan.Images is
 
         return Requirements;
     end Get_Sparse_Memory_Requirements;
+
+    procedure Get_Subresource_Layout(Device: in Vulkan.Device;
+                                     Image: in Vulkan.Image;
+                                     Info: in Image_Subresource_2;
+                                     Layout: in out Subresource_Layout_2) is
+        Info_C: C_V1_4.Image_Subresource_2_C;
+        Layout_C: C_V1_4.Subresource_Layout_2_C;
+    begin
+        Info_C.Next := Extension_Records.To_C(Info.Next);
+        Info_C.Image_Subresource := Info.Image_Subresource;
+        Layout_C.Next := Extension_Records.To_C(Layout.Next);
+        C_V1_4.vkGetImageSubresourceLayout2(Device, Image, Info_C, Layout_C);
+
+        Extension_Records.Free(Info_C.Next);
+        C_V1_4.To_Ada(Layout, Layout_C);
+        Extension_Records.Free(Layout_C.Next);
+    end Get_Subresource_Layout;
+
+    function Get_Subresource_Layout(Device: in Vulkan.Device;
+                                    Image: in Vulkan.Image;
+                                    Info: in Image_Subresource_2)
+        return Subresource_Layout_2 is
+        Layout: Subresource_Layout_2;
+    begin
+        Get_Subresource_Layout(Device, Image, Info, Layout);
+
+        return Layout;
+    end Get_Subresource_Layout;
+
+    function Copy_Memory_To_Image
+        (Device: in Vulkan.Device;
+         Copy_Memory_To_Image_Info: in Vulkan.Copy_Memory_To_Image_Info)
+        return Result is
+        C_Info: C_V1_4.Copy_Memory_To_Image_Info_C :=
+            C_V1_4.To_C(Copy_Memory_To_Image_Info);
+        Result: Vulkan.Result;
+    begin
+        Result := C_V1_4.vkCopyMemoryToImage(Device, C_Info);
+        C_V1_4.Free(C_Info);
+
+        return Result;
+    end Copy_Memory_To_Image;
+
+    procedure Copy_Memory_To_Image
+        (Device: in Vulkan.Device;
+         Copy_Memory_To_Image_Info: in Vulkan.Copy_Memory_To_Image_Info) is
+    begin
+        Exceptions.Check(Copy_Memory_To_Image(Device,
+                                              Copy_Memory_To_Image_Info));
+    end Copy_Memory_To_Image;
+
+    function Copy_Image_To_Memory
+        (Device: in Vulkan.Device;
+         Copy_Image_To_Memory_Info: in Vulkan.Copy_Image_To_Memory_Info)
+        return Result is
+        C_Info: C_V1_4.Copy_Image_To_Memory_Info_C :=
+            C_V1_4.To_C(Copy_Image_To_Memory_Info);
+        Result: Vulkan.Result;
+    begin
+        Result := C_V1_4.vkCopyImageToMemory(Device, C_Info);
+        C_V1_4.Free(C_Info);
+
+        return Result;
+    end Copy_Image_To_Memory;
+
+    procedure Copy_Image_To_Memory
+        (Device: in Vulkan.Device;
+         Copy_Image_To_Memory_Info: in Vulkan.Copy_Image_To_Memory_Info) is
+    begin
+        Exceptions.Check(Copy_Image_To_Memory(Device,
+                                              Copy_Image_To_Memory_Info));
+    end Copy_Image_To_Memory;
+
+    function Copy_Image_To_Image
+        (Device: in Vulkan.Device;
+         Copy_Image_To_Image_Info: in Vulkan.Copy_Image_To_Image_Info)
+        return Result is
+        C_Info: C_V1_4.Copy_Image_To_Image_Info_C :=
+            C_V1_4.To_C(Copy_Image_To_Image_Info);
+        Result: Vulkan.Result;
+    begin
+        Result := C_V1_4.vkCopyImageToImage(Device, C_Info);
+        C_V1_4.Free(C_Info);
+
+        return Result;
+    end Copy_Image_To_Image;
+
+    procedure Copy_Image_To_Image
+        (Device: in Vulkan.Device;
+         Copy_Image_To_Image_Info: in Vulkan.Copy_Image_To_Image_Info) is
+    begin
+        Exceptions.Check(Copy_Image_To_Image(Device,
+                                             Copy_Image_To_Image_Info));
+    end Copy_Image_To_Image;
+    
+    function Transition_Image_Layout
+        (Device: in Vulkan.Device;
+         Transitions: in Host_Image_Layout_Transition_Info_Vectors.Vector)
+        return Result is
+        C_Info: array (1 .. Positive(Transitions.Length)) of
+            aliased C_V1_4.Host_Image_Layout_Transition_Info_C;
+        Result: Vulkan.Result;
+    begin
+        for X in C_Info'Range loop
+            C_Info(X) := C_V1_4.To_C(Transitions(X));
+        end loop;
+
+        Result := C_V1_4.vkTransitionImageLayout
+            (Device,
+             Interfaces.Unsigned_32(Transitions.Length),
+             C_Info(1)'Access);
+
+        for Info of C_Info loop
+            C_V1_4.Free(Info);
+        end loop;
+
+        return Result;
+    end Transition_Image_Layout;
+
+    function Transition_Image_Layout
+        (Device: in Vulkan.Device;
+         Transition: in Host_Image_Layout_Transition_Info) return Result is
+    begin
+        return Transition_Image_Layout
+            (Device,
+             Host_Image_Layout_Transition_Info_Vectors.To_Vector(Transition,
+                                                                 1));
+    end Transition_Image_Layout;
+
+    procedure Transition_Image_Layout
+        (Device: in Vulkan.Device;
+         Transitions: in Host_Image_Layout_Transition_Info_Vectors.Vector) is
+    begin
+        Exceptions.Check(Transition_Image_Layout(Device, Transitions));
+    end Transition_Image_Layout;
+
+    procedure Transition_Image_Layout
+        (Device: in Vulkan.Device;
+         Transition: in Host_Image_Layout_Transition_Info) is
+    begin
+        Exceptions.Check(Transition_Image_Layout(Device, Transition));
+    end Transition_Image_Layout;
 end Vulkan.Images;
 

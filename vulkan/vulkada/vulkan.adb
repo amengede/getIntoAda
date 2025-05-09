@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Basic Vulkan types and constants
 
@@ -58,13 +58,18 @@ package body Vulkan is
         return Patch_Version(Interfaces.Unsigned_32(Version) and 16#fff#);
     end Get_Patch_Version;
 
-    function Get_Variant(Version: in Version_Number)
-        return Variant is
-        use type Interfaces.Unsigned_32;
+    function Get_Variant(Version: in Version_Number) return Variant is
     begin
         return Variant
             (Interfaces.Shift_Right(Interfaces.Unsigned_32(Version), 29));
     end Get_Variant;
+
+    function "=" (Left, Right: in Version_Number) return Boolean is
+    begin
+        return Get_Major_Version(Left) = Get_Major_Version(Right) and
+               Get_Minor_Version(Left) = Get_Minor_Version(Right) and
+               Get_Patch_Version(Left) = Get_Patch_Version(Right);
+    end "=";
 
     function "<" (Left, Right: in Version_Number) return Boolean is
     begin

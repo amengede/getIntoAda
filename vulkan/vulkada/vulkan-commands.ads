@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Command subprograms
 
@@ -171,7 +171,7 @@ package Vulkan.Commands is
                    Vertex_Count,
                    Instance_Count,
                    First_Vertex,
-                   First_Instance: Interfaces.Unsigned_32)
+                   First_Instance: in Interfaces.Unsigned_32)
         with Pre => Command_Buffer /= No_Command_Buffer;
 
     -- vkCmdDrawIndexed
@@ -369,7 +369,6 @@ package Vulkan.Commands is
                     Region.Image_Extent.Width > 0 and
                     Region.Image_Extent.Height > 0 and
                     Region.Image_Extent.Depth > 0;
-
 
     -- vkCmdUpdateBuffer
     generic
@@ -918,6 +917,119 @@ package Vulkan.Commands is
          Primitive_Restart_Enable: in Boolean)
         with Pre => Command_Buffer /= No_Command_Buffer;
 
+    -- Vulkan 1.4
+    -- vkCmdSetLineStipple
+    procedure Set_Line_Stipple(Command_Buffer: in Vulkan.Command_Buffer;
+                               Line_Stipple_Factor: in Interfaces.Unsigned_32;
+                               Line_Stipple_Pattern: in Interfaces.Unsigned_16)
+        with Inline,
+             Pre => Command_Buffer /= No_Command_Buffer and
+                    Line_Stipple_Factor in 1 .. 256;
+
+    -- vkCmdBindIndexBuffer2
+    procedure Bind(Command_Buffer: in Vulkan.Command_Buffer;
+                   Buffer: in Vulkan.Buffer;
+                   Offset, Size: in Device_Size;
+                   Index_Type: in Vulkan.Index_Type)
+        with Inline,
+             Pre => Command_Buffer /= No_Command_Buffer and
+                    Index_Type /= None and
+                    (if Buffer = No_Buffer then Offset = 0);
+
+    -- vkCmdPushDescriptorSet
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Bind_Point: in Pipeline_Bind_Point;
+                   Layout: in Pipeline_Layout;
+                   Set: in Interfaces.Unsigned_32;
+                   Descriptor_Writes: in Write_Descriptor_Set_Vectors.Vector)
+        with Pre => Command_Buffer /= No_Command_Buffer and
+                    Layout /= No_Pipeline_Layout and
+                    not Descriptor_Writes.Is_Empty and
+                    (for all Write of Descriptor_Writes =>
+                        Write.Dst_Set /= No_Descriptor_Set and
+                        Write.Descriptor_Count > 0);
+
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Bind_Point: in Pipeline_Bind_Point;
+                   Layout: in Pipeline_Layout;
+                   Set: in Interfaces.Unsigned_32;
+                   Descriptor_Write: in Write_Descriptor_Set)
+        with Inline,
+             Pre => Command_Buffer /= No_Command_Buffer and
+                    Layout /= No_Pipeline_Layout and
+                    Descriptor_Write.Dst_Set /= No_Descriptor_Set and
+                    Descriptor_Write.Descriptor_Count > 0;
+
+    -- vkCmdPushDescriptorSetWithTemplate
+    procedure Push
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Descriptor_Update_Template: in Vulkan.Descriptor_Update_Template;
+         Layout: in Pipeline_Layout;
+         Set: in Interfaces.Unsigned_32;
+         Data: in Interfaces.C.Extensions.void_ptr)
+        with Inline,
+             Pre => Command_Buffer /= No_Command_Buffer and
+                    Descriptor_Update_Template /=
+                    No_Descriptor_Update_Template and
+                    Layout /= No_Pipeline_Layout and
+                    Data /= System.Null_Address;
+
+    -- vkCmdSetRenderingAttachmentLocations
+    procedure Set_Rendering_Attachment_Locations
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Location_Info: in Rendering_Attachment_Location_Info)
+        with Pre => Command_Buffer /= No_Command_Buffer;
+
+    -- vkCmdSetRenderingInputAttachmentIndices
+    procedure Set_Rendering_Input_Attachment_Indices
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Input_Attachment_Index_Info: in Rendering_Input_Attachment_Index_Info)
+        with Pre => Command_Buffer /= No_Command_Buffer;
+
+    -- vkCmdBindDescriptorSets2
+    procedure Bind
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Bind_Descriptor_Sets_Info: in Vulkan.Bind_Descriptor_Sets_Info)
+        with Pre => Command_Buffer /= No_Command_Buffer and
+                    Bind_Descriptor_Sets_Info.Stage_Flags /=
+                    Shader_Stage_No_Bit and
+                    not Bind_Descriptor_Sets_Info.Descriptor_Sets.Is_Empty and
+                    (for all Set of Bind_Descriptor_Sets_Info.Descriptor_Sets =>
+                        Set /= No_Descriptor_Set);
+
+    -- vkPushConstants2
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Push_Constants_Info: in Vulkan.Push_Constants_Info)
+        with Pre => Command_Buffer /= No_Command_Buffer and
+                    Push_Constants_Info.Stage_Flags /= Shader_Stage_No_Bit and
+                    Push_Constants_Info.Size > 0 and
+                    Push_Constants_Info.Values /= System.Null_Address;
+
+    -- vkCmdPushDescriptorSet2
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Push_Descriptor_Set_Info: in Vulkan.Push_Descriptor_Set_Info)
+        with Pre => Command_Buffer /= No_Command_Buffer and
+                    Push_Descriptor_Set_Info.Stage_Flags /=
+                    Shader_Stage_No_Bit and
+                    not Push_Descriptor_Set_Info.Descriptor_Writes.Is_Empty and
+                    (for all Write of
+                        Push_Descriptor_Set_Info.Descriptor_Writes =>
+                            Write.Dst_Set /= No_Descriptor_Set and
+                            Write.Descriptor_Count /= 0);
+
+    -- vkCmdPushDescriptorSetWithTemplate2
+    procedure Push
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Push_Descriptor_Set_With_Template_Info:
+            in Vulkan.Push_Descriptor_Set_With_Template_Info)
+        with Pre =>
+            Command_Buffer /= No_Command_Buffer and
+            Push_Descriptor_Set_With_Template_Info.Descriptor_Update_Template /=
+            No_Descriptor_Update_Template and
+            Push_Descriptor_Set_With_Template_Info.Layout /=
+            No_Pipeline_Layout and
+            Push_Descriptor_Set_With_Template_Info.Data /= System.Null_Address;
+
 private
     procedure Bind(Command_Buffer: in Vulkan.Command_Buffer;
                    Pipeline_Bind_Point: in Vulkan.Pipeline_Bind_Point;
@@ -965,7 +1077,7 @@ private
                    Vertex_Count,
                    Instance_Count,
                    First_Vertex,
-                   First_Instance: Interfaces.Unsigned_32)
+                   First_Instance: in Interfaces.Unsigned_32)
         renames C.vkCmdDraw;
     
     procedure Draw_Indexed(Command_Buffer: in Vulkan.Command_Buffer;

@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Subprogram access for Vulkan 1.3
 
@@ -81,30 +81,7 @@ private package Vulkan.C_V1_3 is
             Device_Image_Memory_Requirements_Type;
 
     subtype Out_Structure is Structure
-        with Static_Predicate => Out_Structure in
-            Physical_Device_Vulkan_1_3_Features_Type |
-            Physical_Device_Vulkan_1_3_Properties_Type |
-            Physical_Device_Shader_Terminate_Invocation_Features_Type |
-            Physical_Device_Tool_Properties_Type |
-            Physical_Device_Shader_Demote_To_Helper_Invocation_Features_Type |
-            Physical_Device_Private_Data_Features_Type |
-            Physical_Device_Pipeline_Creation_Cache_Control_Features_Type |
-            Physical_Device_Synchronization_2_Features_Type |
-            Physical_Device_Zero_Initialize_Workgroup_Memory_Features_Type |
-            Physical_Device_Image_Robustness_Features_Type |
-            Physical_Device_Subgroup_Size_Control_Features_Type |
-            Physical_Device_Subgroup_Size_Control_Properties_Type |
-            Pipeline_Shader_Stage_Required_Subgroup_Size_Create_Info_Type |
-            Physical_Device_Inline_Uniform_Block_Features_Type |
-            Physical_Device_Inline_Uniform_Block_Properties_Type |
-            Physical_Device_Texture_Compression_ASTC_HDR_Features_Type |
-            Physical_Device_Dynamic_Rendering_Features_Type |
-            Physical_Device_Shader_Integer_Dot_Product_Features_Type |
-            Physical_Device_Shader_Integer_Dot_Product_Properties_Type |
-            Physical_Device_Texel_Buffer_Alignment_Properties_Type |
-            Format_Properties_3_Type |
-            Physical_Device_Maintenance_4_Features_Type |
-            Physical_Device_Maintenance_4_Properties_Type;
+        with Static_Predicate => Out_Structure in Out_Structure_Type;
 
     subtype In_Structure is Structure
         with Static_Predicate => In_Structure not in Out_Structure;

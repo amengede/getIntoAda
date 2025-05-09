@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Subprogram access for Vulkan 1.1
 
@@ -22,7 +22,7 @@ with Vulkan.C;
 with Vulkan.C_Arrays;
 
 private package Vulkan.C_V1_1 is
-    -- Structure classifications.
+    -- Structure classification.
     subtype Structure is Structure_Type
         with Static_Predicate => Structure in
             Physical_Device_Subgroup_Properties_Type |
@@ -92,36 +92,7 @@ private package Vulkan.C_V1_1 is
             Physical_Device_Shader_Draw_Parameter_Features_Type;
             
     subtype Out_Structure is Structure
-        with Static_Predicate => Out_Structure in
-            Physical_Device_Subgroup_Properties_Type |
-            Physical_Device_16Bit_Storage_Features_Type |
-            Memory_Dedicated_Requirements_Type |
-            Physical_Device_Group_Properties_Type |
-            Memory_Requirements_2_Type |
-            Sparse_Image_Memory_Requirements_2_Type |
-            Physical_Device_Features_2_Type |
-            Physical_Device_Properties_2_Type |
-            Format_Properties_2_Type |
-            Image_Format_Properties_2_Type |
-            Queue_Family_Properties_2_Type |
-            Physical_Device_Memory_Properties_2_Type |
-            Sparse_Image_Format_Properties_2_Type |
-            Physical_Device_Point_Clipping_Properties_Type |
-            Physical_Device_Multiview_Features_Type |
-            Physical_Device_Multiview_Properties_Type |
-            Physical_Device_Variable_Pointer_Features_Type |
-            Physical_Device_Protected_Memory_Features_Type |
-            Physical_Device_Protected_Memory_Properties_Type |
-            Physical_Device_Sampler_YCbCr_Conversion_Features_Type |
-            Sampler_YCbCr_Conversion_Image_Format_Properties_Type |
-            External_Image_Format_Properties_Type |
-            External_Buffer_Properties_Type |
-            Physical_Device_ID_Properties_Type |
-            External_Fence_Properties_Type |
-            External_Semaphore_Properties_Type |
-            Physical_Device_Maintenance_3_Properties_Type |
-            Descriptor_Set_Layout_Support_Type |
-            Physical_Device_Shader_Draw_Parameter_Features_Type;
+        with Static_Predicate => Out_Structure in Out_Structure_Type;
 
     subtype In_Structure is Structure
         with Static_Predicate => In_Structure not in Out_Structure;

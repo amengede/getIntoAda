@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Device routines
 
@@ -26,6 +26,7 @@ with Vulkan.Extension_Records;
 with Vulkan.C_V1_1;
 with Vulkan.C_V1_2;
 with Vulkan.C_V1_3;
+with Vulkan.C_V1_4;
 
 package body Vulkan.Devices is
     function Get_Proc_Addr(Device: in Vulkan.Device;
@@ -339,31 +340,6 @@ package body Vulkan.Devices is
         return Size;
     end Get_Memory_Commitment;
 
-    function Get_Group_Present_Capabilities
-        (Device: in Vulkan.Device;
-         Capabilities: in out Device_Group_Present_Capabilities)
-        return Result is
-        Capabilities_C: C.Device_Group_Present_Capabilities_C;
-        Result: Vulkan.Result;
-    begin
-        Capabilities_C.Next := Extension_Records.To_C(Capabilities.Next);
-        Result := C.vkGetDeviceGroupPresentCapabilitiesKHR(Device,
-                                                           Capabilities_C);
-        C.To_Ada(Capabilities, Capabilities_C);
-        Extension_Records.Free(Capabilities_C.Next);
-
-        return Result;
-    end Get_Group_Present_Capabilities;
-
-    function Get_Group_Present_Capabilities(Device: in Vulkan.Device)
-        return Device_Group_Present_Capabilities is
-        Capabilities: Device_Group_Present_Capabilities;
-    begin
-        Exceptions.Check(Get_Group_Present_Capabilities(Device, Capabilities));
-
-        return Capabilities;
-    end Get_Group_Present_Capabilities;
-    
     function Get_Device_Group_Peer_Memory_Features
         (Device: in Vulkan.Device;
          Heap_Index,
@@ -562,5 +538,84 @@ package body Vulkan.Devices is
 
         return Requirements;
     end Get_Image_Sparse_Memory_Requirements;
+
+    function Map_2_With_Result(Device: in Vulkan.Device;
+                               Memory_Map_Info: in Vulkan.Memory_Map_Info;
+                               Data: out Pointers.Pointer) return Result is
+        C_Info: C_V1_4.Memory_Map_Info_C := C_V1_4.To_C(Memory_Map_Info);
+        Result: Vulkan.Result;
+    begin
+        Result := C_V1_4.vkMapMemory2(Device, C_Info, Data'Address);
+        C_V1_4.Free(C_Info);
+
+        return Result;
+    end Map_2_With_Result;
+    
+    function Map_2_With_Exception(Device: in Vulkan.Device;
+                                  Memory_Map_Info: in Vulkan.Memory_Map_Info)
+        return Pointers.Pointer is
+        function Map_2 is new Map_2_With_Result(Pointers);
+
+        Data: Pointers.Pointer;
+    begin
+        Exceptions.Check(Map_2(Device, Memory_Map_Info, Data));
+
+        return Data;
+    end Map_2_With_Exception;
+
+    function Unmap(Device: in Vulkan.Device;
+                   Memory_Unmap_Info: in Vulkan.Memory_Unmap_Info)
+        return Result is
+        C_Info: C_V1_4.Memory_Unmap_Info_C := C_V1_4.To_C(Memory_Unmap_Info);
+        Result: Vulkan.Result;
+    begin
+        Result := C_V1_4.vkUnmapMemory2(Device, C_Info);
+        C_V1_4.Free(C_Info);
+
+        return Result;
+    end Unmap;
+
+    procedure Unmap(Device: in Vulkan.Device;
+                    Memory_Unmap_Info: in Vulkan.Memory_Unmap_Info) is
+    begin
+        Exceptions.Check(Unmap(Device, Memory_Unmap_Info));
+    end Unmap;
+
+    function Get_Granularity(Device: in Vulkan.Device;
+                             Rendering_Area_Info: in Vulkan.Rendering_Area_Info)
+        return Extent_2D is
+        Info_C: C_V1_4.Rendering_Area_Info_C :=
+            C_V1_4.To_C(Rendering_Area_Info);
+        Granularity: Extent_2D;
+    begin
+        C_V1_4.vkGetRenderingAreaGranularity(Device, Info_C, Granularity);
+        C_V1_4.Free(Info_C);
+
+        return Granularity;
+    end Get_Granularity;
+
+    procedure Get_Subresource_Layout(Device: in Vulkan.Device;
+                                     Info: in Device_Image_Subresource_Info;
+                                     Layout: in out Subresource_Layout_2) is
+        Info_C: C_V1_4.Device_Image_Subresource_Info_C := C_V1_4.To_C(InfO);
+        Layout_C: C_V1_4.Subresource_Layout_2_C;
+    begin
+        Layout_C.Next := Extension_Records.To_C(Layout.Next);
+        C_V1_4.vkGetDeviceImageSubresourceLayout(Device, Info_C, Layout_C);
+        
+        C_V1_4.Free(Info_C);
+        C_V1_4.To_Ada(Layout, Layout_C);
+        Extension_Records.Free(Layout_C.Next);
+    end Get_Subresource_Layout;
+    
+    function Get_Subresource_Layout(Device: in Vulkan.Device;
+                                    Info: in Device_Image_Subresource_Info)
+        return Subresource_Layout_2 is
+        Layout: Subresource_Layout_2;
+    begin
+        Get_Subresource_Layout(Device, Info, Layout);
+
+        return Layout;
+    end Get_Subresource_Layout;
 end Vulkan.Devices;
 

@@ -14,12 +14,13 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Command subprograms
 
 with Ada.Unchecked_Conversion;
 with Vulkan.C_V1_1;
+with Vulkan.C_V1_4;
 
 package body Vulkan.Commands is
     procedure Set_Viewport(Command_Buffer: in Vulkan.Command_Buffer;
@@ -952,5 +953,139 @@ package body Vulkan.Commands is
                                  Depth_Fail_Op,
                                  Compare_Op);
     end Set_Stencil_Op;
+
+    procedure Set_Line_Stipple
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Line_Stipple_Factor: in Interfaces.Unsigned_32;
+         Line_Stipple_Pattern: in Interfaces.Unsigned_16) is
+    begin
+        C_V1_4.vkCmdSetLineStipple(Command_Buffer,
+                                   Line_Stipple_Factor,
+                                   Line_Stipple_Pattern);
+    end Set_Line_Stipple;
+
+    procedure Bind(Command_Buffer: in Vulkan.Command_Buffer;
+                   Buffer: in Vulkan.Buffer;
+                   Offset, Size: in Device_Size;
+                   Index_Type: in Vulkan.Index_Type) is
+    begin
+        C_V1_4.vkCmdBindIndexBuffer2(Command_Buffer,
+                                     Buffer,
+                                     Offset,
+                                     Size,
+                                     Index_Type);
+    end Bind;
+
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Bind_Point: in Pipeline_Bind_Point;
+                   Layout: in Pipeline_Layout;
+                   Set: in Interfaces.Unsigned_32;
+                   Descriptor_Writes: in Write_Descriptor_Set_Vectors.Vector) is
+        C_Descriptor_Writes: array (1 .. Positive(Descriptor_Writes.Length))
+            of aliased C.Write_Descriptor_Set_C;
+    begin
+        for X in C_Descriptor_Writes'Range loop
+            C_Descriptor_Writes(X) := C.To_C(Descriptor_Writes(X));
+        end loop;
+
+        C_V1_4.vkCmdPushDescriptorSet(Command_Buffer,
+                                      Bind_Point,
+                                      Layout,
+                                      Set,
+                                      C_Descriptor_Writes'Length,
+                                      C_Descriptor_Writes(1)'Access);
+
+        for Write of C_Descriptor_Writes loop
+            C.Free(Write);
+        end loop;
+    end Push;
+
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Bind_Point: in Pipeline_Bind_Point;
+                   Layout: in Pipeline_Layout;
+                   Set: in Interfaces.Unsigned_32;
+                   Descriptor_Write: in Write_Descriptor_Set) is
+    begin
+        Push(Command_Buffer,
+             Bind_Point,
+             Layout,
+             Set,
+             Write_Descriptor_Set_Vectors.To_Vector(Descriptor_Write, 1));
+    end Push;
+    
+    procedure Push
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Descriptor_Update_Template: in Vulkan.Descriptor_Update_Template;
+         Layout: in Pipeline_Layout;
+         Set: in Interfaces.Unsigned_32;
+         Data: in Interfaces.C.Extensions.void_ptr) is
+    begin
+        C_V1_4.vkCmdPushDescriptorSetWithTemplate(Command_Buffer,
+                                                  Descriptor_Update_Template,
+                                                  Layout,
+                                                  Set,
+                                                  Data);
+    end Push;
+
+    procedure Set_Rendering_Attachment_Locations
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Location_Info: in Rendering_Attachment_Location_Info) is
+        C_Info: C_V1_4.Rendering_Attachment_Location_Info_C :=
+            C_V1_4.To_C(Location_Info);
+    begin
+        C_V1_4.vkCmdSetRenderingAttachmentLocations(Command_Buffer, C_Info);
+        C_V1_4.Free(C_Info);
+    end Set_Rendering_Attachment_Locations;
+
+    procedure Set_Rendering_Input_Attachment_Indices
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Input_Attachment_Index_Info:
+            in Rendering_Input_Attachment_Index_Info) is
+        C_Info: C_V1_4.Rendering_Input_Attachment_Index_Info_C :=
+            C_V1_4.To_C(Input_Attachment_Index_Info);
+    begin
+        C_V1_4.vkCmdSetRenderingInputAttachmentIndices(Command_Buffer, C_Info);
+        C_V1_4.Free(C_Info);
+    end Set_Rendering_Input_Attachment_Indices;
+
+    procedure Bind
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Bind_Descriptor_Sets_Info: in Vulkan.Bind_Descriptor_Sets_Info) is
+        Info_C: C_V1_4.Bind_Descriptor_Sets_Info_C :=
+            C_V1_4.To_C(Bind_Descriptor_Sets_Info);
+    begin
+        c_V1_4.vkCmdBindDescriptorSets2(Command_Buffer, Info_C);
+        C_V1_4.Free(Info_C);
+    end Bind;
+
+    procedure Push(Command_Buffer: in Vulkan.Command_Buffer;
+                   Push_Constants_Info: in Vulkan.Push_Constants_Info) is
+        Info_C: C_V1_4.Push_Constants_Info_C :=
+            C_V1_4.To_C(Push_Constants_Info);
+    begin
+        C_V1_4.vkCmdPushConstants2(Command_Buffer, Info_C);
+        C_V1_4.Free(Info_C);
+    end Push;
+
+    procedure Push
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Push_Descriptor_Set_Info: in Vulkan.Push_Descriptor_Set_Info) is
+        Info_C: C_V1_4.Push_Descriptor_Set_Info_C :=
+            C_V1_4.To_C(Push_Descriptor_Set_Info);
+    begin
+        C_V1_4.vkCmdPushDescriptorSet2(Command_Buffer, Info_C);
+        C_V1_4.Free(Info_C);
+    end Push;
+
+    procedure Push
+        (Command_Buffer: in Vulkan.Command_Buffer;
+         Push_Descriptor_Set_With_Template_Info:
+            in Vulkan.Push_Descriptor_Set_With_Template_Info) is
+        Info_C: C_V1_4.Push_Descriptor_Set_With_Template_Info_C :=
+            C_V1_4.To_C(Push_Descriptor_Set_With_Template_Info);
+    begin
+        C_V1_4.vkCmdPushDescriptorSetWithTemplate2(Command_Buffer, Info_C);
+        C_V1_4.Free(Info_C);
+    end Push;
 end Vulkan.Commands;
 

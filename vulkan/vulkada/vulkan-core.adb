@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Core Vulkan subprograms
 
@@ -26,6 +26,8 @@ with Vulkan.C;
 with Vulkan.C_V1_1;
 with Vulkan.C_V1_2;
 with Vulkan.C_V1_3;
+with Vulkan.C_V1_4;
+--  with Ada.Text_IO; use Ada.Text_IO;
 
 package body Vulkan.Core is
     -- Common creation function.
@@ -93,6 +95,7 @@ package body Vulkan.Core is
     begin
         Raw_Proc := C.vkGetInstanceProcAddr(Instance, C_Name'Unchecked_Access);
 
+        --  Put_Line ("Loaded " & Name & ", got " & To_Proc (Raw_Proc)'Image);
         return To_Proc(Raw_Proc);
     end Get_Proc_Addr;
 
@@ -139,8 +142,14 @@ package body Vulkan.Core is
     end Enumerate_Instance_Layer_Properties;  
 
     function Enumerate_Instance_Version return Version_Number is
+        use type C_V1_1.vkEnumerateInstanceVersion_Access;
+
         Version: Version_Number;
     begin
+        if C_V1_1.vkEnumerateInstanceVersion = null then
+            return API_Version_1_0;
+        end if;
+
         C_V1_1.vkEnumerateInstanceVersion(Version);
 
         return Version;
@@ -174,17 +183,32 @@ package body Vulkan.Core is
         C.Free(Create_Info_C);
 
         if Result = Vulkan.Success and Create_Info.Application_Info /= null then
-            if Create_Info.Application_Info.API_Version >= API_Version_1_1 then
-                C_V1_1.Load(Instance);
-            end if;
-
-            if Create_Info.Application_Info.API_Version >= API_Version_1_2 then
-                C_V1_2.Load(Instance);
+            if Create_Info.Application_Info.API_Version >= API_Version_1_4 then
+                goto Load_1_4;
             end if;
 
             if Create_Info.Application_Info.API_Version >= API_Version_1_3 then
-                C_V1_3.Load(Instance);
+                goto Load_1_3;
             end if;
+
+            if Create_Info.Application_Info.API_Version >= API_Version_1_2 then
+                goto Load_1_2;
+            end if;
+
+            if Create_Info.Application_Info.API_Version >= API_Version_1_1 then
+                goto Load_1_1;
+            end if;
+
+            return Vulkan.Success;
+
+            <<Load_1_4>>
+            C_V1_4.Load(Instance);
+            <<Load_1_3>>
+            C_V1_3.Load(Instance);
+            <<Load_1_2>>
+            C_V1_2.Load(Instance);
+            <<Load_1_1>>
+            C_V1_1.Load(Instance);
         end if;
 
         return Result;

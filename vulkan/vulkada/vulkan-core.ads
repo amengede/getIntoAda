@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Core Vulkan subprograms
 
@@ -22,8 +22,7 @@ package Vulkan.Core is
     -- vkCreateInstance
     function Create(Create_Info: in Instance_Create_Info;
                     Allocator: aliased in Allocation_Callbacks;
-                    Instance: out Vulkan.Instance)
-        return Result
+                    Instance: out Vulkan.Instance) return Result
         with Post => Create'Result in Success |
                                       Out_Of_Host_Memory |
                                       Out_Of_Device_Memory |

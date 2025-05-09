@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Queue related subprograms
 
@@ -150,18 +150,6 @@ package body Vulkan.Queues is
     begin
         Exceptions.Check(Bind(Queue, Bind_Info, Fence));
     end Bind;
-
-    function Present(Queue: in Vulkan.Queue;
-                     Present_Info: in Vulkan.Present_Info)
-                        return Result is
-        Result: Vulkan.Result;
-        Present_Info_C: C.Present_Info_C := C.To_C(Present_Info);
-    begin
-        Result := C.vkQueuePresentKHR(Queue, Present_Info_C);
-        C.Free(Present_Info_C);
-
-        return Result;
-    end Present;
 
     function Get(Device: in Vulkan.Device;
                  Queue_Info: in Device_Queue_Info_2) return Queue is

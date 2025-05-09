@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Device routines
 
@@ -192,8 +192,7 @@ package Vulkan.Devices is
              Post => Pointers."/="(Map_With_Exception'Result, null);
 
     -- vkUnmapMemory
-    procedure Unmap(Device: in Vulkan.Device;
-                    Memory: in Device_Memory)
+    procedure Unmap(Device: in Vulkan.Device; Memory: in Device_Memory)
         with Pre => Device /= No_Device and
                     Memory /= No_Device_Memory;
 
@@ -261,20 +260,6 @@ package Vulkan.Devices is
              Pre => Device /= No_Device and
                     Memory /= No_Device_Memory;
     
-    -- vkGetDeviceGroupPresentCapabilitesKHR
-    function Get_Group_Present_Capabilities
-        (Device: in Vulkan.Device;
-         Capabilities: in out Device_Group_Present_Capabilities) return Result
-        with Pre => Device /= No_Device,
-             Post => Get_Group_Present_Capabilities'Result in
-                Success |
-                Out_Of_Host_Memory |
-                Out_Of_Device_Memory;
-
-    function Get_Group_Present_Capabilities(Device: in Vulkan.Device)
-        return Device_Group_Present_Capabilities
-        with Pre => Device /= No_Device;
- 
     -- Vulkan 1.1
     -- vkGetDeviceGroupPeerMemoryFeatures
     function Get_Device_Group_Peer_Memory_Features
@@ -369,12 +354,67 @@ package Vulkan.Devices is
         return Sparse_Image_Memory_Requirements_2_Vectors.Vector
         with Pre => Device /= No_Device;
 
+    -- Vulkan 1.4
+    -- vkMapMemory2
+    generic
+        with package Pointers is new Interfaces.C.Pointers(<>);
+    function Map_2_With_Result(Device: in Vulkan.Device;
+                               Memory_Map_Info: in Vulkan.Memory_Map_Info;
+                               Data: out Pointers.Pointer) return Result
+        with Pre => Device /= No_Device and
+                    Memory_Map_Info.Memory /= No_Device_Memory and
+                    Memory_Map_Info.Size /= 0,
+             Post => Map_2_With_Result'Result in Success |
+                                                 Out_Of_Host_Memory |
+                                                 Out_Of_Device_Memory |
+                                                 Memory_Map_Failed;
+
+    generic
+        with package Pointers is new Interfaces.C.Pointers(<>);
+    function Map_2_With_Exception(Device: in Vulkan.Device;
+                                  Memory_Map_Info: in Vulkan.Memory_Map_Info)
+        return Pointers.Pointer
+        with Pre => Device /= No_Device and
+                    Memory_Map_Info.Memory /= No_Device_Memory and
+                    Memory_Map_Info.Size /= 0,
+             Post => Pointers."/="(Map_2_With_Exception'Result, null);
+
+    -- vkUnmapMemory2
+    function Unmap(Device: in Vulkan.Device;
+                   Memory_Unmap_Info: in Vulkan.Memory_Unmap_Info) return Result
+        with Pre => Device /= No_Device and
+                    Memory_Unmap_Info.Memory /= No_Device_Memory,
+             Post => Unmap'Result in Success |
+                                     Memory_Map_Failed;
+
+    procedure Unmap(Device: in Vulkan.Device;
+                    Memory_Unmap_Info: in Vulkan.Memory_Unmap_Info)
+        with Pre => Device /= No_Device and
+                    Memory_Unmap_Info.Memory /= No_Device_Memory;
+
+    -- vkGetRenderingAreaGranularity
+    function Get_Granularity(Device: in Vulkan.Device;
+                             Rendering_Area_Info: in Vulkan.Rendering_Area_Info)
+        return Extent_2D
+        with Pre => Device /= No_Device;
+
+    -- vkGetDeviceImageSubresourceLayout
+    procedure Get_Subresource_Layout(Device: in Vulkan.Device;
+                                     Info: in Device_Image_Subresource_Info;
+                                     Layout: in out Subresource_Layout_2)
+        with Pre => Device /= No_Device;
+
+    function Get_Subresource_Layout(Device: in Vulkan.Device;
+                                    Info: in Device_Image_Subresource_Info)
+        return Subresource_Layout_2
+        with Inline,
+             Pre => Device /= No_Device;
+
 private
     function Wait_Idle(Device: in Vulkan.Device) return Result
         renames C.vkDeviceWaitIdle;
     
-    procedure Unmap(Device: in Vulkan.Device;
-                    Memory: in Device_Memory)
+    procedure Unmap(Device: in Vulkan.Device; Memory: in Device_Memory)
         renames C.vkUnmapMemory;
 end Vulkan.Devices;
 

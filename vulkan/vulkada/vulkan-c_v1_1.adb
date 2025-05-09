@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Subprogram access for Vulkan 1.1
 
@@ -35,8 +35,6 @@ package body Vulkan.C_V1_1 is
             P := Get_Pointer(Instance, Name);
         end Load_Pointer;
 
-        procedure Load is
-            new Load_Pointer(vkEnumerateInstanceVersion_Access);
         procedure Load is
             new Load_Pointer(vkBindBufferMemory2_Access);
         procedure Load is
@@ -94,7 +92,6 @@ package body Vulkan.C_V1_1 is
         procedure Load is
             new Load_Pointer(vkGetDescriptorSetLayoutSupport_Access);
     begin
-        Load(vkEnumerateInstanceVersion, "vkEnumerateInstanceVersion");
         Load(vkBindBufferMemory2, "vkBindBufferMemory2");
         Load(vkBindImageMemory2, "vkBindImageMemory2");
         Load(vkGetDeviceGroupPeerMemoryFeatures,
@@ -2483,5 +2480,14 @@ package body Vulkan.C_V1_1 is
                 end;
         end case;
     end Free;
+
+begin
+    declare
+        function Load is
+            new Core.Get_Proc_Addr(vkEnumerateInstanceVersion_Access);
+    begin
+        vkEnumerateInstanceVersion := Load(No_Instance,
+                                           "vkEnumerateInstanceVersion");
+    end;
 end Vulkan.C_V1_1;
 

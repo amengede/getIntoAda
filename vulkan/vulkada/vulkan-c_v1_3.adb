@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Subprogram access for Vulkan 1.3
 
@@ -25,7 +25,7 @@ with Vulkan.Extension_Records;
 with Vulkan.Core;
 
 package body Vulkan.C_V1_3 is
-    -- Wrapper for deallocation a union.
+    -- Wrapper for deallocating a union.
     procedure Release(E: in out Arrayed_Rendering_Attachment_Info_C);
 
     procedure Load(Instance: in Vulkan.Instance) is

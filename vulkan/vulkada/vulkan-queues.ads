@@ -14,7 +14,7 @@
 -- License along with VulkAda.
 -- If not, see <http://www.gnu.org/licenses/>.
 
--- Copyright 2024 Phaser Cat Games LLC
+-- Copyright 2025 Phaser Cat Games LLC
 
 -- Queue related subprograms
 
@@ -151,20 +151,6 @@ package Vulkan.Queues is
                    Fence: in Vulkan.Fence := No_Fence)
         with Inline,
              Pre => Queue /= No_Queue;
-
-    -- vkQueuePresentKHR
-    function Present(Queue: in Vulkan.Queue;
-                     Present_Info: in Vulkan.Present_Info)
-                        return Result
-        with Pre => Queue /= No_Queue,
-             Post => Present'Result in Success |
-                                       Suboptimal |
-                                       Out_Of_Host_Memory |
-                                       Out_Of_Device_Memory |
-                                       Device_Lost |
-                                       Out_Of_Date |
-                                       Surface_Lost |
-                                       Full_Screen_Exclusive_Mode_Lost;
 
     -- Vulkan 1.1
     -- vkGetDeviceQueue2
