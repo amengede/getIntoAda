@@ -98,7 +98,7 @@ package body Logger is
         Messenger_Info.Message_Type :=
             Debug_Utils_Message_Type_General_Bit
             + Debug_Utils_Message_Type_Performance_Bit
-            + Debug_Utils_Message_Type_Performance_Bit;
+            + Debug_Utils_Message_Type_Validation_Bit;
 
         Messenger_Info.User_Callback := Debug_Callback'Access;
 
