@@ -1,0 +1,26 @@
+name = "ada_software_renderer"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Your Name"]
+maintainers = ["Your Name <example@example.com>"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []
+
+executables = ["ada_software_renderer"]
+
+[test]
+runner = "alire"
+
+[[depends-on]]
+sdlada = "^2.5.124"
+
+[[pins]]
+sdlada = { url='https://github.com/ada-game-framework/sdlada.git' }
+
+[[depends-on]]
+sdlada_image = "~0.1.0-dev"
+
+[[pins]]
+sdlada_image = { url='https://github.com/ada-game-framework/sdlada_image.git' }
