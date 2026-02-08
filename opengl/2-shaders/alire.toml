@@ -1,0 +1,24 @@
+name = "opengl_renderer"
+description = ""
+version = "0.1.0-dev"
+
+authors = ["Andrew Mengede"]
+maintainers = ["Andrew Mengede <amengede27@outlook.com>"]
+maintainers-logins = ["amengede"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []
+
+executables = ["opengl_renderer"]
+
+[test]
+runner = "alire"
+
+[[depends-on]]
+openglada = "~0.9.0"
+
+[[depends-on]]
+sdlada = "^2.5.124"
+
+[[pins]]
+sdlada = { url='https://github.com/ada-game-framework/sdlada.git' }
