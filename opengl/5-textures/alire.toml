@@ -12,10 +12,19 @@ tags = []
 executables = ["opengl_renderer"]
 
 [[depends-on]]
-openglada = "~0.9.0"
-
-[[depends-on]]
 sdlada = "^2.5.124"
 
 [[pins]]
 sdlada = { url='https://github.com/ada-game-framework/sdlada.git' }
+
+[[depends-on]]
+openglada = "~0.9.0"
+
+[[pins]]
+openglada = { url='https://github.com/amengede/OpenGLAda.git', subdir='opengl' }
+
+[[depends-on]]
+sdlada_image = "~0.1.0-dev"
+
+[[pins]]
+sdlada_image = { url='https://github.com/ada-game-framework/sdlada_image.git' }

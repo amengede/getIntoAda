@@ -1,11 +1,7 @@
 package Game is
 
     --  Types
-    type Board is Array (1 .. 3, 1 .. 3) of String (1 .. 1);
-
-    --  Constants
-    Blank : constant String := " ";
-    O : constant String := "O";
-    X : constant String := "X";
+    type Game_Piece is (X, O, Blank);
+    type Board is Array (1 .. 3, 1 .. 3) of Game_Piece;
 
 end Game;
