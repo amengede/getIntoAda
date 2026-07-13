@@ -18,7 +18,7 @@ procedure Linked_List is
    Event    : Events.Events;
    Running  : Boolean := True;
    My_List  : Person_List.Link := null;
-   My_Array : Person_Array.MyArray_Access := null;
+   My_Array : Person_Array.Vector;
 
    --  Helpers
    procedure Print (Head : Person_List.Link) is
@@ -35,14 +35,16 @@ procedure Linked_List is
 
    end Print;
 
-   procedure Print (Arr : Person_Array.MyArray_Access) is
+   procedure Print (Arr : in out Person_Array.Vector) is
+      Capacity : Natural := Arr.Get_Capacity;
+      Size : Natural := Arr.Get_Size;
    begin
 
-      Put_Line ("Capacity:" & Arr.Capacity'Image);
+      Put_Line ("Capacity:" & Capacity'Image);
 
-      Put("[");
-      for i in 0 .. Arr.Capacity - 1 loop
-         Put (To_String (Person_Array.Get (Arr, i).Name) & ", ");
+      Put ("[");
+      for i in 0 .. Size - 1 loop
+         Put (To_String (Arr.Get (i).Name) & ", ");
       end loop;
       Put_Line ("]");
 
@@ -68,17 +70,16 @@ begin
    Person_List.Insert (My_List, Person'(20, To_Unbounded_String ("E")));
    Print (My_List);
 
-   My_Array := new Person_Array.MyArray;
    Print (My_Array);
-   Person_Array.Insert (My_Array, 12, Person'(12, To_Unbounded_String ("A")));
+   My_Array.Push_Back (Person'(12, To_Unbounded_String ("A")));
    Print (My_Array);
-   Person_Array.Insert (My_Array, 3, Person'(3, To_Unbounded_String ("B")));
+   My_Array.Push_Back (Person'(3, To_Unbounded_String ("B")));
    Print (My_Array);
-   Person_Array.Insert (My_Array, 45, Person'(45, To_Unbounded_String ("C")));
+   My_Array.Push_Back (Person'(45, To_Unbounded_String ("C")));
    Print (My_Array);
-   Person_Array.Insert (My_Array, 2, Person'(2, To_Unbounded_String ("D")));
+   My_Array.Push_Back (Person'(2, To_Unbounded_String ("D")));
    Print (My_Array);
-   Person_Array.Insert (My_Array, 20, Person'(20, To_Unbounded_String ("E")));
+   My_Array.Push_Back (Person'(20, To_Unbounded_String ("E")));
    Print (My_Array);
 
    if not Renderer.Initialize then
