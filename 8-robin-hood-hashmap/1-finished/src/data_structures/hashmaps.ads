@@ -1,36 +1,58 @@
 with Primitives; use Primitives;
+with Ada.Finalization;
 generic
-   type T is private;
-   with function Key (Item : T) return Uint32;
+   type K is private;
+   type V is private;
+   with function Hash (Item : K) return Natural;
+   Default_Key : K;
 package HashMaps is
+
+   Key_Error : exception;
+
+   type Hash_Map is tagged private;
+
+   procedure Insert (Self : in out Hash_Map; Key : K; Value : V);
+
+   function Has (Self : in out Hash_Map; Key : K) return Boolean;
+
+   function Get (Self : in out Hash_Map; Key : K) return V;
+
+   procedure Remove (Self : in out Hash_Map; Key : K);
+
+   procedure Print (Self : in out Hash_Map);
+
+private
 
    type Element is
       record
-         Probe_Length : Uint32 := 0;
-         Data : T;
+         Probe_Length : Natural := 0;
+         Key : K := Default_Key;
+         Value : V;
          Free : Boolean := True;
       end record;
 
-   type Elements_Type is array (Uint32 range <>) of Element;
-   type Elements_Access is access Elements_Type;
+   type Elements_Type is array (Natural range <>) of Element;
+   type Elements_Ptr is access Elements_Type;
 
-   type HashMap is
+   type Internal_Hash_Map is
       record
-         Elements : Elements_Access := new Elements_Type (0 .. 1);
-         Size : Uint32 := 0;
-         Capacity : Uint32 := 1;
+         Elements : Elements_Ptr := new Elements_Type (0 .. 1);
+         Size : Natural := 0;
+         Capacity : Natural := 1;
+         Reference_Count : Natural := 1;
       end record;
 
-   type HashMap_Access is access HashMap;
+   type Internal_HashMap_Ptr is access Internal_Hash_Map;
 
-   procedure Insert (Target : HashMap_Access; Data : T);
+   type Hash_Map is new Ada.Finalization.Controlled with
+      record
+         Data : Internal_HashMap_Ptr := null;
+      end record;
 
-   function Has (Target : HashMap_Access; Element_Key : Uint32) return Boolean;
+   overriding
+   procedure Adjust (Self : in out Hash_Map);
 
-   function Get (Target : HashMap_Access; Element_Key : Uint32) return T;
-
-   procedure Remove (Target : HashMap_Access; Element_Key : Uint32);
-
-   procedure Print (Target : HashMap_Access);
+   overriding
+   procedure Finalize (Self : in out Hash_Map);
 
 end HashMaps;

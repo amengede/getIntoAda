@@ -10,5 +10,7 @@ package Types is
 
    function Key (P : Person) return Uint32;
 
+   function Hash_Name (Name : Unbounded_String) return Natural;
+
    function Image (P : Person) return String;
 end Types;

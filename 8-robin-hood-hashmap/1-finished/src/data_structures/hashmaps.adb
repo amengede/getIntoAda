@@ -4,154 +4,218 @@ with Ada.Text_IO; use Ada.Text_IO;
 package body HashMaps is
 
    procedure Insert (
-      Target : Elements_Access;
-      Capacity : Uint32; New_Data : T) is
+      Data : Elements_Ptr;
+      Capacity : Natural;
+      New_Key : K;
+      New_Value : V) is
       Orphan : Element;
-      New_Element : Element := Element'(
-         Probe_Length => 0,
-         Data => New_Data,
-         Free => False);
-      I : Uint32 := 0;
-      Insert_Pos : Uint32 := Key (New_Data) and (Capacity - 1);
+      New_Element : Element :=
+            Element'(Probe_Length => 0,
+                     Key => New_Key,
+                     Value => New_Value,
+                     Free => False);
+      Insert_Pos : Natural := Hash (New_Key) mod Capacity;
    begin
 
-      while I < Capacity loop
-         exit when Target (Insert_Pos).Free;
-         if Target (Insert_Pos).Probe_Length < New_Element.Probe_Length then
-            Orphan := Target (Insert_Pos);
-            Target (Insert_Pos) := New_Element;
+      for I in 0..Capacity - 1 loop
+         exit when Data (Insert_Pos).Free or Data (Insert_Pos).Key = New_Key;
+         if Data (Insert_Pos).Probe_Length < New_Element.Probe_Length then
+            Orphan := Data (Insert_Pos);
+            Data (Insert_Pos) := New_Element;
             New_Element := Orphan;
          end if;
 
          New_Element.Probe_Length := New_Element.Probe_Length + 1;
 
-         Insert_Pos := (Insert_Pos + 1);
-         if Insert_Pos = Capacity then
-            Insert_Pos := 0;
-         end if;
-         I := I + 1;
+         Insert_Pos := (Insert_Pos + 1) mod Capacity;
       end loop;
 
-      Target (Insert_Pos) := New_Element;
+      Data (Insert_Pos) := New_Element;
    end Insert;
 
    procedure Free is new Ada.Unchecked_Deallocation
-      (Object => Elements_Type, Name => Elements_Access);
+                               (Object => Elements_Type,
+                                Name => Elements_Ptr);
 
-   procedure ReHash (Target : HashMap_Access) is
-      New_Elements : constant Elements_Access :=
-         new Elements_Type (0 .. 2 * Target.Capacity);
-      Old_Elements : Elements_Access := Target.Elements;
+   procedure Free is new Ada.Unchecked_Deallocation
+                               (Object => Internal_Hash_Map,
+                                Name => Internal_HashMap_Ptr);
+
+   procedure Re_Hash (Self : in out Hash_Map) is
+      New_Elements : constant Elements_Ptr :=
+         new Elements_Type (0 .. 2 * Self.Data.Capacity - 1);
+      Old_Elements : Elements_Ptr := Self.Data.Elements;
+      Old_Capacity : Natural := Self.Data.Capacity;
    begin
 
       --  Attempt to re-insert elements
-      for i in 0 .. Target.Capacity - 1 loop
-         Insert (New_Elements, Target.Capacity * 2, Old_Elements (i).Data);
+      for I in 0 .. Old_Capacity - 1 loop
+            Insert (Data => New_Elements,
+                    Capacity => Old_Capacity * 2,
+                    New_Key => Old_Elements (I).Key,
+                    New_Value => Old_Elements (I).Value);
       end loop;
       Free (Old_Elements);
-      Target.Elements := New_Elements;
-      Target.Capacity := Target.Capacity * 2;
-   end ReHash;
+      Self.Data.Elements := New_Elements;
+      Self.Data.Capacity := Old_Capacity * 2;
+   end Re_Hash;
 
-   procedure Insert (Target : HashMap_Access; Data : T) is
+   procedure Insert (Self : in out Hash_Map; Key : K; Value : V) is
+      Load_Factor : Float;
    begin
 
-      if Target.Size = Target.Capacity then
-         ReHash (Target);
+      if Self.Data = null then
+            Self.Data := new Internal_Hash_Map;
       end if;
 
-      Insert (Target.Elements, Target.Capacity, Data);
+      Load_Factor := Float(Self.Data.Size) / Float(Self.Data.Capacity);
 
-      Target.Size := Target.Size + 1;
+      if Load_Factor > 0.9 then
+         Self.Re_Hash;
+      end if;
+
+      Insert (Self.Data.Elements, Self.Data.Capacity, Key, Value);
+
+      Self.Data.Size := Self.Data.Size + 1;
 
    end Insert;
 
    function Has (
-      Target : HashMap_Access;
-      Element_Key : Uint32) return Boolean is
+      Self : in out Hash_Map;
+      Key : K) return Boolean is
 
-      Search_Position : Uint32 := Element_Key and (Target.Capacity - 1);
+      Search_Position : Natural;
       Current : Element;
-      I : Uint32 := 0;
    begin
-         while I < Target.Capacity loop
-            Current := Target.Elements (Search_Position);
 
-            if Key (Current.Data) = Element_Key then
+         if Self.Data = null then
+               return False;
+         end if;
+
+         Search_Position := Hash(Key) mod Self.Data.Capacity;
+         for I in 0..Self.Data.Capacity - 1 loop
+            Current := Self.Data.Elements (Search_Position);
+
+            if Current.Key = Key then
                return True;
             end if;
 
             exit when Current.Probe_Length < I;
 
-            I := I + 1;
-            Search_Position := Search_Position + 1;
-            if Search_Position = Target.Capacity then
-               Search_Position := 0;
-            end if;
+            Search_Position := (Search_Position + 1) mod Self.Data.Capacity;
          end loop;
          return False;
    end Has;
 
-   function Get (Target : HashMap_Access; Element_Key : Uint32) return T is
+   function Get (Self : in out Hash_Map; Key : K) return V is
+         Search_Position : Natural;
+         Current : Element;
    begin
-      return Target.Elements (Element_Key).Data;
+         if Self.Data = null then
+               raise Key_Error with "Accessing empty Hashmap.";
+         end if;
+
+         Search_Position := Hash(Key) mod Self.Data.Capacity;
+         for I in 0..Self.Data.Capacity - 1 loop
+               Current := Self.Data.Elements (Search_Position);
+
+               if Current.Key = Key then
+                     return Current.Value;
+               end if;
+
+               exit when Current.Probe_Length < I;
+
+               Search_Position := (Search_Position + 1)
+                                  mod Self.Data.Capacity;
+         end loop;
+         raise Key_Error with "Key not present in Hashmap.";
    end Get;
 
-   procedure Remove (Target : HashMap_Access; Element_Key : Uint32) is
-      Deletion_Pos : Uint32 := Element_Key and (Target.Capacity - 1);
-      Inspection_Pos : Uint32;
+   procedure Remove (Self : in out Hash_Map; Key : K) is
+      Deletion_Pos : Natural;
+      Inspection_Pos : Natural;
+      Found : Boolean := False;
    begin
 
-      for I in 0 .. Target.Capacity loop
-         exit when Key (Target.Elements (Deletion_Pos).Data) = Element_Key;
-
-         Deletion_Pos := Deletion_Pos + 1;
-         if Deletion_Pos = Target.Capacity then
-            Deletion_Pos := 0;
+         if Self.Data = null then
+               raise Key_Error with "Attempting to remove from empty Hashmap.";
          end if;
 
-      end loop;
+         Deletion_Pos := Hash(Key) mod Self.Data.Capacity;
 
-      for I in 0 .. Target.Capacity - 1 loop
-         Target.Elements (Deletion_Pos).Free := True;
+         for I in 0 .. Self.Data.Capacity - 1 loop
+               Found := Self.Data.Elements (Deletion_Pos).Key = Key;
+               exit when Found;
 
-         Inspection_Pos := Deletion_Pos + 1;
-         if Inspection_Pos = Target.Capacity then
-            Inspection_Pos := 0;
+               Deletion_Pos := (Deletion_Pos + 1) mod Self.Data.Capacity;
+         end loop;
+
+         if not Found then
+               raise Key_Error with "Deleting non-existant element";
          end if;
 
-         exit when Target.Elements (Inspection_Pos).Probe_Length = 0;
-         Target.Elements (Deletion_Pos) :=
-            Target.Elements (Inspection_Pos);
-         Target.Elements (Deletion_Pos).Probe_Length :=
-            Target.Elements (Deletion_Pos).Probe_Length - 1;
+         for I in 0 .. Self.Data.Capacity - 1 loop
+               Self.Data.Elements (Deletion_Pos).Free := True;
 
-         Deletion_Pos := Deletion_Pos + 1;
-         if Deletion_Pos = Target.Capacity then
-            Deletion_Pos := 0;
-         end if;
+               Inspection_Pos := (Deletion_Pos + 1) mod Self.Data.Capacity;
+               exit when Self.Data.Elements (Inspection_Pos).Probe_Length = 0;
 
-      end loop;
+               Self.Data.Elements (Deletion_Pos) :=
+                     Self.Data.Elements (Inspection_Pos);
+               Self.Data.Elements (Deletion_Pos).Probe_Length :=
+                     Self.Data.Elements (Deletion_Pos).Probe_Length - 1;
 
-      Target.Size := Target.Size - 1;
+               Deletion_Pos := (Deletion_Pos + 1) mod Self.Data.Capacity;
+         end loop;
+
+         Self.Data.Size := Self.Data.Size - 1;
    end Remove;
 
-   procedure Print (Target : HashMap_Access) is
+   procedure Print (Self : in out Hash_Map) is
    begin
-      Put_Line ("Size: " & Target.Size'Image);
-      Put_Line ("Capacity: " & Target.Capacity'Image);
+         if Self.Data = null then
+               Put_Line ("Empty");
+               return;
+         end if;
+
+         Put_Line ("Size: " & Self.Data.Size'Image);
+         Put_Line ("Capacity: " & Self.Data.Capacity'Image);
 
       Put ("[");
-      for I in 0 .. Target.Capacity - 1 loop
-         if Target.Elements (I).Free then
+      for I in 0 .. Self.Data.Capacity - 1 loop
+         if Self.Data.Elements (I).Free then
             Put ("-");
          else
-            Put (Key (Target.Elements (I).Data)'Image);
-            Put ("(" & Target.Elements (I).Probe_Length'Image & ")");
+            Put (Self.Data.Elements (I).Key'Image);
+            Put ("(" & Self.Data.Elements (I).Probe_Length'Image & ")");
          end if;
          Put (", ");
       end loop;
 
       Put_Line ("]");
    end Print;
+
+   procedure Adjust (Self : in out Hash_Map) is
+   begin
+         if Self.Data = null then
+               return;
+         end if;
+
+         Self.Data.Reference_Count := Self.Data.Reference_Count + 1;
+   end Adjust;
+
+   procedure Finalize (Self : in out Hash_Map) is
+   begin
+         if Self.Data = null then
+               return;
+         end if;
+
+         Self.Data.Reference_Count := Self.Data.Reference_Count - 1;
+
+         if Self.Data.Reference_Count = 0 then
+               Free (Self.Data.Elements);
+               Free (Self.Data);
+               Self.Data := null;
+         end if;
+   end Finalize;
 end HashMaps;

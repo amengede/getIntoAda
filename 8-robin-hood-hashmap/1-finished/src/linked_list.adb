@@ -18,8 +18,8 @@ procedure Linked_List is
    Event    : Events.Events;
    Running  : Boolean := True;
    My_List  : Person_List.Link := null;
-   My_Array : Person_Array.MyArray_Access := null;
-   My_Hashmap : Person_Hashmap.HashMap_Access := null;
+   My_Array : Person_Vectors.Vector;
+   My_Hashmap : Person_Hashmaps.Hash_Map;
    Person_A : constant Person := Person'(12, To_Unbounded_String ("A"));
    Person_B : constant Person := Person'(3, To_Unbounded_String ("B"));
    Person_C : constant Person := Person'(45, To_Unbounded_String ("C"));
@@ -41,14 +41,14 @@ procedure Linked_List is
 
    end Print;
 
-   procedure Print (Arr : Person_Array.MyArray_Access) is
+   procedure Print (Arr : in out Person_Vectors.Vector) is
    begin
 
-      Put_Line ("Capacity:" & Arr.Capacity'Image);
+      Put_Line ("Capacity:" & Arr.Get_Capacity'Image);
 
       Put ("[");
-      for i in 0 .. Arr.Capacity - 1 loop
-         Put (To_String (Person_Array.Get (Arr, i).Name) & ", ");
+      for I in 0 .. Arr.Get_Size - 1 loop
+         Put (To_String (Arr.Get (I).Name) & ", ");
       end loop;
       Put_Line ("]");
 
@@ -74,33 +74,31 @@ begin
    Person_List.Insert (My_List, Person_E);
    Print (My_List);
 
-   My_Array := new Person_Array.MyArray;
    Print (My_Array);
-   Person_Array.Insert (My_Array, 12, Person_A);
+   My_Array.Push_Back (Person_A);
    Print (My_Array);
-   Person_Array.Insert (My_Array, 3, Person_B);
+   My_Array.Push_Back (Person_B);
    Print (My_Array);
-   Person_Array.Insert (My_Array, 45, Person_C);
+   My_Array.Push_Back (Person_C);
    Print (My_Array);
-   Person_Array.Insert (My_Array, 2, Person_D);
+   My_Array.Push_Back (Person_D);
    Print (My_Array);
-   Person_Array.Insert (My_Array, 20, Person_E);
+   My_Array.Push_Back (Person_E);
    Print (My_Array);
 
-   My_Hashmap := new Person_Hashmap.HashMap;
-   Person_Hashmap.Print (My_Hashmap);
-   Person_Hashmap.Insert (My_Hashmap, Person_A);
-   Person_Hashmap.Print (My_Hashmap);
-   Person_Hashmap.Insert (My_Hashmap, Person_B);
-   Person_Hashmap.Print (My_Hashmap);
-   Person_Hashmap.Insert (My_Hashmap, Person_C);
-   Person_Hashmap.Print (My_Hashmap);
-   Person_Hashmap.Insert (My_Hashmap, Person_D);
-   Person_Hashmap.Print (My_Hashmap);
-   Person_Hashmap.Insert (My_Hashmap, Person_E);
-   Person_Hashmap.Print (My_Hashmap);
-   Person_Hashmap.Remove (My_Hashmap, 20);
-   Person_Hashmap.Print (My_Hashmap);
+   My_Hashmap.Print;
+   My_Hashmap.Insert (Person_A.Name, Person_A);
+   My_Hashmap.Print;
+   My_Hashmap.Insert (Person_B.Name, Person_B);
+   My_Hashmap.Print;
+   My_Hashmap.Insert (Person_C.Name, Person_C);
+   My_Hashmap.Print;
+   My_Hashmap.Insert (Person_D.Name, Person_D);
+   My_Hashmap.Print;
+   My_Hashmap.Insert (Person_E.Name, Person_E);
+   My_Hashmap.Print;
+   My_Hashmap.Remove (Person_E.Name);
+   My_Hashmap.Print;
 
    if not Renderer.Initialize then
       return;
